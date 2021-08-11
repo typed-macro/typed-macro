@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-macro",
-  "description": "Brings macro capabilities for Vite based projects.",
+  "description": "Brings macro capabilities to Vite based projects.",
   "keywords": [
     "macro",
     "vite",

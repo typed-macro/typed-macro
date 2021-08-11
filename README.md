@@ -5,7 +5,7 @@
 [![license](https://badgen.net/npm/license/vite-plugin-macro)](https://github.com/unbyte/vite-plugin-macro/blob/master/LICENSE)
 ![types](https://badgen.net/npm/types/vite-plugin-macro)
 
-> Help create macro plugins for [vite](https://github.com/vitejs/vite).
+> Brings macro capabilities to [Vite](https://github.com/vitejs/vite) based projects.
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ $ npm install -D vite-plugin-macro
 import { defineMacro } from 'vite-plugin-macro'
 
 const echoMacro = defineMacro('echo')
-  .withSignature('(msg: string, repeat?: number): void')
+  .withSignature(`(msg: string, repeat?: number): void`)
   .withHandler(({ path, args }, { template, types }, { run }) => {
     const msg = run(() => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
@@ -96,17 +96,19 @@ echo('yeah', 3)
 // echo('yeah yeah yeah')
 ```
 
-### Examples
+## Examples
 
 See [Examples](https://github.com/unbyte/vite-plugin-macro/tree/master/examples/)
 
-## Options
+## Types
 
 ### Plugin Options
 
-🚧 TBD
+See [src/plugin.ts#L63-L68](https://github.com/unbyte/vite-plugin-macro/blob/50b132308ff8561ca3420b545e110f597ad10e3a/src/plugin.ts#L63-L68)
 
-### Macro Options
+### Macro Handler
+
+See [src/macro.ts#L71-L75](https://github.com/unbyte/vite-plugin-macro/blob/50b132308ff8561ca3420b545e110f597ad10e3a/src/macro.ts#L71-L75)
 
 ## License
 
