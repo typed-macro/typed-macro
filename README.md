@@ -9,22 +9,25 @@
 
 ## Getting Started
 
-**Install**
+### Install
 
 ```bash
 $ npm install -D vite-plugin-macro
 # or
-# yarn add -D vite-plugin-macro
+$ yarn add -D vite-plugin-macro
 ```
 
-**Define a macro**
+### Define a macro
 
 ```typescript
+// echoMacro.ts
 import { defineMacro } from 'vite-plugin-macro'
 
-const echoMacro = defineMacro('echo')
+const run = <T>(block: () => T) => block()
+
+export const echoMacro = defineMacro('echo')
   .withSignature(`(msg: string, repeat?: number): void`)
-  .withHandler(({ path, args }, { template, types }, { run }) => {
+  .withHandler(({ path, args }, { template, types }) => {
     const msg = run(() => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
@@ -50,22 +53,32 @@ const echoMacro = defineMacro('echo')
   })
 ```
 
-**Define plugin**
+### Define plugin
 
 ```typescript
+// vite.config.ts
+import { defineConfig } from 'vite'
+import vitePluginImportAssets from './plugin'
+import { defineMacroPlugin } from 'vite-plugin-macro'
 import { join } from 'path'
+import { echoMacro } from './echoMacro'
 
-defineMacroPlugin({
-  exports: {
-    '@echo': {
-      macros: [macroEcho],
-    },
-  },
-  dtsPath: join(__dirname, 'macros.d.ts'),
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    defineMacroPlugin({
+      exports: {
+        '@echo': {
+          macros: [echoMacro],
+        },
+      },
+      dtsPath: join(__dirname, 'macros.d.ts'),
+    }),
+  ],
 })
 ```
 
-**Register type declaration file**
+### Register type declaration file
 
 There are two ways:
 
@@ -83,9 +96,15 @@ There are two ways:
   /// <reference path="./macros.d.ts" />
   ```
 
-> Type declaration file will be created automatically when vite dev server starts.
+Type declaration file will be created automatically every time vite dev server starts.
 
-**Use macros**
+```shell
+$ yarn dev
+# or
+$ yarn vite
+```
+
+### Use macros
 
 Then you can import macros from namespace and call them as normal function.
 
@@ -104,11 +123,11 @@ See [Examples](https://github.com/unbyte/vite-plugin-macro/tree/master/examples/
 
 ### Plugin Options
 
-See [src/plugin.ts#L63-L68](https://github.com/unbyte/vite-plugin-macro/blob/50b132308ff8561ca3420b545e110f597ad10e3a/src/plugin.ts#L63-L68)
+See [src/plugin.ts#L116-L127](https://github.com/unbyte/vite-plugin-macro/blob/9395c825fe9eee7b1640c8b29c18ff57a8a6dd25/src/plugin.ts#L116-L127)
 
 ### Macro Handler
 
-See [src/macro.ts#L71-L75](https://github.com/unbyte/vite-plugin-macro/blob/50b132308ff8561ca3420b545e110f597ad10e3a/src/macro.ts#L71-L75)
+See [src/macro.ts#L146-L150](https://github.com/unbyte/vite-plugin-macro/blob/9395c825fe9eee7b1640c8b29c18ff57a8a6dd25/src/macro.ts#L146-L150)
 
 ## License
 
