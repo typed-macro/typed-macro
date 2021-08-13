@@ -1,10 +1,12 @@
 import { defineMacro, defineMacroPlugin } from 'vite-plugin-macro'
 import { join } from 'path'
 
+const run = <T>(block: () => T) => block()
+
 export function vitePluginBasic() {
   const echoMacro = defineMacro('echo')
     .withSignature('(msg: string, repeat?: number): void')
-    .withHandler(({ path, args }, { template, types }, { run }) => {
+    .withHandler(({ path, args }, { template, types }) => {
       const msg = run(() => {
         if (args.length === 0) throw new Error('empty arguments is invalid')
         const firstArg = args[0]
@@ -31,7 +33,7 @@ export function vitePluginBasic() {
 
   const loadMacro = defineMacro('load')
     .withSignature('(glob: string): void')
-    .withHandler(({ path, args, filepath }, { template, types }, { run }) => {
+    .withHandler(({ path, args, filepath }, { template, types }) => {
       const glob = run(() => {
         if (args.length === 0)
           throw new Error(

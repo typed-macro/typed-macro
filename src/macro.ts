@@ -5,9 +5,21 @@ import { CallExpression, Program } from '@babel/types'
 import { validateFnName } from './common'
 
 export type Context = {
+  /**
+   * The file path of the module currently being handled.
+   */
   filepath: string
+  /**
+   * The original source code of the module currently being handled.
+   */
   code: string
+  /**
+   * The arguments nodes of the call-macro expression currently being handled.
+   */
   args: CallExpression['arguments']
+  /*
+   * The NodePath of the call-macro expression currently being handled.
+   */
   path: NodePath
 }
 
@@ -17,6 +29,21 @@ export type BabelTools = {
   traverse: typeof traverse
 }
 
+/**
+ * ```typescript
+ * import 'moduleName'
+ * { moduleName: string }
+ *
+ * import defaultName from 'moduleName'
+ * { defaultName: string; moduleName: string }
+ *
+ * import { exportName } from 'moduleName'
+ * { exportName: string; moduleName: string }
+ *
+ * import { exportName as localName } from 'moduleName'
+ * { localName: string; exportName: string; moduleName: string }
+ * ```
+ */
 export type Imports =
   | { moduleName: string }
   | { defaultName: string; moduleName: string }
@@ -24,48 +51,96 @@ export type Imports =
   | { exportName: string; moduleName: string }
 
 export type Helper = {
-  // get the directory of the root project or the nearest project
+  /**
+   * Get the directory of the root project or the nearest project.
+   * @param which 'root' or 'leaf'
+   */
   projectDir: (which: 'root' | 'leaf') => string
-  // normalize path pattern so can resolve file paths as import paths
+  /**
+   * Normalize path pattern so can resolve file paths as import paths
+   * @param path relative path or path pattern
+   * @param root absolute file path of the project dir, default to projectDir('leaf')
+   * @param importer absolute file path of the importer, default to current module
+   *
+   * e.g. search files by glob pattern and then import them
+   *
+   * ```typescript
+   * // /src/example/a.ts
+   * // /src/example/b.ts
+   * // in /src/another/index.ts
+   * const pattern = '../example/*.ts'
+   * const { normalized, base, resolveImportPath } = normalizePathPattern(pattern)
+   * const importPaths = glob.sync(normalized, { cwd: base }).map(resolveImportPath)
+   *
+   * // importPaths = ['../example/a.ts', '../example/b.ts']
+   * ```
+   */
   normalizePathPattern: (
-    // relative path pattern to be imported
     path: string,
-    // path of the project root dir
     root?: string,
-    // path of the importer
     importer?: string
   ) => {
-    // normalized path to be imported, e.g. ../../a => a
+    /**
+     * Normalized path or path pattern,
+     */
     normalized: string
-    // base path for normalized path
+    /**
+     * Base path for the normalized path or path pattern.
+     */
     base: string
-    // resolve import path, almost the opposite operation of normalization
-    resolveImportPath: (s: string) => string
+    /**
+     * Get import path from file path got by normalized path and base,
+     * almost the opposite operation of normalization
+     * @param path file path
+     */
+    resolveImportPath: (path: string) => string
   }
-  // prepend import statements to program
+  /**
+   * Prepend import statements to program.
+   * @param imports an import or an array of imports
+   * @param program node path of the target program for prepending import statements.
+   * use the one currently being handled by default.
+   */
   prependImports: (
     imports: Imports[] | Imports,
     program?: NodePath<Program>
   ) => void
-  // check if imported
+  /**
+   * Check if an import statement has been added to the target program already.
+   * @param imports an import
+   * @param program node of the target program. use the one currently being handled by default.
+   */
   hasImported: (imports: Imports, program?: Program) => boolean
-  // prepend any node to program
+  /**
+   * Prepend any node to the target program.
+   * @param nodes any node or an array of nodes
+   * @param program node path of the target program. use the one currently being handled by default.
+   */
   prependToBody: <Nodes extends Node | readonly Node[]>(
     nodes: Nodes,
     program?: NodePath<Program>
   ) => void
-  // append any node to program
+  /**
+   * Append any node to the target program.
+   * @param nodes any node or an array of nodes
+   * @param program node path of the target program. use the one currently being handled by default.
+   */
   appendToBody: <Nodes extends Node | readonly Node[]>(
     nodes: Nodes,
     program?: NodePath<Program>
   ) => void
 
-  // force to recollect imported macros in the next loop.
-  // usually called after import a new macro to program.
+  /**
+   * Force to recollect imported macros in the next loop.
+   * Usually used after importing new macros to program during expanding a macro.
+   *
+   * Note:
+   *
+   *  Only collected imported macros can be applied, because plugin only
+   *  searches call expressions for collected macros. Also, external macros
+   *  cannot be collected because plugin is unaware of external macros.
+   */
   forceRecollectMacros: () => void
-
-  // make a block stmt become an expression
-  run: <T>(fn: () => T) => T
 }
 
 export type Transformer = (
@@ -89,14 +164,28 @@ export type Macro = {
 }
 
 type MacroBuilder = {
-  // add custom type definition, it will be written to .d.ts before macro signature
+  /**
+   * Add custom type definition, it will be written to .d.ts before macro signature.
+   */
   withCustomType: (typeDefinition: string) => Omit<MacroBuilder, 'withHandler'>
-  // add signature of macro placeholder. one macro requires at least one signature.
+  /**
+   * Add signature of macro. one macro requires at least one signature.
+   * @param signature function signature, like '(s: string): void'
+   * @param comment comment for the signature, will be written to .d.ts
+   * before the corresponding function signature.
+   */
   withSignature: (signature: string, comment?: string) => MacroBuilder
-  // set the transform handler for this macro
+  /**
+   * Set the transform handler and get the macro.
+   */
   withHandler: (transformer: Transformer) => Macro
 }
 
+/**
+ * Define a macro.
+ * @param name the name of the macro, should be a valid identifier name.
+ * @return macro builder.
+ */
 export function defineMacro(name: string): Omit<MacroBuilder, 'withHandler'> {
   if (!validateFnName(name))
     throw new Error(`'${name}' is not a valid macro name!`)

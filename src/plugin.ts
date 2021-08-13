@@ -1,5 +1,5 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, mkdir } from 'fs/promises'
 import { BabelTools, Macro } from './macro'
 import { parse, ParserPlugin } from '@babel/parser'
 import * as types from '@babel/types'
@@ -18,7 +18,7 @@ import {
 } from '@babel/types'
 import template from '@babel/template'
 import traverse, { NodePath } from '@babel/traverse'
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
 import { render } from 'mustache'
 import generate from '@babel/generator'
 import { ModuleNode } from 'vite'
@@ -26,32 +26,85 @@ import {
   getFilePathRelatedHelper,
   getProgramRelatedHelper,
   projectDir,
-  run,
 } from './helper'
 import { findInSet } from './common'
 
 export type MacroPluginOptions = {
+  /**
+   * Exports macros so macros can be imported and called,
+   * the value of the key will be the name of namespace(or called module).
+   *
+   * e.g.
+   * ```typescript
+   * const macroA = defineMacro('macroA')
+   *   .withSignature('(...args: any[]): void')
+   *   .withHandler(()=>...)
+   *
+   * { exports: {'@macros': {macros: [macroA]}} }
+   * ```
+   * Then in some .js(x) or .ts(x) file you can
+   * ```typescript
+   * import { macroA } from '@macros'
+   * macroA(someArgs)
+   * ```
+   */
   exports: {
     [namespace: string]: {
       macros: Macro[]
-      // type definitions, will be written to d.ts
+      /**
+       * Type definitions, will be written to d.ts.
+       *
+       * e.g.
+       * ```typescript
+       * { exports: { '@macros': { customTypes: `type A = string` } } }
+       * ```
+       * will generate
+       * ```typescript
+       * declare module '@macros' {
+       *   type A = string
+       * }
+       * ```
+       */
       customTypes?: string
     }
   }
-  // path of the automatically generated type declaration file
+  /**
+   * The path of the automatically generated type declaration file.
+   */
   dtsPath: string
-  // max recursion for applying macros,
-  // default to 5
+  /**
+   * The max recursion for applying macros, default to 5.
+   *
+   * After reached the maxRecursion, plugin will throw out an error.
+   *
+   * It's usually caused by forgetting to remove the call expression
+   * in macros.
+   */
   maxRecursion?: number
-  // babel plugins to be applied during parsing
+  /**
+   * Babel plugins to be applied during parsing.
+   *
+   * By default 'typescript' and 'jsx' are included and cannot be removed.
+   */
   parserPlugins?: ParserPlugin[]
 }
 
 export type MacroPluginServerHelper = {
-  // invalidate caches for macros of all namespaces or specific namespace,
-  // only available in dev mode
+  /**
+   * Invalidate caches of modules that import macros
+   * from all namespaces or specific namespace,
+   * only available in dev mode.
+   *
+   * This is usually used when, the macro needs to be re-expanded due to
+   * the change of external conditions, while the modules that call
+   * the macro cannot be automatically reloaded because their dependencies
+   * in the module dependency graph have no change so Vite always caches them.
+   */
   invalidateCache: (namespace?: string) => void
-  // find modules that import macros, only available in dev mode
+  /**
+   * Find modules that import macros from all namespaces or specific namespace,
+   * only available in dev mode.
+   */
   findImporters: (namespace?: string) => Set<ModuleNode>
 }
 
@@ -61,7 +114,13 @@ export type MacroPluginServerHook = (
 ) => (() => void) | void | Promise<(() => void) | void>
 
 export type MacroPlugin = MacroPluginOptions & {
+  /**
+   * The name of plugin.
+   */
   name: string
+  /**
+   * Vite plugin options.
+   */
   hooks?: Omit<Plugin, 'name' | 'enforce' | 'apply' | 'configureServer'> & {
     configureServer?: MacroPluginServerHook
   }
@@ -105,6 +164,10 @@ type MacroPluginContext = {
   dev: boolean
 }
 
+/**
+ * Define the macro plugin. It can be used as vite plugin directly.
+ * @param plugin plugin options.
+ */
 export function defineMacroPlugin(plugin: MacroPlugin): Plugin {
   const {
     name,
@@ -313,6 +376,7 @@ async function generateDts(
     customTypes,
   }: Pick<NormalizedMacroPluginOptions, 'namespaces' | 'macros' | 'customTypes'>
 ) {
+  await mkdir(dirname(targetPath), { recursive: true })
   await writeFile(
     targetPath,
     render(
@@ -441,7 +505,6 @@ function applyMacros({
             },
             BABEL_TOOLS,
             {
-              run,
               projectDir,
               forceRecollectMacros,
               ...filePathRelatedHelper,

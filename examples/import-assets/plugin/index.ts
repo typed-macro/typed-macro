@@ -2,6 +2,8 @@ import { join } from 'path'
 import glob from 'fast-glob'
 import { defineMacro, defineMacroPlugin } from 'vite-plugin-macro'
 
+const run = <T>(block: () => T) => block()
+
 export default function vitePluginImportAssets() {
   const importMacro = defineMacro('importAssets')
     .withSignature(
@@ -9,11 +11,7 @@ export default function vitePluginImportAssets() {
       'provide a glob pattern to import assets'
     )
     .withHandler(
-      (
-        { path, args },
-        { types },
-        { prependImports, normalizePathPattern, run }
-      ) => {
+      ({ path, args }, { types }, { prependImports, normalizePathPattern }) => {
         const pattern = run(() => {
           if (args.length === 0)
             throw new Error(

@@ -41,8 +41,6 @@ function getProjectDirHelper(): Helper['projectDir'] {
 
 export const projectDir = getProjectDirHelper()
 
-export const run: Helper['run'] = (fn) => fn()
-
 export function getFilePathRelatedHelper(
   filepath: string
 ): Pick<Helper, 'normalizePathPattern'> {
