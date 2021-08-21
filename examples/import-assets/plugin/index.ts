@@ -11,7 +11,7 @@ export default function vitePluginImportAssets() {
       'provide a glob pattern to import assets'
     )
     .withHandler(
-      ({ path, args }, { types }, { prependImports, normalizePathPattern }) => {
+      ({ path, args }, { types }, { appendImports, normalizePathPattern }) => {
         const pattern = run(() => {
           if (args.length === 0)
             throw new Error(
@@ -30,7 +30,7 @@ export default function vitePluginImportAssets() {
 
         const imports = searchByGlob(normalized, base).map(resolveImportPath)
 
-        prependImports(
+        appendImports(
           imports.map((imp) => ({
             moduleName: imp,
           }))

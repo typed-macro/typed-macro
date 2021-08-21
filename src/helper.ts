@@ -2,12 +2,12 @@ import { dirname, resolve, sep } from 'path'
 import { existsSync } from 'fs'
 import { Helper, Imports } from './macro'
 import traverse, { NodePath } from '@babel/traverse'
-import { statements } from '@babel/template'
+import template from '@babel/template'
 import {
   isIdentifier,
+  isImportDefaultSpecifier,
   isImportNamespaceSpecifier,
   isImportSpecifier,
-  isImportDefaultSpecifier,
   Program,
 } from '@babel/types'
 
@@ -90,7 +90,11 @@ export function getProgramRelatedHelper(
   thisProgram: NodePath<Program>
 ): Pick<
   Helper,
-  'prependImports' | 'hasImported' | 'prependToBody' | 'appendToBody'
+  | 'prependImports'
+  | 'appendImports'
+  | 'hasImported'
+  | 'prependToBody'
+  | 'appendToBody'
 > {
   const hasImported: Helper['hasImported'] = (
     imp,
@@ -163,14 +167,31 @@ export function getProgramRelatedHelper(
     program = thisProgram
   ) => {
     if (!Array.isArray(imports)) imports = [imports]
-    imports.forEach((imp) => {
-      if (!hasImported(imp, program.node)) {
-        program.unshiftContainer(
-          'body',
-          statements.ast(generateImportStmt(imp))
-        )
-      }
-    })
+    const importStmts = template.statements.ast(
+      imports
+        .filter((imp) => !hasImported(imp, program.node))
+        .map((imp) => generateImportStmt(imp))
+        .join('; ')
+    )
+    program.unshiftContainer('body', importStmts)
+  }
+
+  const appendImports: Helper['appendImports'] = (
+    imports,
+    program = thisProgram
+  ) => {
+    if (!Array.isArray(imports)) imports = [imports]
+    const importStmts = template.statements.ast(
+      imports
+        .filter((imp) => !hasImported(imp, program.node))
+        .map((imp) => generateImportStmt(imp))
+        .join('; ')
+    )
+    const lastImport = (program.get('body') as NodePath[])
+      .filter((p) => p.isImportDeclaration())
+      .pop()
+    if (lastImport) lastImport.insertAfter(importStmts)
+    else program.unshiftContainer('body', importStmts)
   }
 
   const prependToBody: Helper['prependToBody'] = (
@@ -190,6 +211,7 @@ export function getProgramRelatedHelper(
   return {
     hasImported,
     prependImports,
+    appendImports,
     prependToBody,
     appendToBody,
   }

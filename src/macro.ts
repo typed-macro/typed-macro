@@ -106,6 +106,16 @@ export type Helper = {
     program?: NodePath<Program>
   ) => void
   /**
+   * Append import statements to the last import statement of the program.
+   * @param imports an import or an array of imports
+   * @param program node path of the target program for prepending import statements.
+   * use the one currently being handled by default.
+   */
+  appendImports: (
+    imports: Imports[] | Imports,
+    program?: NodePath<Program>
+  ) => void
+  /**
    * Check if an import statement has been added to the target program already.
    * @param imports an import
    * @param program node of the target program. use the one currently being handled by default.
