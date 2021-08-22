@@ -23,7 +23,7 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "dev": "yarn build && yarn unlink && yarn link",
     "build": "node scripts/build.mjs",
