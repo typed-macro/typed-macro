@@ -44,7 +44,7 @@ export type BabelTools = {
  * { localName: string; exportName: string; moduleName: string }
  * ```
  */
-export type Imports =
+export type ImportOption =
   | { moduleName: string }
   | { defaultName: string; moduleName: string }
   | { localName: string; exportName: string; moduleName: string }
@@ -56,6 +56,7 @@ export type Helper = {
    * @param which 'root' or 'leaf'
    */
   projectDir: (which: 'root' | 'leaf') => string
+
   /**
    * Normalize path pattern so can resolve file paths as import paths
    * @param path relative path or path pattern
@@ -95,6 +96,7 @@ export type Helper = {
      */
     resolveImportPath: (path: string) => string
   }
+
   /**
    * Prepend import statements to program.
    * @param imports an import or an array of imports
@@ -102,9 +104,10 @@ export type Helper = {
    * use the one currently being handled by default.
    */
   prependImports: (
-    imports: Imports[] | Imports,
+    imports: ImportOption[] | ImportOption,
     program?: NodePath<Program>
   ) => void
+
   /**
    * Append import statements to the last import statement of the program.
    * @param imports an import or an array of imports
@@ -112,15 +115,17 @@ export type Helper = {
    * use the one currently being handled by default.
    */
   appendImports: (
-    imports: Imports[] | Imports,
+    imports: ImportOption[] | ImportOption,
     program?: NodePath<Program>
   ) => void
+
   /**
    * Check if an import statement has been added to the target program already.
    * @param imports an import
    * @param program node of the target program. use the one currently being handled by default.
    */
-  hasImported: (imports: Imports, program?: Program) => boolean
+  hasImported: (imports: ImportOption, program?: Program) => boolean
+
   /**
    * Prepend any node to the target program.
    * @param nodes any node or an array of nodes
@@ -130,6 +135,7 @@ export type Helper = {
     nodes: Nodes,
     program?: NodePath<Program>
   ) => void
+
   /**
    * Append any node to the target program.
    * @param nodes any node or an array of nodes
@@ -139,6 +145,12 @@ export type Helper = {
     nodes: Nodes,
     program?: NodePath<Program>
   ) => void
+
+  /**
+   * Get current program or the program of provided node.
+   * @param node any node path
+   */
+  getProgram: (node?: NodePath) => NodePath<Program>
 
   /**
    * Force to recollect imported macros in the next loop.

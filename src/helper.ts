@@ -1,6 +1,6 @@
 import { dirname, resolve, sep } from 'path'
 import { existsSync } from 'fs'
-import { Helper, Imports } from './macro'
+import { Helper, ImportOption } from './macro'
 import traverse, { NodePath } from '@babel/traverse'
 import template from '@babel/template'
 import {
@@ -95,6 +95,7 @@ export function getProgramRelatedHelper(
   | 'hasImported'
   | 'prependToBody'
   | 'appendToBody'
+  | 'getProgram'
 > {
   const hasImported: Helper['hasImported'] = (
     imp,
@@ -153,7 +154,7 @@ export function getProgramRelatedHelper(
     return has
   }
 
-  const generateImportStmt = (imp: Imports) =>
+  const generateImportStmt = (imp: ImportOption) =>
     'defaultName' in imp
       ? `import ${imp.defaultName} from '${imp.moduleName}'`
       : 'localName' in imp
@@ -162,31 +163,36 @@ export function getProgramRelatedHelper(
       ? `import { ${imp.exportName} } from '${imp.moduleName}'`
       : `import '${imp.moduleName}'`
 
-  const prependImports: Helper['prependImports'] = (
-    imports,
-    program = thisProgram
-  ) => {
+  function normalizeImports(
+    imports: ImportOption | ImportOption[],
+    program: NodePath<Program>
+  ) {
     if (!Array.isArray(imports)) imports = [imports]
-    const importStmts = template.statements.ast(
+    return template.statements.ast(
       imports
         .filter((imp) => !hasImported(imp, program.node))
         .map((imp) => generateImportStmt(imp))
         .join('; ')
     )
-    program.unshiftContainer('body', importStmts)
+  }
+
+  const prependImports: Helper['prependImports'] = (
+    imports,
+    program = thisProgram
+  ) => {
+    const importStmts = normalizeImports(imports, program)
+    const firstImport = (program.get('body') as NodePath[])
+      .filter((p) => p.isImportDeclaration())
+      .pop()
+    if (firstImport) firstImport.insertBefore(importStmts)
+    else program.unshiftContainer('body', importStmts)
   }
 
   const appendImports: Helper['appendImports'] = (
     imports,
     program = thisProgram
   ) => {
-    if (!Array.isArray(imports)) imports = [imports]
-    const importStmts = template.statements.ast(
-      imports
-        .filter((imp) => !hasImported(imp, program.node))
-        .map((imp) => generateImportStmt(imp))
-        .join('; ')
-    )
+    const importStmts = normalizeImports(imports, program)
     const lastImport = (program.get('body') as NodePath[])
       .filter((p) => p.isImportDeclaration())
       .pop()
@@ -208,11 +214,17 @@ export function getProgramRelatedHelper(
     program.pushContainer('body', nodes)
   }
 
+  const getProgram: Helper['getProgram'] = (node) => {
+    if (!node) return thisProgram
+    return node.findParent((p) => p.isProgram()) as NodePath<Program>
+  }
+
   return {
     hasImported,
     prependImports,
     appendImports,
     prependToBody,
     appendToBody,
+    getProgram,
   }
 }
