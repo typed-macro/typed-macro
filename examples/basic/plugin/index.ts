@@ -56,7 +56,7 @@ export function vitePluginBasic() {
 
   return defineMacroPlugin({
     name: 'macro-test-plugin',
-    dtsPath: join(__dirname, '../client.d.ts'),
+    dtsPath: join(__dirname, '../macros.d.ts'),
     exports: {
       '@echo': {
         customTypes: `export interface DummyType {}`,
