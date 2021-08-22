@@ -165,13 +165,13 @@ export type Helper = {
   forceRecollectMacros: () => void
 }
 
-export type Transformer = (
+export type MacroHandler = (
   ctx: Context,
   babel: Readonly<BabelTools>,
   helper: Readonly<Helper>
 ) => void
 
-export type MacroMeta = {
+type MacroMeta = {
   signatures: {
     comment?: string
     signature: string
@@ -182,7 +182,7 @@ export type MacroMeta = {
 export type Macro = {
   name: string
   meta: MacroMeta
-  apply: Transformer
+  apply: MacroHandler
 }
 
 type MacroBuilder = {
@@ -200,7 +200,7 @@ type MacroBuilder = {
   /**
    * Set the transform handler and get the macro.
    */
-  withHandler: (transformer: Transformer) => Macro
+  withHandler: (handler: MacroHandler) => Macro
 }
 
 /**
@@ -229,7 +229,7 @@ export function defineMacro(name: string): Omit<MacroBuilder, 'withHandler'> {
       meta.signatures.push({ signature, comment })
       return builder
     },
-    withHandler(transformer) {
+    withHandler(handler) {
       if (meta.signatures.length === 0)
         throw new Error(
           `Please call .withSignature() before .withHandler() to specify at least one signature for macro '${name}'`
@@ -238,7 +238,7 @@ export function defineMacro(name: string): Omit<MacroBuilder, 'withHandler'> {
       return {
         name,
         meta,
-        apply: transformer,
+        apply: handler,
       }
     },
   }

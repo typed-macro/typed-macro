@@ -1,12 +1,12 @@
 {{#namespaces}}
-declare module '{{path}}' {
-{{#moduleTypes}}
+declare module '{{module}}' {
+{{#moduleScopeTypes}}
   {{{.}}}
-{{/moduleTypes}}
+{{/moduleScopeTypes}}
 {{#macros}}
-{{#macroTypes}}
+{{#macroScopeTypes}}
   {{{.}}}
-{{/macroTypes}}
+{{/macroScopeTypes}}
 {{#signature}}
 {{#comment}}
   {{{.}}}

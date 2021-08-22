@@ -9,41 +9,52 @@ import {
   isImportNamespaceSpecifier,
   isImportSpecifier,
   Program,
+  File,
 } from '@babel/types'
+import { findProgramPath } from './common'
 
-function getProjectDirHelper(): Helper['projectDir'] {
-  const projectDirCache = {
-    root: '',
-    leaf: '',
-  }
-  return (which) => {
-    if (projectDirCache[which]) return projectDirCache[which]
-
-    const paths = (require.main?.path || process.cwd()).split(sep)
-
-    if (which === 'root') {
-      for (let i = 0; i < paths.length; i++) {
-        const path = paths.slice(0, i + 1).join(sep)
-        if (existsSync([path, 'node_modules'].join(sep)))
-          return (projectDirCache['root'] = path)
-      }
-    } else {
-      for (let i = paths.length; i > 0; i--) {
-        const path = paths.slice(0, i).join(sep)
-        if (existsSync([path, 'node_modules'].join(sep)))
-          return (projectDirCache['leaf'] = path)
-      }
-    }
-
-    throw new Error('can not find project root')
-  }
+const projectDirCache = {
+  root: '',
+  leaf: '',
 }
 
-export const projectDir = getProjectDirHelper()
+const projectDir: Helper['projectDir'] = (which) => {
+  if (projectDirCache[which]) return projectDirCache[which]
 
-export function getFilePathRelatedHelper(
-  filepath: string
-): Pick<Helper, 'normalizePathPattern'> {
+  const paths = (require.main?.path || process.cwd()).split(sep)
+
+  if (which === 'root') {
+    for (let i = 0; i < paths.length; i++) {
+      const path = paths.slice(0, i + 1).join(sep)
+      if (existsSync([path, 'node_modules'].join(sep)))
+        return (projectDirCache['root'] = path)
+    }
+  } else {
+    for (let i = paths.length; i > 0; i--) {
+      const path = paths.slice(0, i).join(sep)
+      if (existsSync([path, 'node_modules'].join(sep)))
+        return (projectDirCache['leaf'] = path)
+    }
+  }
+
+  throw new Error('can not find project root')
+}
+
+const generateImportStmt = (imp: ImportOption) =>
+  'defaultName' in imp
+    ? `import ${imp.defaultName} from '${imp.moduleName}'`
+    : 'localName' in imp
+    ? `import { ${imp.exportName} as ${imp.localName} } from '${imp.moduleName}'`
+    : 'exportName' in imp
+    ? `import { ${imp.exportName} } from '${imp.moduleName}'`
+    : `import '${imp.moduleName}'`
+
+export function getHelper(
+  filepath: string,
+  ast: File
+): Omit<Helper, 'forceRecollectMacros'> {
+  const thisProgram = findProgramPath(ast)
+
   const normalizePathPattern: Helper['normalizePathPattern'] = (
     pattern,
     root = projectDir('leaf'),
@@ -81,22 +92,7 @@ export function getFilePathRelatedHelper(
         : (f) => `./${f}`,
     }
   }
-  return {
-    normalizePathPattern,
-  }
-}
 
-export function getProgramRelatedHelper(
-  thisProgram: NodePath<Program>
-): Pick<
-  Helper,
-  | 'prependImports'
-  | 'appendImports'
-  | 'hasImported'
-  | 'prependToBody'
-  | 'appendToBody'
-  | 'getProgram'
-> {
   const hasImported: Helper['hasImported'] = (
     imp,
     program = thisProgram.node
@@ -153,15 +149,6 @@ export function getProgramRelatedHelper(
     })
     return has
   }
-
-  const generateImportStmt = (imp: ImportOption) =>
-    'defaultName' in imp
-      ? `import ${imp.defaultName} from '${imp.moduleName}'`
-      : 'localName' in imp
-      ? `import { ${imp.exportName} as ${imp.localName} } from '${imp.moduleName}'`
-      : 'exportName' in imp
-      ? `import { ${imp.exportName} } from '${imp.moduleName}'`
-      : `import '${imp.moduleName}'`
 
   function normalizeImports(
     imports: ImportOption | ImportOption[],
@@ -220,6 +207,8 @@ export function getProgramRelatedHelper(
   }
 
   return {
+    projectDir,
+    normalizePathPattern,
     hasImported,
     prependImports,
     appendImports,

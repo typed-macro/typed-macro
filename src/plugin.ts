@@ -1,10 +1,12 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { ModuleNode } from 'vite'
+import { mkdir, readFile, writeFile } from 'fs/promises'
 import { BabelTools, Macro } from './macro'
 import { parse, ParserPlugin } from '@babel/parser'
 import * as types from '@babel/types'
 import {
   CallExpression,
+  File,
   ImportDeclaration,
   isCallExpression,
   isIdentifier,
@@ -13,20 +15,13 @@ import {
   isMemberExpression,
   isStringLiteral,
   Node,
-  File,
-  Program,
 } from '@babel/types'
 import template from '@babel/template'
 import traverse, { NodePath } from '@babel/traverse'
-import { resolve, dirname } from 'path'
+import { dirname, resolve } from 'path'
 import { render } from 'mustache'
 import generate from '@babel/generator'
-import { ModuleNode } from 'vite'
-import {
-  getFilePathRelatedHelper,
-  getProgramRelatedHelper,
-  projectDir,
-} from './helper'
+import { getHelper } from './helper'
 import { findInSet } from './common'
 
 export type MacroPluginOptions = {
@@ -227,31 +222,27 @@ export function defineMacroPlugin(plugin: MacroPlugin): Plugin {
           plugins: parserPlugins,
         })
 
-        const collect = (container: Set<ImportedMacro>) =>
-          collectImportedMacros(
-            ast,
-            namespaces,
-            container,
-            // Note: keep import statements in dev mode so can invalidate macro modules
-            ctx.dev /* keep import stmt */
-          )
+        const importedMacros = getImportedMacros(
+          ast,
+          namespaces,
+          // Note: keep import statements in dev mode so can invalidate macro modules
+          ctx.dev /* keep import stmt */
+        )
 
-        const importedMacros = collect(new Set())
-        if (!importedMacros.size) return
+        if (!importedMacros.collect().size) return
 
         const applyCtx: ApplyContext = {
           code,
           filepath: id,
           ast,
-          macros,
-          importedMacros,
+          macroFinder: getMacroFinder(importedMacros, macros),
         }
 
         let loopCount = 0
         while (loopCount < maxRecursion) {
           const { applied, recollectMacros } = applyMacros(applyCtx)
           if (!applied) break
-          if (recollectMacros) collect(applyCtx.importedMacros)
+          if (recollectMacros) importedMacros.collect()
 
           loopCount++
           if (loopCount === maxRecursion)
@@ -319,50 +310,65 @@ type ImportedMacro =
       origin: string
     }
 
-function collectImportedMacros(
+type ImportedMacrosCollector = Set<ImportedMacro> & {
+  collect: () => ImportedMacrosCollector
+}
+
+function getImportedMacros(
   ast: Node,
   namespaces: string[],
-  importedMacros: Set<ImportedMacro>,
   keepImportStmt = false
-) {
-  {
-    const importPaths: NodePath<ImportDeclaration>[] = []
-    traverse(ast, {
-      Declaration(path) {
-        if (!path.isImportDeclaration()) return
-        if (!namespaces.includes(path.node.source.value)) return
+): ImportedMacrosCollector {
+  const importedMacros: ImportedMacrosCollector = new Set() as any
 
-        // import 'a'
-        if (!path.node.specifiers.length) return
+  importedMacros.collect = () => {
+    {
+      const importPaths: NodePath<ImportDeclaration>[] = []
+      traverse(ast, {
+        Declaration(path) {
+          if (!path.isImportDeclaration()) return
+          if (!namespaces.includes(path.node.source.value)) return
 
-        path.node.specifiers.forEach((s) => {
-          importedMacros.add(
-            // import a from 'a' || import * as a from 'a'
-            isImportDefaultSpecifier(s) || isImportNamespaceSpecifier(s)
-              ? ({
-                  importedAsNamespace: true,
-                  namespace: path.node.source.value,
-                  local: s.local.name,
-                } as ImportedMacro)
-              : // import { a as a } from 'a'
-                ({
-                  importedAsNamespace: false,
-                  namespace: path.node.source.value,
-                  local: s.local.name,
-                  origin: isIdentifier(s.imported) && s.imported.name,
-                } as ImportedMacro)
+          // case - import 'a'
+          if (!path.node.specifiers.length) return
+
+          path.node.specifiers.forEach((s) => {
+            importedMacros.add(
+              // case - import a from 'a'
+              // or
+              // case - import * as a from 'a'
+              isImportDefaultSpecifier(s) || isImportNamespaceSpecifier(s)
+                ? {
+                    importedAsNamespace: true,
+                    namespace: path.node.source.value,
+                    local: s.local.name,
+                  }
+                : // case - import { a as a } from 'a'
+                  {
+                    importedAsNamespace: false,
+                    namespace: path.node.source.value,
+                    local: s.local.name,
+                    // imported !== existed
+                    origin: isIdentifier(s.imported)
+                      ? s.imported.name
+                      : s.imported.value,
+                  }
+            )
+          })
+          importPaths.push(path)
+        },
+      })
+      if (keepImportStmt) {
+        importPaths.forEach((p) =>
+          p.replaceWith(
+            template.statement.ast(`import '${p.node.source.value}'`)
           )
-        })
-        importPaths.push(path)
-      },
-    })
-    if (keepImportStmt) {
-      importPaths.forEach((p) =>
-        p.replaceWith(template.statement.ast(`import '${p.node.source.value}'`))
-      )
-    } else {
-      importPaths.forEach((p) => p.remove())
+        )
+      } else {
+        importPaths.forEach((p) => p.remove())
+      }
     }
+    return importedMacros
   }
 
   return importedMacros
@@ -383,66 +389,68 @@ async function generateDts(
       (await readFile(resolve(__dirname, './client.d.ts.tpl'))).toString(),
       {
         namespaces: namespaces.map((ns) => ({
-          path: ns,
+          module: ns,
           macros: macros[ns].map((m) => ({
-            macroTypes: m.meta.typeDefinitions,
+            macroScopeTypes: m.meta.typeDefinitions,
             signature: m.meta.signatures,
             name: m.name,
           })),
-          moduleTypes: customTypes[ns],
+          moduleScopeTypes: customTypes[ns],
         })),
       }
     )
   )
 }
 
-// find macros to be applied, returns:
-//
+// find macros to be applied from call expr, returns a
 // - Macro: has origin
-//
-// - string: has origin name but no origin found
-//
-// - undefined: normal function call
-function findMacroToApply(
-  callee: CallExpression['callee'],
+// - string: has origin name but no origin macro found
+// - undefined: no origin name found
+type MacroFinder = (
+  callee: CallExpression['callee']
+) => Macro | string | undefined
+
+function getMacroFinder(
   importedMacros: Set<ImportedMacro>,
   macros: NamespacedMacros
-) {
-  if (isMemberExpression(callee)) {
-    const ns = callee.object
-    if (isIdentifier(ns)) {
+): MacroFinder {
+  return (callee) => {
+    if (isMemberExpression(callee)) {
+      const ns = callee.object
+      if (isIdentifier(ns)) {
+        const maybeMacro = findInSet(
+          importedMacros,
+          (m) => m.importedAsNamespace && m.local === ns.name
+        )
+        if (!maybeMacro) return
+        const method = callee.property
+        if (isIdentifier(method)) {
+          // case - namespace.method()
+          return (
+            macros[maybeMacro.namespace].find((m) => m.name === method.name) ||
+            method.name
+          )
+        } else if (isStringLiteral(method)) {
+          // case - namespace['method']()
+          return (
+            macros[maybeMacro.namespace].find((m) => m.name === method.value) ||
+            method.value
+          )
+        }
+      }
+    } else if (isIdentifier(callee)) {
+      // case - method()
       const maybeMacro = findInSet(
         importedMacros,
-        (m) => m.importedAsNamespace && m.local === ns.name
+        (m) => !m.importedAsNamespace && m.local === callee.name
       )
       if (!maybeMacro) return
-      const method = callee.property
-      if (isIdentifier(method)) {
-        // namespace.method()
-        return (
-          macros[maybeMacro.namespace].find((m) => m.name === method.name) ||
-          method.name
-        )
-      } else if (isStringLiteral(method)) {
-        // namespace['method']()
-        return (
-          macros[maybeMacro.namespace].find((m) => m.name === method.value) ||
-          method.value
-        )
-      }
+      return (
+        macros[maybeMacro.namespace].find(
+          (m) => m.name === (maybeMacro as { origin: string }).origin
+        ) || callee.name
+      )
     }
-  } else if (isIdentifier(callee)) {
-    // method()
-    const maybeMacro = findInSet(
-      importedMacros,
-      (m) => !m.importedAsNamespace && m.local === callee.name
-    )
-    if (!maybeMacro) return
-    return (
-      macros[maybeMacro.namespace].find(
-        (m) => m.name === (maybeMacro as { origin: string }).origin
-      ) || callee.name
-    )
   }
 }
 
@@ -457,8 +465,7 @@ type ApplyContext = {
   filepath: string
   ast: File
 
-  importedMacros: Set<ImportedMacro>
-  macros: NamespacedMacros
+  macroFinder: MacroFinder
 }
 
 type ApplyResult = {
@@ -470,26 +477,22 @@ function applyMacros({
   code,
   filepath,
   ast,
-  importedMacros,
-  macros,
+  macroFinder,
 }: ApplyContext): ApplyResult {
   const result: ApplyResult = {
     applied: false,
     recollectMacros: false,
   }
 
-  const forceRecollectMacros = () => (result.recollectMacros = true)
-  const filePathRelatedHelper = getFilePathRelatedHelper(filepath)
-  let programRelatedHelper: ReturnType<typeof getProgramRelatedHelper>
+  const helper = Object.freeze({
+    forceRecollectMacros: () => (result.recollectMacros = true),
+    ...getHelper(filepath, ast),
+  })
 
   traverse(ast, {
     Expression(path) {
       if (isCallExpression(path.node)) {
-        const macroToApply = findMacroToApply(
-          path.node.callee,
-          importedMacros,
-          macros
-        )
+        const macroToApply = macroFinder(path.node.callee)
         if (!macroToApply) return
 
         if (typeof macroToApply === 'string')
@@ -504,15 +507,7 @@ function applyMacros({
               args: path.node.arguments,
             },
             BABEL_TOOLS,
-            {
-              projectDir,
-              forceRecollectMacros,
-              ...filePathRelatedHelper,
-              ...(programRelatedHelper ||
-                (programRelatedHelper = getProgramRelatedHelper(
-                  path.findParent((p) => p.isProgram()) as NodePath<Program>
-                ))),
-            }
+            helper
           )
         } catch (e) {
           throw new Error(
