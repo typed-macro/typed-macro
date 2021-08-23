@@ -2,7 +2,7 @@ import type { Plugin, ViteDevServer } from 'vite'
 import { ModuleNode } from 'vite'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { BabelTools, Macro } from './macro'
-import { parse, ParserPlugin } from '@babel/parser'
+import { parse, ParserPlugin, parseExpression } from '@babel/parser'
 import * as types from '@babel/types'
 import {
   CallExpression,
@@ -458,6 +458,8 @@ const BABEL_TOOLS: BabelTools = Object.freeze({
   template,
   traverse,
   types,
+  parse,
+  parseExpression,
 })
 
 type ApplyContext = {

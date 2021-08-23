@@ -1,5 +1,6 @@
 import traverse, { Node, NodePath } from '@babel/traverse'
 import * as types from '@babel/types'
+import { parse, parseExpression } from '@babel/parser'
 import template from '@babel/template'
 import { CallExpression, ImportDeclaration, Program } from '@babel/types'
 import { validateFnName } from './common'
@@ -27,6 +28,8 @@ export type BabelTools = {
   types: typeof types
   template: typeof template
   traverse: typeof traverse
+  parse: typeof parse
+  parseExpression: typeof parseExpression
 }
 
 /**

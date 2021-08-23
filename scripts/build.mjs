@@ -1,7 +1,7 @@
 import $ from 'shelljs'
 import chalk from 'chalk'
 
-const log = (msg) => console.log(chalk.blue(msg))
+const log = (msg) => console.log(chalk.yellow(msg))
 
 log('Cleaning...')
 $.rm('-rf', './dist')
