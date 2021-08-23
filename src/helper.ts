@@ -172,12 +172,11 @@ export function getHelper(
     const firstImport = (program.get('body') as NodePath[]).filter((p) =>
       p.isImportDeclaration()
     )[0]
-    if (firstImport) firstImport.insertBefore(importStmts)
-    else program.unshiftContainer('body', importStmts)
-    const anchor = importStmts.pop()
-    return (program.get('body') as NodePath[]).find(
-      (p) => p.node === anchor
-    ) as NodePath<ImportDeclaration>
+    return (
+      firstImport
+        ? firstImport.insertBefore(importStmts)
+        : program.unshiftContainer('body', importStmts)
+    ).pop() as NodePath<ImportDeclaration>
   }
 
   const appendImports: Helper['appendImports'] = (
@@ -188,34 +187,25 @@ export function getHelper(
     const lastImport = (program.get('body') as NodePath[])
       .filter((p) => p.isImportDeclaration())
       .pop()
-    if (lastImport) lastImport.insertAfter(importStmts)
-    else program.unshiftContainer('body', importStmts)
-    const anchor = importStmts.pop()
-    return (program.get('body') as NodePath[]).find(
-      (p) => p.node === anchor
-    ) as NodePath<ImportDeclaration>
+    return (
+      lastImport
+        ? lastImport.insertAfter(importStmts)
+        : program.unshiftContainer('body', importStmts)
+    ).pop() as NodePath<ImportDeclaration>
   }
 
   const prependToBody: Helper['prependToBody'] = (
     nodes,
     program = thisProgram
   ) => {
-    program.unshiftContainer('body', nodes)
-    const anchor = Array.isArray(nodes) ? nodes[nodes.length - 1] : nodes
-    return (program.get('body') as NodePath[]).find(
-      (p) => p.node === anchor
-    ) as NodePath
+    return program.unshiftContainer('body', nodes).pop() as NodePath
   }
 
   const appendToBody: Helper['appendToBody'] = (
     nodes,
     program = thisProgram
   ) => {
-    program.pushContainer('body', nodes)
-    const anchor = Array.isArray(nodes) ? nodes[nodes.length - 1] : nodes
-    return (program.get('body') as NodePath[]).find(
-      (p) => p.node === anchor
-    ) as NodePath
+    return program.pushContainer('body', nodes).pop() as NodePath
   }
 
   const getProgram: Helper['getProgram'] = (node) => {
