@@ -125,11 +125,11 @@ echo('yeah', 3)
 
 ### Plugin Options
 
-See [src/plugin.ts#L111-L122](https://github.com/unbyte/vite-plugin-macro/blob/91d80bf41fe50009ebd82aa07ac62127fcfa9e95/src/plugin.ts#L111-L122)
+See [src/plugin.ts#L111-L122](https://github.com/unbyte/vite-plugin-macro/blob/b21088bd48cb8f47082822d402f96183159366b8/src/plugin.ts#L111-L122)
 
 ### Macro Handler
 
-See [src/macro.ts#L175-L179](https://github.com/unbyte/vite-plugin-macro/blob/91d80bf41fe50009ebd82aa07ac62127fcfa9e95/src/macro.ts#L175-L179)
+See [src/macro.ts#L191-L195](https://github.com/unbyte/vite-plugin-macro/blob/b21088bd48cb8f47082822d402f96183159366b8/src/macro.ts#L191-L195)
 
 ## License
 
