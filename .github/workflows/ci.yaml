@@ -1,11 +1,13 @@
-name: Publish
+name: CI
 on:
   push:
-    tags:
-      - 'v*.*.*'
-
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - master
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,7 +16,8 @@ jobs:
           node-version: '14.x'
           registry-url: 'https://registry.npmjs.org'
       - run: yarn
-      - run: yarn build
-      - run: yarn publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: yarn test --ci --coverage
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage/
