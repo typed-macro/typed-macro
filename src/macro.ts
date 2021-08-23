@@ -45,6 +45,9 @@ export type BabelTools = {
  *
  * import { exportName as localName } from 'moduleName'
  * { localName: string; exportName: string; moduleName: string }
+ *
+ * import * as namespaceName from 'moduleName'
+ * { namespaceName: string; moduleName: string }
  * ```
  */
 export type ImportOption =
@@ -52,6 +55,7 @@ export type ImportOption =
   | { defaultName: string; moduleName: string }
   | { localName: string; exportName: string; moduleName: string }
   | { exportName: string; moduleName: string }
+  | { namespaceName: string; moduleName: string }
 
 export type Helper = {
   /**
@@ -125,11 +129,23 @@ export type Helper = {
   ) => NodePath<ImportDeclaration>
 
   /**
-   * Check if an import statement has been added to the target program already.
+   * Find an import statement that has been in the target program already.
+   * Note that findImported() will not trim extension for moduleName.
    * @param imports an import
-   * @param program node of the target program. use the one currently being handled by default.
+   * @param program node path of the target program. use the one currently being handled by default.
    */
-  hasImported: (imports: ImportOption, program?: Program) => boolean
+  findImported: (
+    imports: ImportOption,
+    program?: NodePath<Program>
+  ) => NodePath<ImportDeclaration> | undefined
+
+  /**
+   * Check if an import statement has been in the target program already.
+   * Note that hasImported() will not trim extension for moduleName.
+   * @param imports an import
+   * @param program node path of the target program. use the one currently being handled by default.
+   */
+  hasImported: (imports: ImportOption, program?: NodePath<Program>) => boolean
 
   /**
    * Prepend any node to the target program.
