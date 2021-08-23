@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`helper appendImports() should work 1`] = `
+"import { a as _a } from 'a';
+import na from 'a';
+import * as _na from 'a';
+import { a } from 'a';
+import 'a';
+import { b } from 'a';
+const b = a(1);"
+`;
+
+exports[`helper appendToBody() should work 1`] = `
+"import { a as _a } from 'a';
+import na from 'a';
+import * as _na from 'a';
+import { a } from 'a';
+import 'a';
+const b = a(1);
+console.log('hello world');"
+`;
+
+exports[`helper prependImports() should work 1`] = `
+"import { b } from 'a';
+import { a as _a } from 'a';
+import na from 'a';
+import * as _na from 'a';
+import { a } from 'a';
+import 'a';
+const b = a(1);"
+`;
+
+exports[`helper prependToBody() should work 1`] = `
+"console.log('hello world');
+import { a as _a } from 'a';
+import na from 'a';
+import * as _na from 'a';
+import { a } from 'a';
+import 'a';
+const b = a(1);"
+`;
