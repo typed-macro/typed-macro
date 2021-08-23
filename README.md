@@ -2,7 +2,7 @@
 
 [![npm version](https://badgen.net/npm/v/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
 [![monthly downloads](https://badgen.net/npm/dm/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
-[![license](https://badgen.net/npm/license/vite-plugin-macro)](https://github.com/unbyte/vite-plugin-macro/blob/master/LICENSE)
+[![license](https://badgen.net/npm/license/vite-plugin-macro)](https://github.com/viteland/vite-plugin-macro/blob/master/LICENSE)
 ![types](https://badgen.net/npm/types/vite-plugin-macro)
 
 > Brings macro capabilities to [Vite](https://github.com/vitejs/vite) based projects.
@@ -117,19 +117,19 @@ echo('yeah', 3)
 
 ## Examples
 
-- [Basic](https://github.com/unbyte/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
-- [Import Assets](https://github.com/unbyte/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
-- [Vue Ref Sugar (in JSX)](https://github.com/unbyte/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
+- [Basic](https://github.com/viteland/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
+- [Import Assets](https://github.com/viteland/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
+- [Vue Ref Sugar (in JSX)](https://github.com/viteland/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
 
 ## Types
 
 ### Plugin Options
 
-See [src/plugin.ts#L111-L122](https://github.com/unbyte/vite-plugin-macro/blob/b21088bd48cb8f47082822d402f96183159366b8/src/plugin.ts#L111-L122)
+See [src/plugin.ts#L111-L122](https://github.com/viteland/vite-plugin-macro/blob/2e6f9eb11b4ef2481c142337642f7a816dafeb2c/src/plugin.ts#L111-L122)
 
 ### Macro Handler
 
-See [src/macro.ts#L191-L195](https://github.com/unbyte/vite-plugin-macro/blob/b21088bd48cb8f47082822d402f96183159366b8/src/macro.ts#L191-L195)
+See [src/macro.ts#L200-L204](https://github.com/viteland/vite-plugin-macro/blob/2e6f9eb11b4ef2481c142337642f7a816dafeb2c/src/macro.ts#L200-L204)
 
 ## License
 

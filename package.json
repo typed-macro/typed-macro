@@ -11,12 +11,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/unbyte/vite-plugin-macro"
+    "url": "https://github.com/viteland/vite-plugin-macro"
   },
   "author": "unbyte <i@shangyes.net>",
-  "homepage": "https://github.com/unbyte/vite-plugin-macro/",
+  "homepage": "https://github.com/viteland/vite-plugin-macro/",
   "bugs": {
-    "url": "https://github.com/unbyte/vite-plugin-macro/issues/new"
+    "url": "https://github.com/viteland/vite-plugin-macro/issues/new"
   },
   "files": [
     "dist"
