@@ -10,6 +10,7 @@ import {
   isImportSpecifier,
   Program,
   File,
+  ImportDeclaration,
 } from '@babel/types'
 import { findProgramPath } from './common'
 
@@ -168,11 +169,15 @@ export function getHelper(
     program = thisProgram
   ) => {
     const importStmts = normalizeImports(imports, program)
-    const firstImport = (program.get('body') as NodePath[])
-      .filter((p) => p.isImportDeclaration())
-      .pop()
+    const firstImport = (program.get('body') as NodePath[]).filter((p) =>
+      p.isImportDeclaration()
+    )[0]
     if (firstImport) firstImport.insertBefore(importStmts)
     else program.unshiftContainer('body', importStmts)
+    const anchor = importStmts.pop()
+    return (program.get('body') as NodePath[]).find(
+      (p) => p.node === anchor
+    ) as NodePath<ImportDeclaration>
   }
 
   const appendImports: Helper['appendImports'] = (
@@ -185,6 +190,10 @@ export function getHelper(
       .pop()
     if (lastImport) lastImport.insertAfter(importStmts)
     else program.unshiftContainer('body', importStmts)
+    const anchor = importStmts.pop()
+    return (program.get('body') as NodePath[]).find(
+      (p) => p.node === anchor
+    ) as NodePath<ImportDeclaration>
   }
 
   const prependToBody: Helper['prependToBody'] = (
@@ -192,6 +201,10 @@ export function getHelper(
     program = thisProgram
   ) => {
     program.unshiftContainer('body', nodes)
+    const anchor = Array.isArray(nodes) ? nodes[nodes.length - 1] : nodes
+    return (program.get('body') as NodePath[]).find(
+      (p) => p.node === anchor
+    ) as NodePath
   }
 
   const appendToBody: Helper['appendToBody'] = (
@@ -199,6 +212,10 @@ export function getHelper(
     program = thisProgram
   ) => {
     program.pushContainer('body', nodes)
+    const anchor = Array.isArray(nodes) ? nodes[nodes.length - 1] : nodes
+    return (program.get('body') as NodePath[]).find(
+      (p) => p.node === anchor
+    ) as NodePath
   }
 
   const getProgram: Helper['getProgram'] = (node) => {

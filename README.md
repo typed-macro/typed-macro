@@ -117,17 +117,19 @@ echo('yeah', 3)
 
 ## Examples
 
-See [Examples](https://github.com/unbyte/vite-plugin-macro/tree/master/examples/)
+- [Basic](https://github.com/unbyte/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
+- [Import Assets](https://github.com/unbyte/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
+- [Vue Ref Sugar (in JSX)](https://github.com/unbyte/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
 
 ## Types
 
 ### Plugin Options
 
-See [src/plugin.ts#L116-L127](https://github.com/unbyte/vite-plugin-macro/blob/9395c825fe9eee7b1640c8b29c18ff57a8a6dd25/src/plugin.ts#L116-L127)
+See [src/plugin.ts#L111-L122](https://github.com/unbyte/vite-plugin-macro/blob/11a7bd4360b089fba88ba45e545e339c40a48108/src/plugin.ts#L111-L122)
 
 ### Macro Handler
 
-See [src/macro.ts#L146-L150](https://github.com/unbyte/vite-plugin-macro/blob/9395c825fe9eee7b1640c8b29c18ff57a8a6dd25/src/macro.ts#L146-L150)
+See [src/macro.ts#L172-L176](https://github.com/unbyte/vite-plugin-macro/blob/11a7bd4360b089fba88ba45e545e339c40a48108/src/macro.ts#L172-L176)
 
 ## License
 

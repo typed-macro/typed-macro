@@ -1,7 +1,7 @@
 import traverse, { Node, NodePath } from '@babel/traverse'
 import * as types from '@babel/types'
 import template from '@babel/template'
-import { CallExpression, Program } from '@babel/types'
+import { CallExpression, ImportDeclaration, Program } from '@babel/types'
 import { validateFnName } from './common'
 
 export type Context = {
@@ -102,22 +102,24 @@ export type Helper = {
    * @param imports an import or an array of imports
    * @param program node path of the target program for prepending import statements.
    * use the one currently being handled by default.
+   * @return node path of the last inserted import statement
    */
   prependImports: (
     imports: ImportOption[] | ImportOption,
     program?: NodePath<Program>
-  ) => void
+  ) => NodePath<ImportDeclaration>
 
   /**
    * Append import statements to the last import statement of the program.
    * @param imports an import or an array of imports
    * @param program node path of the target program for prepending import statements.
    * use the one currently being handled by default.
+   * @return node path of the last inserted import statement
    */
   appendImports: (
     imports: ImportOption[] | ImportOption,
     program?: NodePath<Program>
-  ) => void
+  ) => NodePath<ImportDeclaration>
 
   /**
    * Check if an import statement has been added to the target program already.
@@ -130,21 +132,23 @@ export type Helper = {
    * Prepend any node to the target program.
    * @param nodes any node or an array of nodes
    * @param program node path of the target program. use the one currently being handled by default.
+   * @return node path of the last inserted node
    */
   prependToBody: <Nodes extends Node | readonly Node[]>(
     nodes: Nodes,
     program?: NodePath<Program>
-  ) => void
+  ) => NodePath
 
   /**
    * Append any node to the target program.
    * @param nodes any node or an array of nodes
    * @param program node path of the target program. use the one currently being handled by default.
+   * @return node path of the last inserted node
    */
   appendToBody: <Nodes extends Node | readonly Node[]>(
     nodes: Nodes,
     program?: NodePath<Program>
-  ) => void
+  ) => NodePath
 
   /**
    * Get current program or the program of provided node.
