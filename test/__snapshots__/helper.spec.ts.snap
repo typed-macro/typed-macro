@@ -1,41 +1,39 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`helper appendImports() should work 1`] = `
-"import { a as _a } from 'a';
-import na from 'a';
-import * as _na from 'a';
-import { a } from 'a';
-import 'a';
-import { b } from 'a';
-const b = a(1);"
+exports[`helper pre-/ap-pendImports() should insert new import stmts 1`] = `
+"import * as _nb from 'b';
+import nb from 'b';
+import 'b';
+import { b } from 'b';
+import { b as _b } from 'b';
+const a = 1;"
 `;
 
-exports[`helper appendToBody() should work 1`] = `
-"import { a as _a } from 'a';
-import na from 'a';
-import * as _na from 'a';
-import { a } from 'a';
-import 'a';
-const b = a(1);
-console.log('hello world');"
+exports[`helper pre-/ap-pendImports() should insert new import stmts 2`] = `
+"import { b as _b } from 'b';
+import { b } from 'b';
+import 'b';
+import nb from 'b';
+import * as _nb from 'b';
+const a = 1;"
 `;
 
-exports[`helper prependImports() should work 1`] = `
-"import { b } from 'a';
-import { a as _a } from 'a';
-import na from 'a';
-import * as _na from 'a';
-import { a } from 'a';
-import 'a';
-const b = a(1);"
+exports[`helper pre-/ap-pendImports() should unshift to body if no existed import stmt 1`] = `
+"import 'a';
+const b = 1;"
 `;
 
-exports[`helper prependToBody() should work 1`] = `
-"console.log('hello world');
-import { a as _a } from 'a';
-import na from 'a';
-import * as _na from 'a';
-import { a } from 'a';
-import 'a';
-const b = a(1);"
+exports[`helper pre-/ap-pendImports() should unshift to body if no existed import stmt 2`] = `
+"import 'a';
+const b = 1;"
+`;
+
+exports[`helper pre-/ap-pendToBody() should work 1`] = `
+"console.log('prepended');
+const b = 1;"
+`;
+
+exports[`helper pre-/ap-pendToBody() should work 2`] = `
+"const b = 1;
+console.log('appended');"
 `;

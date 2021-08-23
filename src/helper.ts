@@ -96,7 +96,11 @@ export function getHelper(
     }
   }
 
-  const findImported: Helper['findImported'] = (imp, program = thisProgram) => {
+  const findImported: Helper['findImported'] = (
+    imp,
+    loose = true,
+    program = thisProgram
+  ) => {
     // An import declaration can only be used in top-level.
     for (const path of program.get('body') as NodePath[]) {
       if (!path.isImportDeclaration()) continue
@@ -124,7 +128,8 @@ export function getHelper(
           if (
             isImportSpecifier(s) &&
             isIdentifier(s.imported) &&
-            s.imported.name === imp.exportName
+            s.imported.name === imp.exportName &&
+            (loose || s.local.name === imp.exportName)
           )
             return path
         }
@@ -139,13 +144,17 @@ export function getHelper(
         }
       } else {
         // import 'moduleName'
-        return path
+        if (loose || path.node.specifiers.length === 0) return path
       }
     }
   }
 
-  const hasImported: Helper['hasImported'] = (imp, program = thisProgram) => {
-    return findImported(imp, program) !== undefined
+  const hasImported: Helper['hasImported'] = (
+    imp,
+    loose = true,
+    program = thisProgram
+  ) => {
+    return findImported(imp, loose, program) !== undefined
   }
 
   // returns
@@ -157,10 +166,12 @@ export function getHelper(
   ) {
     if (!Array.isArray(imports)) imports = [imports]
     // remove duplicated
-    const toBeImported = imports.filter((imp) => !hasImported(imp, program))
+    const toBeImported = imports.filter(
+      (imp) => !hasImported(imp, false, program)
+    )
     // all import statements are duplicated, returns the node path of the last one
     if (!toBeImported.length)
-      return findImported(imports[imports.length - 1], program)!
+      return findImported(imports[imports.length - 1], false, program)!
     return template.statements.ast(
       Array.from(
         new Set(toBeImported.map((imp) => generateImportStmt(imp)))

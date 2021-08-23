@@ -132,10 +132,13 @@ export type Helper = {
    * Find an import statement that has been in the target program already.
    * Note that findImported() will not trim extension for moduleName.
    * @param imports an import
+   * @param loose match loosely, defaults to true, e.g:
+   * `import { a as _a } from 'a'` will match `{ moduleName: 'a' }` and `{ moduleName: 'a', exportName: 'a' }`
    * @param program node path of the target program. use the one currently being handled by default.
    */
   findImported: (
     imports: ImportOption,
+    loose?: boolean,
     program?: NodePath<Program>
   ) => NodePath<ImportDeclaration> | undefined
 
@@ -143,9 +146,15 @@ export type Helper = {
    * Check if an import statement has been in the target program already.
    * Note that hasImported() will not trim extension for moduleName.
    * @param imports an import
+   * @param loose match loosely, defaults to true, e.g:
+   * `import { a as _a } from 'a'` will match `{ moduleName: 'a' }` and `{ moduleName: 'a', exportName: 'a' }`
    * @param program node path of the target program. use the one currently being handled by default.
    */
-  hasImported: (imports: ImportOption, program?: NodePath<Program>) => boolean
+  hasImported: (
+    imports: ImportOption,
+    loose?: boolean,
+    program?: NodePath<Program>
+  ) => boolean
 
   /**
    * Prepend any node to the target program.
