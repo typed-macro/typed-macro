@@ -96,14 +96,15 @@ type ImportedAsNS = {
   macros: Macro[]
 }
 
-type ImportedAsFn = {
+type ImportedAsNamed = {
   importedAsNamespace: false
   namespace: string
   local: string
-  macro: Macro
+  // not always macro
+  macro?: Macro
 }
 
-type ImportedMacro = ImportedAsNS | ImportedAsFn
+type ImportedMacro = ImportedAsNS | ImportedAsNamed
 
 export function collectImportedMacros(
   ast: Node,
@@ -138,16 +139,12 @@ export function collectImportedMacros(
             const exportName = isIdentifier(s.imported)
               ? s.imported.name
               : s.imported.value
-            const macro = macros[ns].find((m) => m.name === exportName)
-            if (!macro)
-              throw new Error(
-                `Macro ${exportName} is not existed but is imported from '${ns}'`
-              )
+
             importedMacros.push({
               importedAsNamespace: false,
               namespace: path.node.source.value,
               local: s.local.name,
-              macro,
+              macro: macros[ns].find((m) => m.name === exportName),
             })
           }
         })
@@ -166,9 +163,9 @@ export function collectImportedMacros(
 }
 
 // find macros to be applied from call expr, returns a
-// - Macro: has origin
-// - string: has origin name but no origin macro found
-// - undefined: no origin name found
+// - Macro: the macro to be applied
+// - string: is a macro call but no macro found
+// - undefined: not a macro call
 export function findCalledMacro(
   callee: CallExpression['callee'],
   importedMacros: Array<ImportedMacro>
@@ -197,9 +194,9 @@ export function findCalledMacro(
     // case - method()
     const maybeMacro = importedMacros.find(
       (m) => !m.importedAsNamespace && m.local === callee.name
-    ) as ImportedAsFn
+    ) as ImportedAsNamed
     if (!maybeMacro) return
-    return maybeMacro.macro
+    return maybeMacro.macro || callee.name
   }
 }
 

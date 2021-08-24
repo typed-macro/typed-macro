@@ -80,41 +80,6 @@ describe('collectImportedMacros()', () => {
       expect(ast.program.body.length).toBe(0)
     })
   })
-
-  it('should throw error if named import non-existent macro', () => {
-    const testCases: {
-      code: string
-      macros: Record<string, { name: string }[]>
-      err: boolean
-    }[] = [
-      { code: `import { a } from '@a'`, macros: { '@a': [] }, err: true },
-      {
-        code: `import { a as _a } from '@a'`,
-        macros: { '@a': [] },
-        err: true,
-      },
-      {
-        code: `import a from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        err: false,
-      },
-      {
-        code: `import * as a from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        err: false,
-      },
-    ]
-    testCases.forEach((c) => {
-      const ast = getAST(c.code)
-      c.err
-        ? expect(() =>
-            collectImportedMacros(ast, c.macros as any, true)
-          ).toThrow()
-        : expect(() =>
-            collectImportedMacros(ast, c.macros as any, true)
-          ).not.toThrow()
-    })
-  })
 })
 
 describe('findCalledMacro()', () => {
@@ -178,6 +143,7 @@ describe('findCalledMacro()', () => {
     })
   })
 })
+
 describe('applyMacros()', () => {
   it('should work', () => {
     const testCases: {
@@ -301,8 +267,14 @@ describe('transformer', () => {
       expect(() =>
         process(`import { echo } from '@echo'; echo()`, '', false)
       ).toThrow()
-      // import non-existent macro
-      expect(() => process(`import { abc } from '@echo';`, '', false)).toThrow()
+      // import non-existent macro and call
+      expect(() =>
+        process(`import { abc } from '@echo'; abc()`, '', false)
+      ).toThrow()
+      // import non-existent macro but no call
+      expect(() =>
+        process(`import { abc } from '@echo';`, '', false)
+      ).not.toThrow()
       // call non-existent macro
       expect(() =>
         process(`import echo from '@echo'; echo.abc()`, '', false)
