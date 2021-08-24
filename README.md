@@ -8,7 +8,7 @@
 
 > Brings macro capabilities to [Vite](https://github.com/vitejs/vite) based projects.
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Install
 
@@ -115,13 +115,48 @@ echo('yeah', 3)
 // echo('yeah yeah yeah')
 ```
 
-## Examples
+## 📚 Examples
 
 - [Basic](https://github.com/viteland/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
 - [Import Assets](https://github.com/viteland/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
 - [Vue Ref Sugar (in JSX)](https://github.com/viteland/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
 - [With Helper](https://github.com/viteland/vite-plugin-macro/blob/master/examples/with-helper/plugin/index.ts)
+- [Rollup](https://github.com/viteland/vite-plugin-macro/blob/master/examples/rollup/plugin/index.ts)
 
-## License
+## 🧐 FAQ
+
+### Q: Why named vite-plugin- instead of rollup-plugin- ?
+
+Since vite is compatible with the most of rollup plugin APIs,
+vite-plugin-macro can be used as rollup plugin of course. [[example]](https://github.com/viteland/vite-plugin-macro/blob/master/examples/rollup/plugin/index.ts)
+
+However, vite-plugin-macro provides vite-specific helpers like `invalidateCache()`
+to improve the experience of development with macros.
+So call it vite-plugin- is better.
+
+> `invalidateCache()`
+>
+> Suppose we have a macro whose behavior is determined by external conditions.
+> When the external conditions change, we can call `invalidateCache()` to
+> actively re-expand the macro, otherwise we need to restart the dev server
+> if we use rollup.
+
+### Q: Why not babel-plugin-macros or other very mature solutions?
+
+- One word: Typescript.
+
+  Almost all my projects are in Typescript,
+  and those mature solutions have poor support for Typescript:
+  whether call macros in Typescript, or written macros in Typescript projects.
+
+  Only after using various tricky skills can we have a certain degree of
+  development experience with that solutions in Typescript.
+
+- Three words: Vite is awesome.
+
+  And how they solve the problem that re-expanding is required
+  due to changes occurred in dependent external conditions?
+
+## 📃 License
 
 MIT License © 2021 [unbyte](https://github.com/unbyte)
