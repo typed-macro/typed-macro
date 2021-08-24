@@ -58,12 +58,13 @@ export type Helper = {
    * @param imports an import or an array of imports
    * @param program node path of the target program for prepending import statements.
    * use the one currently being handled by default.
-   * @return node path of the last inserted import statement
+   * @return node path of the last inserted import statement,
+   *   or undefined if imports param is array and length === 0
    */
   prependImports: (
     imports: ImportOption[] | ImportOption,
     program?: NodePath<Program>
-  ) => NodePath<ImportDeclaration>
+  ) => NodePath<ImportDeclaration> | undefined
 
   /**
    * Append import statements to the last import statement of the program.
@@ -71,11 +72,12 @@ export type Helper = {
    * @param program node path of the target program for prepending import statements.
    * use the one currently being handled by default.
    * @return node path of the last inserted import statement
+   *   or undefined if imports param is array and length === 0
    */
   appendImports: (
     imports: ImportOption[] | ImportOption,
     program?: NodePath<Program>
-  ) => NodePath<ImportDeclaration>
+  ) => NodePath<ImportDeclaration> | undefined
 
   /**
    * Find an import statement that has been in the target program already.
@@ -240,11 +242,16 @@ export function getHelper(
   // returns
   // - array: generated import statements
   // - path: all import statements are duplicated, returns the node path of the last one
+  // - undefined: none import statement provided
   function normalizeImports(
     imports: ImportOption | ImportOption[],
     program: NodePath<Program>
   ) {
-    if (!Array.isArray(imports)) imports = [imports]
+    if (Array.isArray(imports)) {
+      if (imports.length === 0) return
+    } else {
+      imports = [imports]
+    }
     // remove duplicated
     const toBeImported = imports.filter(
       (imp) => !hasImported(imp, false, program)
@@ -264,6 +271,7 @@ export function getHelper(
     program = thisProgram
   ) => {
     const toBeImported = normalizeImports(imports, program)
+    if (!toBeImported) return
     if (!Array.isArray(toBeImported)) return toBeImported
     const firstImport = (program.get('body') as NodePath[]).filter((p) =>
       p.isImportDeclaration()
@@ -280,6 +288,7 @@ export function getHelper(
     program = thisProgram
   ) => {
     const toBeImported = normalizeImports(imports, program)
+    if (!toBeImported) return
     if (!Array.isArray(toBeImported)) return toBeImported
     const lastImport = (program.get('body') as NodePath[])
       .filter((p) => p.isImportDeclaration())

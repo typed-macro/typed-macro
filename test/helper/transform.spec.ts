@@ -110,6 +110,12 @@ describe('macro handler helpers', () => {
     ).toBe(false)
   })
 
+  it('pre-/ap-pendImports() should returns undefined if empty array provided', () => {
+    reset(`import { a } from 'a'`)
+    expect(helper.appendImports([])).toBeUndefined()
+    expect(helper.prependImports([])).toBeUndefined()
+  })
+
   it('pre-/ap-pendImports() should returns the existed import stmt', () => {
     reset(`import { a } from 'a'`)
     expect(helper.appendImports({ moduleName: 'a', exportName: 'a' })).toBe(
