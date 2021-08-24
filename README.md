@@ -2,6 +2,7 @@
 
 [![npm version](https://badgen.net/npm/v/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
 [![monthly downloads](https://badgen.net/npm/dm/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
+[![code coverage](https://badgen.net/codecov/c/github/viteland/vite-plugin-macro)](https://app.codecov.io/gh/viteland/vite-plugin-macro)
 [![license](https://badgen.net/npm/license/vite-plugin-macro)](https://github.com/viteland/vite-plugin-macro/blob/master/LICENSE)
 ![types](https://badgen.net/npm/types/vite-plugin-macro)
 
