@@ -56,6 +56,7 @@ export function plugin(options: InternalPluginOptions): Plugin {
     parserPlugins,
     customTypes,
     hooks: {
+      buildStart,
       configResolved,
       configureServer,
       transform,
@@ -79,11 +80,14 @@ export function plugin(options: InternalPluginOptions): Plugin {
   return {
     name,
     enforce: 'pre',
+    buildStart(opt) {
+      generateDts(dtsPath, customTypes).then()
+      return buildStart?.bind(this)(opt)
+    },
     configResolved(config) {
       if (config.env.DEV) devMode = true
-      generateDts(dtsPath, customTypes).then()
       // hook
-      return configResolved?.(config)
+      return configResolved?.bind(null)(config)
     },
     resolveId(id, importer, options, ssr) {
       if (macroNamespaces.includes(id)) return id
@@ -109,7 +113,8 @@ export function plugin(options: InternalPluginOptions): Plugin {
       return transform?.bind(this)(code, id, ssr)
     },
     configureServer(server) {
-      if (configureServer) configureServer(server, getDevServerHelper(server))
+      if (configureServer)
+        configureServer.bind(null)(server, getDevServerHelper(server))
     },
     ...otherHooks,
   }
