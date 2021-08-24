@@ -5,7 +5,7 @@ import { render } from 'mustache'
 import { getProcessor, NamespacedMacros } from '@/processor'
 import { MacroMeta } from '@/macro'
 import { ParserPlugin } from '@babel/parser'
-import { DevServerHelper, getDevServerHelper } from '@/helper/server'
+import { DevServerHelper, getDevServerHelper } from '@/helper'
 
 export type MacroPluginHooks = Omit<
   Plugin,

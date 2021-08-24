@@ -1,4 +1,4 @@
-import { getHelper } from '@/helper/macro'
+import { getHelper } from '@/helper/transform'
 import { File } from '@babel/types'
 import { getAST, matchCodeSnapshot } from '../testutils'
 import template from '@babel/template'

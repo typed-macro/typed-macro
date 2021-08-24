@@ -3,11 +3,7 @@ import { existsSync } from 'fs'
 import { Node, NodePath } from '@babel/traverse'
 import template from '@babel/template'
 import { File, ImportDeclaration, Program } from '@babel/types'
-import {
-  ImportOption,
-  matchImportStmt,
-  renderImportStmt,
-} from '@/helper/import'
+import { ImportOption, matchImportStmt, renderImportStmt } from './import'
 import { findProgramPath } from '@/common'
 
 export type Helper = {
