@@ -1,15 +1,15 @@
-import { getHelper } from '../src/helper'
+import { getHelper } from '@/helper/transform'
 import { File } from '@babel/types'
-import { getAST, matchCodeSnapshot } from './testutils'
+import { getAST, matchCodeSnapshot } from '../testutils'
 import template from '@babel/template'
-import { ImportOption } from '../src'
+import { ImportOption } from '@/helper/import'
 
-describe('helper', () => {
+describe('macro handler helpers', () => {
   let ast: File
   let helper: ReturnType<typeof getHelper>
 
   const reset = (
-    code = `  const z = 1`,
+    code = `const z = 1`,
     filepath = '/workspace/project-a/src/test.ts'
   ) => {
     ast = getAST(code)
@@ -120,7 +120,7 @@ describe('helper', () => {
     )
   })
 
-  it('pre-/ap-pendImports() should insert new import stmts', function () {
+  it('pre-/ap-pendImports() should insert new import stmts', () => {
     {
       reset(`const a = 1`)
       const imps: ImportOption[] = [
@@ -151,7 +151,7 @@ describe('helper', () => {
     }
   })
 
-  it('pre-/ap-pendImports() should unshift to body if no existed import stmt', function () {
+  it('pre-/ap-pendImports() should unshift to body if no existed import stmt', () => {
     {
       reset(`const b = 1`)
       expect(helper.prependImports({ moduleName: 'a' })).not.toBeUndefined()

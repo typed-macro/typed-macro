@@ -2,6 +2,7 @@
 
 [![npm version](https://badgen.net/npm/v/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
 [![monthly downloads](https://badgen.net/npm/dm/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
+[![code coverage](https://badgen.net/codecov/c/github/viteland/vite-plugin-macro)](https://app.codecov.io/gh/viteland/vite-plugin-macro)
 [![license](https://badgen.net/npm/license/vite-plugin-macro)](https://github.com/viteland/vite-plugin-macro/blob/master/LICENSE)
 ![types](https://badgen.net/npm/types/vite-plugin-macro)
 
@@ -45,10 +46,9 @@ export const echoMacro = defineMacro('echo')
     })
 
     path.replaceWith(
-      template.statement.ast`console.log("${Array.from(
-        { length: repeat },
-        () => msg
-      ).join(' ')}")`
+      template.statement.ast(
+        `console.log('${Array.from({ length: repeat }, () => msg).join(' ')}')`
+      )
     )
   })
 ```
@@ -120,16 +120,7 @@ echo('yeah', 3)
 - [Basic](https://github.com/viteland/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
 - [Import Assets](https://github.com/viteland/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
 - [Vue Ref Sugar (in JSX)](https://github.com/viteland/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
-
-## Types
-
-### Plugin Options
-
-See [src/plugin.ts#L111-L122](https://github.com/viteland/vite-plugin-macro/blob/2e6f9eb11b4ef2481c142337642f7a816dafeb2c/src/plugin.ts#L111-L122)
-
-### Macro Handler
-
-See [src/macro.ts#L200-L204](https://github.com/viteland/vite-plugin-macro/blob/2e6f9eb11b4ef2481c142337642f7a816dafeb2c/src/macro.ts#L200-L204)
+- [With Helper](https://github.com/viteland/vite-plugin-macro/blob/master/examples/with-helper/plugin/index.ts)
 
 ## License
 

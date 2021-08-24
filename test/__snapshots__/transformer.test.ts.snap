@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`applyMacros() should work 1`] = `
+Object {
+  "applied": false,
+  "recollectMacros": false,
+}
+`;
+
+exports[`applyMacros() should work 2`] = `
+Object {
+  "applied": true,
+  "recollectMacros": false,
+}
+`;
+
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
+
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
+
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 3`] = `"import '@a';"`;
+
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 4`] = `"import '@a';"`;
+
+exports[`collectImportedMacros() should work 1`] = `
+Array [
+  Object {
+    "importedAsNamespace": false,
+    "local": "a",
+    "macro": Object {
+      "name": "a",
+    },
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`collectImportedMacros() should work 2`] = `
+Array [
+  Object {
+    "importedAsNamespace": false,
+    "local": "_a",
+    "macro": Object {
+      "name": "a",
+    },
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`collectImportedMacros() should work 3`] = `
+Array [
+  Object {
+    "importedAsNamespace": true,
+    "local": "a",
+    "macros": Array [
+      Object {
+        "name": "a",
+      },
+    ],
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`collectImportedMacros() should work 4`] = `
+Array [
+  Object {
+    "importedAsNamespace": true,
+    "local": "a",
+    "macros": Array [
+      Object {
+        "name": "a",
+      },
+    ],
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`findCalledMacro() should work 1`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`findCalledMacro() should work 2`] = `undefined`;
+
+exports[`findCalledMacro() should work 3`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`findCalledMacro() should work 4`] = `undefined`;
+
+exports[`findCalledMacro() should work 5`] = `undefined`;
+
+exports[`findCalledMacro() should work 6`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`findCalledMacro() should work 7`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`findCalledMacro() should work 8`] = `"a"`;
+
+exports[`transformer should support recollect imported macros 1`] = `"console.log('hello world');"`;
+
+exports[`transformer should work 1`] = `"console.log(\\"yeah yeah yeah\\");"`;

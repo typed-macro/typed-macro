@@ -9,7 +9,7 @@ declare module '{{module}}' {
 {{/macroScopeTypes}}
 {{#signature}}
 {{#comment}}
-  {{{.}}}
+  /** {{{.}}} **/
 {{/comment}}
   export function {{name}}{{{signature}}}
 {{/signature}}

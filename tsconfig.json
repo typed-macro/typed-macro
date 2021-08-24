@@ -8,8 +8,12 @@
     "strictNullChecks": true,
     "moduleResolution": "Node",
     "skipLibCheck": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["./src"],
+  "include": ["./src", "./test"],
   "exclude": ["node_modules", "examples", "dist"]
 }

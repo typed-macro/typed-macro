@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renderImportStmt() should render code properly 1`] = `"import 'a'"`;
+
+exports[`renderImportStmt() should render code properly 2`] = `"import { a } from 'a'"`;
+
+exports[`renderImportStmt() should render code properly 3`] = `"import { a as _a } from 'a'"`;
+
+exports[`renderImportStmt() should render code properly 4`] = `"import a from 'a'"`;
+
+exports[`renderImportStmt() should render code properly 5`] = `"import * as a from 'a'"`;
