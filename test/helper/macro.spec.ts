@@ -1,15 +1,15 @@
-import { getHelper } from '../src/helper'
+import { getHelper } from '@/helper/macro'
 import { File } from '@babel/types'
-import { getAST, matchCodeSnapshot } from './testutils'
+import { getAST, matchCodeSnapshot } from '../testutils'
 import template from '@babel/template'
-import { ImportOption } from '../src'
+import { ImportOption } from '@/helper/import'
 
-describe('helper', () => {
+describe('tools#helper', () => {
   let ast: File
   let helper: ReturnType<typeof getHelper>
 
   const reset = (
-    code = `  const z = 1`,
+    code = `const z = 1`,
     filepath = '/workspace/project-a/src/test.ts'
   ) => {
     ast = getAST(code)

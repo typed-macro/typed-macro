@@ -9,4 +9,7 @@ module.exports = {
     // mostly just entries
     '!src/index.ts',
   ],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 }

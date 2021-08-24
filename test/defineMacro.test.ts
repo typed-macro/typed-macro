@@ -1,7 +1,5 @@
-import { defineMacro } from '../src'
-
-/* eslint-disable @typescript-eslint/no-empty-function */
-const NO_OP = () => {}
+import { defineMacro } from '@/defineMacro'
+import { NO_OP } from './testutils'
 
 describe('defineMacro', () => {
   it('should work', () => {

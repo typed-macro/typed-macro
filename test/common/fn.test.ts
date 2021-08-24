@@ -1,13 +1,12 @@
-import { findInSet, findProgramPath, validateFnName } from '../src/common'
+import { findProgramPath, nodeLoc, validateFnName } from '@/common/fn'
 import { parse } from '@babel/parser'
 import template from '@babel/template'
+import { getAST } from '../testutils'
 
-describe('common#findInSet', () => {
+describe('common#nodeLoc', () => {
   it('should work', () => {
-    const set = new Set([1, 2, 3, 4])
-    expect(findInSet(set, (n) => n === 3)).toBe(3)
-    expect(findInSet(set, (n) => n === 4)).toBe(4)
-    expect(findInSet(set, (n) => n === 5)).toBeUndefined()
+    const ast = getAST(`const a = 1`)
+    expect(nodeLoc(ast.program.body[0])).toMatchSnapshot()
   })
 })
 
