@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "types/index.cjs.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "prepare": "yarn link vite-plugin-macro",
+    "build": "rollup -c --configPlugin typescript",
+    "dev": "rollup -c -w --configPlugin typescript"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "rollup": "^2.56.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.3.5",
+    "vite-plugin-macro": "^0.0.5"
+  },
+  "dependencies": {}
+}

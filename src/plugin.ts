@@ -56,6 +56,7 @@ export function plugin(options: InternalPluginOptions): Plugin {
     parserPlugins,
     customTypes,
     hooks: {
+      buildStart,
       configResolved,
       configureServer,
       transform,
@@ -79,9 +80,13 @@ export function plugin(options: InternalPluginOptions): Plugin {
   return {
     name,
     enforce: 'pre',
+    buildStart(opt) {
+      generateDts(dtsPath, customTypes).then()
+      // hook
+      return buildStart?.bind(this)(opt)
+    },
     configResolved(config) {
       if (config.env.DEV) devMode = true
-      generateDts(dtsPath, customTypes).then()
       // hook
       return configResolved?.(config)
     },
@@ -109,6 +114,7 @@ export function plugin(options: InternalPluginOptions): Plugin {
       return transform?.bind(this)(code, id, ssr)
     },
     configureServer(server) {
+      // hook
       if (configureServer) configureServer(server, getDevServerHelper(server))
     },
     ...otherHooks,
