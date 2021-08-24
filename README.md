@@ -147,16 +147,12 @@ So the name vite-plugin- is better.
 
   Almost all my projects are in Typescript,
   and those mature solutions have poor support for Typescript:
-  whether call macros in Typescript, or written macros in Typescript projects.
+  whether calling macros in Typescript, or writing macros in Typescript projects.
 
   Only after using various tricky skills can we have a certain degree of
-  development experience with that solutions in Typescript.
+  development experience in Typescript with those solutions.
 
 - Three words: Vite is awesome.
 
-  And how they solve the problem that re-expanding is required
+  How they solve the problem that re-expanding is required
   due to changes occurred in dependent external conditions?
-
-## 📃 License
-
-MIT License © 2021 [unbyte](https://github.com/unbyte)
