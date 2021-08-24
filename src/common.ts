@@ -19,3 +19,6 @@ export const findProgramPath = (ast: File) => {
   })
   return path!
 }
+
+/* eslint-disable @typescript-eslint/no-empty-function */
+export const NO_OP = () => {}

@@ -1,28 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`inside transformer applyMacros() should work 1`] = `
+exports[`applyMacros() should work 1`] = `
 Object {
   "applied": false,
   "recollectMacros": false,
 }
 `;
 
-exports[`inside transformer applyMacros() should work 2`] = `
+exports[`applyMacros() should work 2`] = `
 Object {
   "applied": true,
   "recollectMacros": false,
 }
 `;
 
-exports[`inside transformer collectImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
 
-exports[`inside transformer collectImportedMacros() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
 
-exports[`inside transformer collectImportedMacros() should rewrite import stmts if keep=true 3`] = `"import '@a';"`;
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 3`] = `"import '@a';"`;
 
-exports[`inside transformer collectImportedMacros() should rewrite import stmts if keep=true 4`] = `"import '@a';"`;
+exports[`collectImportedMacros() should rewrite import stmts if keep=true 4`] = `"import '@a';"`;
 
-exports[`inside transformer collectImportedMacros() should work 1`] = `
+exports[`collectImportedMacros() should work 1`] = `
 Array [
   Object {
     "importedAsNamespace": false,
@@ -35,7 +35,7 @@ Array [
 ]
 `;
 
-exports[`inside transformer collectImportedMacros() should work 2`] = `
+exports[`collectImportedMacros() should work 2`] = `
 Array [
   Object {
     "importedAsNamespace": false,
@@ -48,7 +48,7 @@ Array [
 ]
 `;
 
-exports[`inside transformer collectImportedMacros() should work 3`] = `
+exports[`collectImportedMacros() should work 3`] = `
 Array [
   Object {
     "importedAsNamespace": true,
@@ -63,7 +63,7 @@ Array [
 ]
 `;
 
-exports[`inside transformer collectImportedMacros() should work 4`] = `
+exports[`collectImportedMacros() should work 4`] = `
 Array [
   Object {
     "importedAsNamespace": true,
@@ -78,37 +78,37 @@ Array [
 ]
 `;
 
-exports[`inside transformer findCalledMacro() should work 1`] = `
+exports[`findCalledMacro() should work 1`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`inside transformer findCalledMacro() should work 2`] = `undefined`;
+exports[`findCalledMacro() should work 2`] = `undefined`;
 
-exports[`inside transformer findCalledMacro() should work 3`] = `
+exports[`findCalledMacro() should work 3`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`inside transformer findCalledMacro() should work 4`] = `undefined`;
+exports[`findCalledMacro() should work 4`] = `undefined`;
 
-exports[`inside transformer findCalledMacro() should work 5`] = `undefined`;
+exports[`findCalledMacro() should work 5`] = `undefined`;
 
-exports[`inside transformer findCalledMacro() should work 6`] = `
+exports[`findCalledMacro() should work 6`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`inside transformer findCalledMacro() should work 7`] = `
+exports[`findCalledMacro() should work 7`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`inside transformer findCalledMacro() should work 8`] = `"a"`;
+exports[`findCalledMacro() should work 8`] = `"a"`;
 
 exports[`transformer should support recollect imported macros 1`] = `"console.log('hello world');"`;
 

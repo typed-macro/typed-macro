@@ -9,8 +9,8 @@ import { getAST, getExpression, matchCodeSnapshot, NO_OP } from './testutils'
 import { CallExpression, StringLiteral } from '@babel/types'
 import { MacroWithMeta } from '@/macro'
 
-describe('inside transformer', () => {
-  it('throwErrorIfConflict() should work', () => {
+describe('throwErrorIfConflict()', () => {
+  it('should work', () => {
     expect(() =>
       throwErrorIfConflict({ '@a': [{ name: 'a' }, { name: 'b' }] as any })
     ).not.toThrow()
@@ -18,8 +18,10 @@ describe('inside transformer', () => {
       throwErrorIfConflict({ '@a': [{ name: 'a' }, { name: 'a' }] as any })
     ).toThrow()
   })
+})
 
-  it('collectImportedMacros() should work', () => {
+describe('collectImportedMacros()', () => {
+  it('should work', () => {
     const testCases: {
       code: string
       macros: Record<string, { name: string }[]>
@@ -39,7 +41,7 @@ describe('inside transformer', () => {
     })
   })
 
-  it('collectImportedMacros() should rewrite import stmts if keep=true', () => {
+  it('should rewrite import stmts if keep=true', () => {
     const testCases: {
       code: string
       macros: Record<string, { name: string }[]>
@@ -59,7 +61,7 @@ describe('inside transformer', () => {
     })
   })
 
-  it('collectImportedMacros() should remove import stmts if keep=false', () => {
+  it('should remove import stmts if keep=false', () => {
     const testCases: {
       code: string
       macros: Record<string, { name: string }[]>
@@ -79,7 +81,7 @@ describe('inside transformer', () => {
     })
   })
 
-  it('collectImportedMacros() should throw error if named import non-existent macro', () => {
+  it('should throw error if named import non-existent macro', () => {
     const testCases: {
       code: string
       macros: Record<string, { name: string }[]>
@@ -113,8 +115,10 @@ describe('inside transformer', () => {
           ).not.toThrow()
     })
   })
+})
 
-  it('findCalledMacro() should work', () => {
+describe('findCalledMacro()', () => {
+  it('should work', () => {
     const testCases: {
       code: string
       macros: Record<string, { name: string }[]>
@@ -173,8 +177,9 @@ describe('inside transformer', () => {
       ).toMatchSnapshot()
     })
   })
-
-  it('applyMacros() should work', () => {
+})
+describe('applyMacros()', () => {
+  it('should work', () => {
     const testCases: {
       code: string
       macros: Record<string, MacroWithMeta[]>
@@ -219,7 +224,7 @@ describe('inside transformer', () => {
     })
   })
 
-  it('applyMacros() should throw error when call non-existent macro', () => {
+  it('should throw error when call non-existent macro', () => {
     const testCases: {
       code: string
       macros: Record<string, { name: string }[]>

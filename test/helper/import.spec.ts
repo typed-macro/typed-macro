@@ -6,8 +6,8 @@ import {
 } from '@/helper/import'
 import { ImportDeclaration } from '@babel/types'
 
-describe('tools#import', () => {
-  it('matchImportStmt() should work with loose=true', () => {
+describe('matchImportStmt()', () => {
+  it('should work with loose=true', () => {
     const stmt = getStatement(
       `import { a as _a } from 'a'`
     ) as ImportDeclaration
@@ -31,7 +31,7 @@ describe('tools#import', () => {
     )
   })
 
-  it('matchImportStmt() should work with loose=false', () => {
+  it('should work with loose=false', () => {
     {
       const stmt = getStatement(
         `import { a as _a } from 'a'`
@@ -113,8 +113,10 @@ describe('tools#import', () => {
       ).toBe(false)
     }
   })
+})
 
-  it('renderImportStmt() should render code properly', function () {
+describe('renderImportStmt()', () => {
+  it('should render code properly', () => {
     const testCases: ImportOption[] = [
       { moduleName: 'a' },
       { moduleName: 'a', exportName: 'a' },

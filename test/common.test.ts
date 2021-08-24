@@ -1,16 +1,16 @@
-import { findProgramPath, nodeLoc, validateFnName } from '@/common/fn'
+import { findProgramPath, nodeLoc, validateFnName } from '@/common'
 import { parse } from '@babel/parser'
 import template from '@babel/template'
-import { getAST } from '../testutils'
+import { getAST } from './testutils'
 
-describe('common#nodeLoc', () => {
+describe('nodeLoc()', () => {
   it('should work', () => {
     const ast = getAST(`const a = 1`)
     expect(nodeLoc(ast.program.body[0])).toMatchSnapshot()
   })
 })
 
-describe('common#validateFnName', () => {
+describe('validateFnName()', () => {
   it('should work', () => {
     const fnNames = [
       { name: '', ok: false },
@@ -28,7 +28,7 @@ describe('common#validateFnName', () => {
   })
 })
 
-describe('common#findProgramPath', () => {
+describe('findProgramPath()', () => {
   it('should work', () => {
     const ast = parse(`const a = 1`)
     const program = findProgramPath(ast)
