@@ -118,9 +118,9 @@ echo('yeah', 3)
 ## 📚 Examples
 
 - [Basic](https://github.com/viteland/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
-- [Import Assets](https://github.com/viteland/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
+- [Import Glob Pattern](https://github.com/viteland/vite-plugin-macro/tree/master/examples/import-glob-pattern/plugin/index.ts)
 - [Vue Ref Sugar (in JSX)](https://github.com/viteland/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
-- [With Helper](https://github.com/viteland/vite-plugin-macro/blob/master/examples/with-helper/plugin/index.ts)
+- [With External Helper](https://github.com/viteland/vite-plugin-macro/blob/master/examples/with-external-helper/plugin/index.ts)
 - [Rollup](https://github.com/viteland/vite-plugin-macro/blob/master/examples/rollup/plugin/index.ts)
 
 ## 🧐 FAQ

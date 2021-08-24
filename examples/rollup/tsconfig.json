@@ -11,8 +11,7 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "rootDir": "src"
+    "noImplicitReturns": true
   },
   "include": ["**/*.ts", "macros.d.ts"]
 }

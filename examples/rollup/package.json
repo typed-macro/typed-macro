@@ -8,6 +8,7 @@
     "types"
   ],
   "scripts": {
+    "prepare": "yarn link vite-plugin-macro",
     "build": "rollup -c --configPlugin typescript",
     "dev": "rollup -c -w --configPlugin typescript"
   },
