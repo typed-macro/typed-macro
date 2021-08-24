@@ -19,18 +19,18 @@ import { nodeLoc } from '@/common'
 
 export type NamespacedMacros = { [namespace: string]: Macro[] }
 
-export type ProcessorOptions = {
+export type TransformerOptions = {
   macros: NamespacedMacros
 
   maxRecursion: number
   parserPlugins: ParserPlugin[]
 }
 
-export function getProcessor({
+export function getTransformer({
   parserPlugins,
   maxRecursion,
   macros,
-}: ProcessorOptions) {
+}: TransformerOptions) {
   throwErrorIfConflict(macros)
 
   return (code: string, id: string, dev: boolean) => {

@@ -2,7 +2,7 @@ import type { Plugin, ViteDevServer } from 'vite'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { dirname, resolve } from 'path'
 import { render } from 'mustache'
-import { getProcessor, NamespacedMacros } from '@/processor'
+import { getTransformer, NamespacedMacros } from '@/transformer'
 import { MacroMeta } from '@/macro'
 import { ParserPlugin } from '@babel/parser'
 import { DevServerHelper, getDevServerHelper } from '@/helper'
@@ -70,7 +70,7 @@ export function plugin(options: InternalPluginOptions): Plugin {
 
   let devMode = false
 
-  const process = getProcessor({
+  const process = getTransformer({
     parserPlugins,
     macros,
     maxRecursion,

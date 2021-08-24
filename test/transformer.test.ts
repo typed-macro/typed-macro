@@ -2,14 +2,14 @@ import {
   applyMacros,
   collectImportedMacros,
   findCalledMacro,
-  getProcessor,
+  getTransformer,
   throwErrorIfConflict,
-} from '@/processor'
+} from '@/transformer'
 import { getAST, getExpression, matchCodeSnapshot, NO_OP } from './testutils'
 import { CallExpression, StringLiteral } from '@babel/types'
 import { MacroWithMeta } from '@/macro'
 
-describe('processor methods', () => {
+describe('inside transformer', () => {
   it('throwErrorIfConflict() should work', () => {
     expect(() =>
       throwErrorIfConflict({ '@a': [{ name: 'a' }, { name: 'b' }] as any })
@@ -247,9 +247,9 @@ describe('processor methods', () => {
   })
 })
 
-describe('processor', () => {
+describe('transformer', () => {
   it('should work', () => {
-    const process = getProcessor({
+    const process = getTransformer({
       parserPlugins: [],
       maxRecursion: 5,
       macros: {
@@ -277,7 +277,7 @@ describe('processor', () => {
 
   it('should throw errors if there is wrong in steps', () => {
     {
-      const process = getProcessor({
+      const process = getTransformer({
         parserPlugins: [],
         maxRecursion: 5,
         macros: {
@@ -304,7 +304,7 @@ describe('processor', () => {
       ).toThrow()
     }
     {
-      const process = getProcessor({
+      const process = getTransformer({
         parserPlugins: [],
         maxRecursion: 5,
         macros: {
@@ -325,7 +325,7 @@ describe('processor', () => {
 
   it('should support recollect imported macros', () => {
     const fn = jest.fn()
-    const process = getProcessor({
+    const process = getTransformer({
       parserPlugins: [],
       maxRecursion: 5,
       macros: {
