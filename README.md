@@ -132,7 +132,7 @@ vite-plugin-macro can be used as rollup plugin of course. [[example]](https://gi
 
 However, vite-plugin-macro provides vite-specific helpers like `invalidateCache()`
 to improve the experience of development with macros.
-So call it vite-plugin- is better.
+So the name vite-plugin- is better.
 
 > `invalidateCache()`
 >
