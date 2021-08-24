@@ -82,12 +82,13 @@ export function plugin(options: InternalPluginOptions): Plugin {
     enforce: 'pre',
     buildStart(opt) {
       generateDts(dtsPath, customTypes).then()
+      // hook
       return buildStart?.bind(this)(opt)
     },
     configResolved(config) {
       if (config.env.DEV) devMode = true
       // hook
-      return configResolved?.bind(null)(config)
+      return configResolved?.(config)
     },
     resolveId(id, importer, options, ssr) {
       if (macroNamespaces.includes(id)) return id
@@ -113,8 +114,8 @@ export function plugin(options: InternalPluginOptions): Plugin {
       return transform?.bind(this)(code, id, ssr)
     },
     configureServer(server) {
-      if (configureServer)
-        configureServer.bind(null)(server, getDevServerHelper(server))
+      // hook
+      if (configureServer) configureServer(server, getDevServerHelper(server))
     },
     ...otherHooks,
   }
