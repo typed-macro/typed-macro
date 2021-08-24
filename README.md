@@ -46,10 +46,9 @@ export const echoMacro = defineMacro('echo')
     })
 
     path.replaceWith(
-      template.statement.ast`console.log("${Array.from(
-        { length: repeat },
-        () => msg
-      ).join(' ')}")`
+      template.statement.ast(
+        `console.log('${Array.from({ length: repeat }, () => msg).join(' ')}')`
+      )
     )
   })
 ```
@@ -121,16 +120,7 @@ echo('yeah', 3)
 - [Basic](https://github.com/viteland/vite-plugin-macro/blob/master/examples/basic/plugin/index.ts)
 - [Import Assets](https://github.com/viteland/vite-plugin-macro/tree/master/examples/import-assets/plugin/index.ts)
 - [Vue Ref Sugar (in JSX)](https://github.com/viteland/vite-plugin-macro/blob/master/examples/vue-ref-sugar/plugin/index.ts)
-
-## Types
-
-### Plugin Options
-
-See [src/plugin.ts#L111-L122](https://github.com/viteland/vite-plugin-macro/blob/2e6f9eb11b4ef2481c142337642f7a816dafeb2c/src/plugin.ts#L111-L122)
-
-### Macro Handler
-
-See [src/macro.ts#L200-L204](https://github.com/viteland/vite-plugin-macro/blob/2e6f9eb11b4ef2481c142337642f7a816dafeb2c/src/macro.ts#L200-L204)
+- [With Helper](https://github.com/viteland/vite-plugin-macro/blob/master/examples/with-helper/plugin/index.ts)
 
 ## License
 
