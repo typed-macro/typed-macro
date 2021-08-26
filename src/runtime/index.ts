@@ -3,7 +3,6 @@ import {
   NamespacedModules,
   NamespacedTypes,
   NormalizedExports,
-  renderTypes,
 } from '@/runtime/types'
 import {
   createTransformer,
@@ -104,4 +103,16 @@ export class Runtime {
     await mkdir(dirname(path), { recursive: true })
     await writeFile(path, renderTypes(this.types))
   }
+}
+
+export function renderTypes(types: NamespacedTypes) {
+  const namespaces = Object.keys(types)
+  return namespaces
+    .map((ns) => {
+      const item = types[ns]
+      return `declare module '${ns}' {
+${[item.moduleScope, item.macroScope.join('\n')].filter((t) => !!t).join('\n')}
+}`
+    })
+    .join('\n')
 }

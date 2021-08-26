@@ -109,15 +109,3 @@ export type NamespacedTypes = {
     macroScope: string[]
   }
 }
-
-export function renderTypes(types: NamespacedTypes) {
-  const namespaces = Object.keys(types)
-  return namespaces
-    .map((ns) => {
-      const item = types[ns]
-      return `declare module '${ns}' {
-${[item.moduleScope, item.macroScope.join('\n')].filter((t) => !!t).join('\n')}
-}`
-    })
-    .join('\n')
-}
