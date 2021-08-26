@@ -4,37 +4,55 @@ import {
   MacroProvider,
   MacroProviderHooks,
 } from '@/macroProvider'
-import { findDuplicatedItem } from '@/common'
-import {
-  getTransformer,
-  Transformer,
-  TransformerOptions,
-} from '@/runtime/transformer'
+import { TransformerOptions } from '@/runtime/transformer'
 import { isMacroPlugin, MacroPlugin } from '@/macroPlugin'
-import { MacroContainer } from '@/macroContainer'
 import { getDevServerHelper } from '@/helper/server'
+import { Runtime } from '@/runtime'
 
-export class MacroManagerContext extends MacroContainer {
-  config?: ResolvedConfig = undefined
-  devServer?: ViteDevServer = undefined
+type MacroManagerContextOptions = {
+  transformer: TransformerOptions
+  dtsPath: string
+}
+
+export class MacroManagerContext {
+  private config?: ResolvedConfig = undefined
+  private devServer?: ViteDevServer = undefined
 
   plugins: Plugin[] = []
 
   private hooks: MacroProviderHooks[] = []
 
-  constructor(transformer: Transformer) {
-    super(transformer)
-  }
+  private runtime: Runtime
+  private dtsPath: string
 
-  get isDev() {
-    return !!this.devServer
+  constructor({ transformer, dtsPath }: MacroManagerContextOptions) {
+    this.runtime = new Runtime({ transformer })
+    this.dtsPath = dtsPath
   }
 
   get isRollup() {
     return !!this.config
   }
 
-  async callOnStartHooks() {
+  add(p: MacroProvider | Plugin) {
+    if (isMacroProvider(p)) this.addProvider(p)
+    else if (isMacroPlugin(p)) this.addPlugin(p)
+    else
+      throw new Error(`argument is neither a macro provider nor a macro plugin`)
+  }
+
+  private addProvider(provider: MacroProvider) {
+    this.runtime.register(provider.exports)
+    this.hooks.push(provider.hooks)
+  }
+
+  private addPlugin(plugin: MacroPlugin) {
+    const provider = plugin.__consume()
+    this.addProvider(provider)
+    this.plugins.push(plugin)
+  }
+
+  async handleBuildStart() {
     if (this.isRollup)
       await Promise.all(this.hooks.map((h) => h.onRollupStart?.()))
     else
@@ -48,61 +66,30 @@ export class MacroManagerContext extends MacroContainer {
         )
       )
     await Promise.all(this.hooks.map((h) => h.onStart?.()))
+    // no need to await
+    this.runtime.generateDts(this.dtsPath).then()
   }
 
-  addProvider(provider: MacroProvider) {
-    {
-      const duplicated = findDuplicatedItem(
-        Object.keys(provider.types),
-        Object.keys(this.types)
-      )
-      if (duplicated)
-        throw new Error(
-          `Error when use '${provider.id}': duplicated namespace '${duplicated}'.`
-        )
-    }
-    {
-      Object.keys(provider.macros).forEach((ns) => {
-        const mem = Object.create(null)
-        provider.macros[ns].forEach((m) => {
-          if (mem[m.name]) {
-            throw new Error(
-              `Error when use '${provider.id}': a macro with name '${m.name}' in '${ns}' already existed`
-            )
-          }
-          mem[m.name] = 1
-        })
-      })
-    }
-    Object.assign(this.macros, provider.macros)
-    this.macrosNamespaces = Object.keys(this.macros)
-    Object.assign(this.modules, provider.modules)
-    this.modulesNamespaces = Object.keys(this.macros)
-    Object.assign(this.types, provider.types)
-    this.hooks.push(provider.hooks)
+  handleLoad(id: string) {
+    return this.runtime.handleLoad(id)
   }
 
-  addPlugin(plugin: MacroPlugin) {
-    const provider = plugin.__consume()
-    this.addProvider(provider)
-    this.plugins.push(plugin)
+  handleResolveId(id: string) {
+    return this.runtime.handleResolveId(id)
   }
 
-  load(id: string) {
-    return super.callLoad(id)
+  handleTransform(code: string, id: string, ssr = false) {
+    return this.runtime.handleTransform(code, id, ssr)
   }
 
-  resolveId(id: string) {
-    return super.callResolveId(id)
+  handleConfigureServer(server: ViteDevServer) {
+    this.devServer = server
+    this.runtime.setDevMode()
   }
 
-  transform(code: string, id: string, ssr: boolean | undefined) {
-    return super.callTransform({
-      code,
-      id,
-      ssr,
-      dev: this.isDev,
-    })
+  handleConfigResolved(config: ResolvedConfig) {
+    this.config = config
+    this.runtime.setDevMode()
   }
 }
 
@@ -113,9 +100,8 @@ export type MacroManager = Plugin[] & {
   }
 }
 
-export type InternalMacroManagerOptions = TransformerOptions & {
+export type InternalMacroManagerOptions = MacroManagerContextOptions & {
   name: string
-  dtsPath: string
 }
 
 interface InternalMacroManager extends MacroManager {
@@ -125,48 +111,42 @@ interface InternalMacroManager extends MacroManager {
 export function macroManager(
   options: InternalMacroManagerOptions
 ): MacroManager {
-  const { name, dtsPath, maxRecursion, parserPlugins } = options
+  const { name, dtsPath, transformer } = options
 
-  const context = new MacroManagerContext(
-    getTransformer({
-      maxRecursion,
-      parserPlugins,
-    })
-  )
+  const context = new MacroManagerContext({
+    transformer,
+    dtsPath,
+  })
 
   const manager = context.plugins as MacroManager
   manager.push({
     name,
     enforce: 'pre',
     configResolved(config) {
-      context.config = config
+      context.handleConfigResolved(config)
     },
     configureServer(server) {
-      context.devServer = server
+      context.handleConfigureServer(server)
     },
     async buildStart() {
-      await Promise.all([
-        context.callOnStartHooks(),
-        context.generateDts(dtsPath),
-      ])
+      await context.handleBuildStart()
     },
     resolveId(id) {
-      return context.resolveId(id)
+      return context.handleResolveId(id)
     },
     load(id) {
-      return context.load(id)
+      return context.handleLoad(id)
     },
     transform(code, id, ssr) {
-      if (/\.[jt]sx?$/.test(id)) return context.transform(code, id, ssr)
+      return context.handleTransform(code, id, ssr)
     },
   })
   manager.use = (p) => {
-    if (isMacroProvider(p)) context.addProvider(p)
-    else if (isMacroPlugin(p)) context.addPlugin(p)
-    else
-      throw new Error(
-        `Error when call use(): argument is neither a macro provider nor a macro plugin`
-      )
+    try {
+      context.add(p)
+    } catch (e) {
+      throw new Error(`Error when use provider/plugin: ${e.message || e}`)
+    }
     return manager
   }
   ;(manager as InternalMacroManager).__internal_macro_manager = true

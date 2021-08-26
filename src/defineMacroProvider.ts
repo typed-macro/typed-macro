@@ -3,7 +3,7 @@ import {
   MacroProvider,
   MacroProviderHooks,
 } from '@/macroProvider'
-import { NamespacedExportable, normalizeExports } from '@/exportable'
+import { NamespacedExportable, normalizeExports } from '@/runtime/types'
 
 export type MacroProviderOptions = {
   id: string
@@ -16,7 +16,7 @@ function normalizeProvider(raw: MacroProviderOptions): MacroProvider {
   return {
     id,
     hooks,
-    ...normalizeExports(exports),
+    exports: normalizeExports(exports),
   }
 }
 

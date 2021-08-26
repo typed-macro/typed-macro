@@ -1,16 +1,13 @@
-import { ParserPlugin } from '@babel/parser'
 import {
   InternalMacroManagerOptions,
   macroManager,
   MacroManager,
 } from './macroManager'
-import { normalizeExports } from '@/exportable'
+import { TransformerOptions } from '@/runtime/transformer'
 
-export type MacroManagerOptions = {
+export type MacroManagerOptions = TransformerOptions & {
   name: string
   dtsPath: string
-  maxRecursion?: number
-  parserPlugins?: ParserPlugin[]
 }
 
 function normalizeOption({
@@ -22,9 +19,10 @@ function normalizeOption({
   return {
     name,
     dtsPath,
-    maxRecursion,
-    parserPlugins,
-    ...normalizeExports(exports),
+    transformer: {
+      maxRecursion,
+      parserPlugins,
+    },
   }
 }
 

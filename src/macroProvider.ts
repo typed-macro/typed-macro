@@ -1,8 +1,4 @@
-import {
-  NamespacedModules,
-  NamespacedMacros,
-  NamespacedTypes,
-} from '@/runtime/types'
+import { NormalizedExports } from '@/runtime/types'
 import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
 
@@ -18,9 +14,7 @@ export type MacroProviderHooks = {
 
 export type MacroProvider = {
   id: string
-  macros: NamespacedMacros
-  modules: NamespacedModules
-  types: NamespacedTypes
+  exports: NormalizedExports
   hooks: MacroProviderHooks
 }
 

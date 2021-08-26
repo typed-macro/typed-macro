@@ -37,7 +37,7 @@ export type Transformer = (
   macros: NamespacedMacros
 ) => string | undefined
 
-export function getTransformer({
+export function createTransformer({
   parserPlugins = [],
   maxRecursion = 0,
 }: TransformerOptions): Transformer {

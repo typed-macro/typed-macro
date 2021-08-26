@@ -1,6 +1,5 @@
-import { NO_OP, validateFnName } from '@/common'
-import type { MacroWithMeta } from '@/macro'
-import { MacroHandler } from '@/runtime/types'
+import { validateFnName } from '@/common'
+import { Macro, MacroHandler, MacroWithType } from '@/runtime/types'
 
 type MacroBuilder = {
   /**
@@ -20,7 +19,15 @@ type MacroBuilder = {
   /**
    * Set the transform handler and get the macro.
    */
-  withHandler: (handler: MacroHandler) => MacroWithMeta
+  withHandler: (handler: MacroHandler) => Macro
+}
+
+type MacroMeta = {
+  signatures: {
+    comment?: string
+    signature: string
+  }[]
+  customTypes: string[]
 }
 
 /**
@@ -32,33 +39,48 @@ export function defineMacro(name: string): Omit<MacroBuilder, 'withHandler'> {
   if (!validateFnName(name))
     throw new Error(`'${name}' is not a valid macro name!`)
 
-  const macro: MacroWithMeta = {
-    name,
-    meta: {
-      signatures: [],
-      types: [],
-    },
-    apply: NO_OP,
+  const meta: MacroMeta = {
+    signatures: [],
+    customTypes: [],
   }
 
   const builder: MacroBuilder = {
     withCustomType(typeDefinition) {
-      macro.meta.types.push(typeDefinition)
+      meta.customTypes.push(typeDefinition)
       return builder
     },
     withSignature(signature, comment) {
-      macro.meta.signatures.push({ signature, comment })
+      meta.signatures.push({ signature, comment })
       return builder
     },
     withHandler(handler) {
-      if (macro.meta.signatures.length === 0)
+      if (meta.signatures.length === 0)
         throw new Error(
           `Please call .withSignature() before .withHandler() to specify at least one signature for macro '${name}'`
         )
-      macro.apply = handler
-      return macro
+      return {
+        name,
+        apply: handler,
+        __types: renderMacroType(name, meta),
+      } as MacroWithType
     },
   }
 
   return builder
+}
+
+function renderMacroType(name: string, meta: MacroMeta) {
+  return [
+    meta.customTypes.join('\n'),
+    meta.signatures
+      .map((s) =>
+        s.comment
+          ? `  /** ${s.comment} **/
+  export function ${name}${s.signature}`
+          : `  export function ${name}${s.signature}`
+      )
+      .join('\n'),
+  ]
+    .filter((t) => !!t)
+    .join('\n')
 }

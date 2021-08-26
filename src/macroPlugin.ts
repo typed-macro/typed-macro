@@ -1,13 +1,9 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { getTransformer, TransformerOptions } from '@/runtime/transformer'
-import {
-  NamespacedMacros,
-  NamespacedModules,
-  NamespacedTypes,
-} from '@/runtime/types'
+import { TransformerOptions } from '@/runtime/transformer'
+import { NormalizedExports } from '@/runtime/types'
 import { MacroProvider } from '@/macroProvider'
-import { MacroContainer } from '@/macroContainer'
 import { DevServerHelper, getDevServerHelper } from '@/helper/server'
+import { Runtime } from '@/runtime'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -19,15 +15,11 @@ export type MacroPluginHooks = Omit<
   ) => (() => void) | void | Promise<(() => void) | void>
 }
 
-export type InternalPluginOptions = TransformerOptions & {
+export type InternalPluginOptions = {
   name: string
   dtsPath: string
-
-  macros: NamespacedMacros
-  modules: NamespacedModules
-
-  types: NamespacedTypes
-
+  transformer: TransformerOptions
+  exports: NormalizedExports
   hooks: MacroPluginHooks
 }
 
@@ -43,11 +35,8 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
   const {
     name,
     dtsPath,
-    modules,
-    macros,
-    maxRecursion,
-    parserPlugins,
-    types,
+    exports,
+    transformer,
     hooks: {
       buildStart,
       configResolved,
@@ -59,58 +48,52 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
   } = options
 
-  let devMode = false
-  let container: MacroContainer | undefined = new MacroContainer(
-    getTransformer({
-      parserPlugins,
-      maxRecursion,
-    })
-  )
-  container.add(macros, modules, types)
+  let runtime: Runtime | undefined = new Runtime({ transformer })
+
+  runtime.register(exports)
 
   return {
     __internal_macro_plugin: true,
     __consume() {
-      container = undefined
-      return { id: name, macros, modules, types, hooks: {} } as MacroProvider
+      if (!runtime) throw new Error(`plugin '${name}' is used more than once.`)
+      const provider: MacroProvider = {
+        id: name,
+        exports: runtime.container,
+        hooks: {},
+      }
+      runtime = undefined
+      return provider
     },
     name,
     enforce: 'pre',
     buildStart(opt) {
-      container?.generateDts(dtsPath).then()
+      runtime?.generateDts(dtsPath).then()
       // hook
       return buildStart?.bind(this)(opt)
     },
     configResolved(config) {
-      if (config.env.DEV) devMode = true
+      runtime?.setDevMode(config.env.DEV)
       // hook
       return configResolved?.(config)
     },
     resolveId(id, importer, options, ssr) {
-      const result = container?.callResolveId(id)
+      const result = runtime?.handleResolveId(id)
       if (result) return result
       // hook
       return resolveId?.bind(this)(id, importer, options, ssr)
     },
     load(id, ssr) {
-      const result = container?.callLoad(id)
+      const result = runtime?.handleLoad(id)
       if (result) return result
       // hook
       return load?.bind(this)(id, ssr)
     },
     transform(code, id, ssr) {
-      if (container && /\.[jt]sx?$/.test(id)) {
-        const transformed = container.callTransform({
-          code,
-          id,
-          ssr,
-          dev: devMode,
-        })
-        if (transformed !== undefined)
-          return transform
-            ? transform.bind(this)(transformed, id, ssr)
-            : transformed
-      }
+      const transformed = runtime?.handleTransform(code, id, ssr)
+      if (transformed !== undefined)
+        return transform
+          ? transform.bind(this)(transformed, id, ssr)
+          : transformed
       // hook
       return transform?.bind(this)(code, id, ssr)
     },
