@@ -1036,10 +1036,10 @@ util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
-vite-plugin-macro@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/vite-plugin-macro/-/vite-plugin-macro-0.0.3.tgz#1f33b6e520cc0099c2aab7793110abfc4d3209cd"
-  integrity sha512-m0ZqZlHpmEaSA/hXgdhIqZP3dlvcQgEMnAClwCJDItCD0Eyc1J3vyEDUbLjsSN6q5h5eE4AhjyX8JZC3vDSTHA==
+vite-plugin-macro@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/vite-plugin-macro/-/vite-plugin-macro-0.0.5.tgz#335185dee42151ffb5ff3f20b228bba516eaa6f5"
+  integrity sha512-vO2UrbY6mfy551ilz8ART5ksMYB1Vwyn2CeE0PSL6/QyU/QMWnrLCMZwcl3NuXYRsUEWxzqapqNbSBZPnkb1BQ==
   dependencies:
     "@babel/generator" "^7.14.5"
     "@babel/parser" "^7.14.7"

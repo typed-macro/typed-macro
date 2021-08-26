@@ -1,5 +1,6 @@
 import { NO_OP, validateFnName } from '@/common'
-import type { MacroWithMeta, MacroHandler } from '@/macro'
+import type { MacroWithMeta } from '@/macro'
+import { MacroHandler } from '@/runtime/types'
 
 type MacroBuilder = {
   /**

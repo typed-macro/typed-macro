@@ -22,3 +22,10 @@ export const findProgramPath = (ast: File) => {
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 export const NO_OP = () => {}
+
+export const findDuplicatedItem = <T>(a: T[], b: T[]) => {
+  for (const item of a) {
+    if (b.includes(item)) return item
+  }
+  return undefined
+}

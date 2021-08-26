@@ -26,6 +26,7 @@
   "types": "dist/index.d.ts",
   "version": "0.1.1",
   "scripts": {
+    "bootstrap": "node scripts/bootstrap.mjs",
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
     "test": "jest",
@@ -36,7 +37,6 @@
   },
   "devDependencies": {
     "@types/jest": "^27.0.1",
-    "@types/mustache": "^4.1.2",
     "@types/node": "^16.3.2",
     "@types/shelljs": "^0.8.9",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
@@ -64,8 +64,7 @@
     "@babel/types": "^7.14.5",
     "@types/babel__generator": "^7.6.3",
     "@types/babel__template": "^7.4.1",
-    "@types/babel__traverse": "^7.14.2",
-    "mustache": "^4.2.0"
+    "@types/babel__traverse": "^7.14.2"
   },
   "peerDependencies": {
     "vite": "^2"

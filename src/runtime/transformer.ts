@@ -11,29 +11,40 @@ import {
 } from '@babel/types'
 import traverse, { NodePath } from '@babel/traverse'
 import template from '@babel/template'
-import { Macro } from '@/macro'
-import { BABEL_TOOLS, getHelper } from '@/helper'
 import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
-
-export type NamespacedMacros = { [namespace: string]: Macro[] }
+import { Macro, MacroHelper, NamespacedMacros } from './types'
+import { getTransformHelper } from '@/helper/transform'
+import { getPathHelper } from '@/helper/path'
+import { getStateHelper, State } from '@/helper/state'
+import { BABEL_TOOLS } from '@/helper/babel'
 
 export type TransformerOptions = {
-  macros: NamespacedMacros
-
-  maxRecursion: number
-  parserPlugins: ParserPlugin[]
+  maxRecursion?: number
+  parserPlugins?: ParserPlugin[]
 }
 
-export function getTransformer({
-  parserPlugins,
-  maxRecursion,
-  macros,
-}: TransformerOptions) {
-  throwErrorIfConflict(macros)
+export type TransformerContext = {
+  code: string
+  id: string
+  ssr?: boolean
+  dev: boolean
+}
 
-  return (code: string, id: string, dev: boolean) => {
+export type Transformer = (
+  ctx: TransformerContext,
+  macros: NamespacedMacros
+) => string | undefined
+
+export function getTransformer({
+  parserPlugins = [],
+  maxRecursion = 0,
+}: TransformerOptions): Transformer {
+  maxRecursion = maxRecursion > 0 ? maxRecursion : 5
+  parserPlugins = ['typescript', 'jsx', ...parserPlugins]
+
+  return ({ code, id, ssr = false, dev }, macros) => {
     const ast = parse(code, {
       sourceType: 'module',
       plugins: parserPlugins,
@@ -49,44 +60,33 @@ export function getTransformer({
     const importedMacros = collect()
     if (!importedMacros.length) return
 
-    const applyCtx: ApplyContext = {
+    const ctx: ApplyContext = {
       code,
       filepath: id,
       ast,
+      ssr,
       importedMacros,
+      state: {
+        thisTurn: {},
+        crossTurn: {},
+      },
     }
 
     let loopCount = 0
-    while (loopCount < maxRecursion) {
-      const { applied, recollectMacros } = applyMacros(applyCtx)
-      if (!applied) break
-      if (recollectMacros) importedMacros.push(...collect())
-
-      loopCount++
+    while (loopCount++ < maxRecursion && applyMacros(ctx)) {
       if (loopCount === maxRecursion)
         throw new Error(
           `Reached the maximum recursion, please check macros applied in file ${id}`
         )
+      ctx.importedMacros.push(...collect())
+      // clear this turn's state
+      ctx.state.thisTurn = {}
     }
 
     return generate(ast, {
       retainLines: true,
     }).code
   }
-}
-
-export function throwErrorIfConflict(macros: NamespacedMacros) {
-  Object.keys(macros).forEach((ns) => {
-    const mem = Object.create(null)
-    macros[ns].forEach((m) => {
-      if (mem[m.name]) {
-        throw new Error(
-          `Error when loading macros: a macro with name '${m.name}' in '${ns}' already existed`
-        )
-      }
-      mem[m.name] = 1
-    })
-  })
 }
 
 type ImportedAsNS = {
@@ -204,13 +204,10 @@ type ApplyContext = {
   code: string
   filepath: string
   ast: File
+  ssr: boolean
 
   importedMacros: ImportedMacro[]
-}
-
-type ApplyResult = {
-  applied: boolean
-  recollectMacros: boolean
+  state: State
 }
 
 export function applyMacros({
@@ -218,15 +215,15 @@ export function applyMacros({
   filepath,
   ast,
   importedMacros,
-}: ApplyContext): ApplyResult {
-  const result: ApplyResult = {
-    applied: false,
-    recollectMacros: false,
-  }
+  ssr,
+  state,
+}: ApplyContext): boolean {
+  let applied = false
 
-  const helper = Object.freeze({
-    forceRecollectMacros: () => (result.recollectMacros = true),
-    ...getHelper(filepath, ast),
+  const helper: MacroHelper = Object.freeze({
+    ...getTransformHelper(ast),
+    ...getPathHelper(filepath),
+    ...getStateHelper(state),
   })
 
   traverse(ast, {
@@ -245,6 +242,7 @@ export function applyMacros({
             code,
             filepath,
             path,
+            ssr,
             args: path.node.arguments,
           },
           BABEL_TOOLS,
@@ -257,10 +255,10 @@ export function applyMacros({
           } in ${filepath} near ${nodeLoc(path.node)}:\n ${e}`
         )
       } finally {
-        result.applied = true
+        applied = true
       }
     },
   })
 
-  return result
+  return applied
 }

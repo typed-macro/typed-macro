@@ -1,38 +1,11 @@
 import { Plugin } from 'vite'
 import { ParserPlugin } from '@babel/parser'
-import { InternalPluginOptions, MacroPluginHooks, plugin } from '@/plugin'
-import { MacroWithMeta } from '@/macro'
-
-type Exportable = (
-  | {
-      /**
-       * as macros
-       */
-      macros: MacroWithMeta[]
-    }
-  | {
-      /**
-       * as module, code will be used as source code of the module
-       */
-      code: string
-    }
-) & {
-  /**
-   * Type definitions, will be written to d.ts.
-   *
-   * e.g.
-   * ```typescript
-   * { exports: { '@macros': { customTypes: `type A = string` } } }
-   * ```
-   * will generate
-   * ```typescript
-   * declare module '@macros' {
-   *   type A = string
-   * }
-   * ```
-   */
-  customTypes?: string
-}
+import {
+  InternalPluginOptions,
+  macroPlugin,
+  MacroPluginHooks,
+} from '@/macroPlugin'
+import { NamespacedExportable, normalizeExports } from './exportable'
 
 export type MacroPluginOptions = {
   /**
@@ -61,9 +34,7 @@ export type MacroPluginOptions = {
    * macroA(someArgs)
    * ```
    */
-  exports: {
-    [namespace: string]: Exportable
-  }
+  exports: NamespacedExportable
   /**
    * The path of the automatically generated type declaration file.
    */
@@ -85,43 +56,21 @@ export type MacroPluginOptions = {
   parserPlugins?: ParserPlugin[]
 }
 
-function normalizeOption(raw: MacroPluginOptions): InternalPluginOptions {
-  const {
-    name,
-    hooks = {},
-    dtsPath,
-    exports,
-    maxRecursion,
-    parserPlugins,
-  } = raw
-  const macros: InternalPluginOptions['macros'] = Object.create(null)
-  const modules: InternalPluginOptions['modules'] = Object.create(null)
-  const customTypes: InternalPluginOptions['customTypes'] = Object.create(null)
-  Object.keys(exports).forEach((ns) => {
-    const item = exports[ns]
-    customTypes[ns] = {
-      moduleScopeTypes: item.customTypes,
-      macroScope: [],
-    }
-    if ('code' in item) {
-      modules[ns] = item.code
-    } else {
-      macros[ns] = item.macros.map((m) => ({ name: m.name, apply: m.apply }))
-      customTypes[ns].macroScope = item.macros.map((m) => ({
-        name: m.name,
-        meta: m.meta,
-      }))
-    }
-  })
+function normalizeOption({
+  name,
+  dtsPath,
+  hooks = {},
+  maxRecursion,
+  parserPlugins,
+  exports,
+}: MacroPluginOptions): InternalPluginOptions {
   return {
     name,
     dtsPath,
-    modules,
-    macros,
-    customTypes,
-    maxRecursion: maxRecursion && maxRecursion > 0 ? maxRecursion : 5,
-    parserPlugins: ['typescript', 'jsx', ...(parserPlugins || [])],
     hooks,
+    maxRecursion,
+    parserPlugins,
+    ...normalizeExports(exports),
   }
 }
 
@@ -130,5 +79,5 @@ function normalizeOption(raw: MacroPluginOptions): InternalPluginOptions {
  * @param options plugin options.
  */
 export function defineMacroPlugin(options: MacroPluginOptions): Plugin {
-  return plugin(normalizeOption(options))
+  return macroPlugin(normalizeOption(options))
 }

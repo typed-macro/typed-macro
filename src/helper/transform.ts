@@ -1,58 +1,10 @@
-import { dirname, resolve, sep } from 'path'
-import { existsSync } from 'fs'
 import { Node, NodePath } from '@babel/traverse'
 import template from '@babel/template'
 import { File, ImportDeclaration, Program } from '@babel/types'
 import { ImportOption, matchImportStmt, renderImportStmt } from './import'
 import { findProgramPath } from '@/common'
 
-export type Helper = {
-  /**
-   * Get the directory of the root project or the nearest project.
-   * @param which 'root' or 'leaf'
-   */
-  projectDir: (which: 'root' | 'leaf') => string
-
-  /**
-   * Normalize path pattern so can resolve file paths as import paths
-   * @param path relative path or path pattern
-   * @param root absolute file path of the project dir, default to projectDir('leaf')
-   * @param importer absolute file path of the importer, default to current module
-   *
-   * e.g. search files by glob pattern and then import them
-   *
-   * ```typescript
-   * // /src/example/a.ts
-   * // /src/example/b.ts
-   * // in /src/another/index.ts
-   * const pattern = '../example/*.ts'
-   * const { normalized, base, resolveImportPath } = normalizePathPattern(pattern)
-   * const importPaths = glob.sync(normalized, { cwd: base }).map(resolveImportPath)
-   *
-   * // importPaths = ['../example/a.ts', '../example/b.ts']
-   * ```
-   */
-  normalizePathPattern: (
-    pattern: string,
-    root?: string,
-    importer?: string
-  ) => {
-    /**
-     * Normalized path or path pattern,
-     */
-    normalized: string
-    /**
-     * Base path for the normalized path or path pattern.
-     */
-    base: string
-    /**
-     * Get import path from file path got by normalized path and base,
-     * almost the opposite operation of normalization
-     * @param path file path
-     */
-    resolveImportPath: (path: string) => string
-  }
-
+export type TransformHelper = {
   /**
    * Prepend import statements to program.
    * @param imports an import or an array of imports
@@ -134,92 +86,12 @@ export type Helper = {
    * @param node any node path
    */
   getProgram: (node?: NodePath) => NodePath<Program>
-
-  /**
-   * Force to recollect imported macros in the next loop.
-   * Usually used after importing new macros to program during expanding a macro.
-   *
-   * Note:
-   *
-   *  Only collected imported macros can be applied, because plugin only
-   *  searches call expressions for collected macros. Also, external macros
-   *  cannot be collected because plugin is unaware of external macros.
-   */
-  forceRecollectMacros: () => void
 }
 
-const projectDirCache = {
-  root: '',
-  leaf: '',
-}
-
-const projectDir: Helper['projectDir'] = (which) => {
-  if (projectDirCache[which]) return projectDirCache[which]
-
-  const paths = (require.main?.path || process.cwd()).split(sep)
-
-  if (which === 'root') {
-    for (let i = 0; i < paths.length; i++) {
-      const path = paths.slice(0, i + 1).join(sep)
-      if (existsSync([path, 'node_modules'].join(sep)))
-        return (projectDirCache['root'] = path)
-    }
-  } else {
-    for (let i = paths.length; i > 0; i--) {
-      const path = paths.slice(0, i).join(sep)
-      if (existsSync([path, 'node_modules'].join(sep)))
-        return (projectDirCache['leaf'] = path)
-    }
-  }
-
-  throw new Error('can not find project root')
-}
-
-export function getHelper(
-  filepath: string,
-  ast: File
-): Omit<Helper, 'forceRecollectMacros'> {
+export function getTransformHelper(ast: File): TransformHelper {
   const thisProgram = findProgramPath(ast)
 
-  const normalizePathPattern: Helper['normalizePathPattern'] = (
-    pattern,
-    root = projectDir('leaf'),
-    importer = filepath
-  ) => {
-    if (!pattern.startsWith('.') && !pattern.startsWith('/')) {
-      throw new Error(
-        `pattern must start with "." or "/" (relative to project root)`
-      )
-    }
-    let base: string
-    let parentDepth = 0
-    const isAbsolute = pattern.startsWith('/')
-    if (isAbsolute) {
-      base = resolve(root)
-      pattern = pattern.slice(1)
-    } else {
-      base = dirname(importer)
-      while (pattern.startsWith('../')) {
-        pattern = pattern.slice(3)
-        base = resolve(base, '../')
-        parentDepth++
-      }
-      if (pattern.startsWith('./')) {
-        pattern = pattern.slice(2)
-      }
-    }
-    return {
-      normalized: pattern,
-      base,
-      resolveImportPath: isAbsolute
-        ? (f) => `/${f}`
-        : parentDepth
-        ? (f) => `${'../'.repeat(parentDepth)}${f}`
-        : (f) => `./${f}`,
-    }
-  }
-
-  const findImported: Helper['findImported'] = (
+  const findImported: TransformHelper['findImported'] = (
     imp,
     loose = true,
     program = thisProgram
@@ -231,7 +103,7 @@ export function getHelper(
     }
   }
 
-  const hasImported: Helper['hasImported'] = (
+  const hasImported: TransformHelper['hasImported'] = (
     imp,
     loose = true,
     program = thisProgram
@@ -266,7 +138,7 @@ export function getHelper(
     ) as ImportDeclaration[]
   }
 
-  const prependImports: Helper['prependImports'] = (
+  const prependImports: TransformHelper['prependImports'] = (
     imports,
     program = thisProgram
   ) => {
@@ -283,7 +155,7 @@ export function getHelper(
     ).pop() as NodePath<ImportDeclaration>
   }
 
-  const appendImports: Helper['appendImports'] = (
+  const appendImports: TransformHelper['appendImports'] = (
     imports,
     program = thisProgram
   ) => {
@@ -300,28 +172,26 @@ export function getHelper(
     ).pop() as NodePath<ImportDeclaration>
   }
 
-  const prependToBody: Helper['prependToBody'] = (
+  const prependToBody: TransformHelper['prependToBody'] = (
     nodes,
     program = thisProgram
   ) => {
     return program.unshiftContainer('body', nodes).pop() as NodePath
   }
 
-  const appendToBody: Helper['appendToBody'] = (
+  const appendToBody: TransformHelper['appendToBody'] = (
     nodes,
     program = thisProgram
   ) => {
     return program.pushContainer('body', nodes).pop() as NodePath
   }
 
-  const getProgram: Helper['getProgram'] = (node) => {
+  const getProgram: TransformHelper['getProgram'] = (node) => {
     if (!node) return thisProgram
     return node.findParent((p) => p.isProgram()) as NodePath<Program>
   }
 
   return {
-    projectDir,
-    normalizePathPattern,
     findImported,
     hasImported,
     prependImports,
