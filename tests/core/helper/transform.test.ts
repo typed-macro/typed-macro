@@ -1,34 +1,29 @@
-import { getHelper } from '@/helper/transform'
+import { getTransformHelper, TransformHelper } from '@/core/helper/transform'
 import { File } from '@babel/types'
-import { getAST, matchCodeSnapshot } from '../testutils'
+import { getAST, matchCodeSnapshot } from '../../testutils'
 import template from '@babel/template'
-import { ImportOption } from '@/helper/import'
+import { ImportOption } from '@/core/helper/import'
+import traverse from '@babel/traverse'
 
-describe('macro handler helpers', () => {
+describe('TransformHelper', () => {
   let ast: File
-  let helper: ReturnType<typeof getHelper>
+  let helper: TransformHelper
 
-  const reset = (
-    code = `const z = 1`,
-    filepath = '/workspace/project-a/src/test.ts'
-  ) => {
+  const reset = (code = `const z = 1`) => {
     ast = getAST(code)
-    helper = getHelper(filepath, ast)
+    helper = getTransformHelper(ast)
   }
 
   beforeEach(reset)
 
-  it('projectDir() should work', () => {
-    const leaf = helper.projectDir('leaf')
-    const root = helper.projectDir('root')
-    expect(leaf).not.toBeUndefined()
-    expect(root).not.toBeUndefined()
-    // in this project it should be equal
-    expect(leaf).toBe(root)
-  })
-
   it('getProgram() should work', () => {
     expect(helper.getProgram()).not.toBeUndefined()
+    traverse(ast, {
+      Declaration(path) {
+        expect(helper.getProgram(path)).not.toBeUndefined()
+        path.stop()
+      },
+    })
   })
 
   it('findImported() should return found node path', () => {
@@ -180,39 +175,6 @@ describe('macro handler helpers', () => {
       reset(`const b = 1`)
       helper.appendToBody(template.statement.ast(`console.log('appended')`))
       matchCodeSnapshot(ast)
-    }
-  })
-
-  it('normalizePathPattern() should work', () => {
-    {
-      const { normalized, resolveImportPath } = helper.normalizePathPattern(
-        '../assets/*.css',
-        '/workspace/a',
-        '/workspace/a/src/test.ts'
-      )
-      expect(normalized).toBe('assets/*.css')
-      expect(resolveImportPath('assets/hello.css')).toBe('../assets/hello.css')
-    }
-    {
-      const { normalized, resolveImportPath } = helper.normalizePathPattern(
-        '/assets/*.css',
-        '/workspace/a',
-        '/workspace/a/src/test/test.ts'
-      )
-      expect(normalized).toBe('assets/*.css')
-      expect(resolveImportPath('assets/hello.css')).toBe(
-        // absolute
-        '/assets/hello.css'
-      )
-    }
-    {
-      const { normalized, resolveImportPath } = helper.normalizePathPattern(
-        './assets/*.css',
-        '/workspace/a',
-        '/workspace/a/src/test.ts'
-      )
-      expect(normalized).toBe('assets/*.css')
-      expect(resolveImportPath('assets/hello.css')).toBe('./assets/hello.css')
     }
   })
 })

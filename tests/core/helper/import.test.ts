@@ -1,9 +1,9 @@
-import { getStatement } from '../testutils'
+import { getStatement } from '../../testutils'
 import {
   ImportOption,
   matchImportStmt,
   renderImportStmt,
-} from '@/helper/import'
+} from '@/core/helper/import'
 import { ImportDeclaration } from '@babel/types'
 
 describe('matchImportStmt()', () => {

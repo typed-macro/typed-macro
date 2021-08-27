@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MacroManager should handle load properly 1`] = `"export function hello(msg) {console.log(msg)}"`;
+
+exports[`MacroManager should handle load properly 2`] = `"export {}"`;
+
+exports[`MacroManager should handle transform with macro 1`] = `"import { hello } from '@helper';hello('world');"`;

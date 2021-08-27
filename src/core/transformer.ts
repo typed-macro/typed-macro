@@ -14,14 +14,15 @@ import template from '@babel/template'
 import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
-import { Macro, MacroHelper, NamespacedMacros } from './types'
 import {
   BABEL_TOOLS,
   getPathHelper,
   getStateHelper,
   getTransformHelper,
-  State,
+  StateHelper,
 } from '@/core/helper'
+import { NamespacedMacros } from './exports'
+import { Macro, MacroHelper } from './macro'
 
 export type TransformerOptions = {
   maxRecursion?: number
@@ -30,7 +31,7 @@ export type TransformerOptions = {
 
 export type TransformerContext = {
   code: string
-  id: string
+  filepath: string
   ssr?: boolean
   dev: boolean
 }
@@ -47,43 +48,38 @@ export function createTransformer({
   maxRecursion = maxRecursion > 0 ? maxRecursion : 5
   parserPlugins = ['typescript', 'jsx', ...parserPlugins]
 
-  return ({ code, id, ssr = false, dev }, macros) => {
+  return ({ code, filepath, ssr = false, dev }, macros) => {
     const ast = parse(code, {
       sourceType: 'module',
       plugins: parserPlugins,
     })
 
-    const collect = () =>
-      collectImportedMacros(
-        ast,
-        macros,
-        // Note: keep import statements in dev mode so can invalidate macro modules
-        dev /* keep import stmt */
-      )
+    // Note: keep import statements in dev mode so can invalidate macro modules
+    const collect = () => collectImportedMacros(ast, macros, dev)
+
     const importedMacros = collect()
     if (!importedMacros.length) return
 
-    const ctx: ApplyContext = {
-      code,
-      filepath: id,
-      ast,
-      ssr,
-      importedMacros,
-      state: {
-        thisTurn: {},
-        crossTurn: {},
-      },
-    }
+    const state = getStateHelper()
 
     let loopCount = 0
-    while (loopCount++ < maxRecursion && applyMacros(ctx)) {
+    while (
+      loopCount++ < maxRecursion &&
+      applyMacros({
+        code,
+        filepath,
+        ast,
+        ssr,
+        importedMacros,
+        state,
+      }) &&
+      importedMacros.push(...collect()) &&
+      state.clearTurnState()
+    ) {
       if (loopCount === maxRecursion)
         throw new Error(
-          `Reached the maximum recursion, please check macros applied in file ${id}`
+          `Reached the maximum recursion when apply macros on ${filepath}`
         )
-      ctx.importedMacros.push(...collect())
-      // clear this turn's state
-      ctx.state.thisTurn = {}
     }
 
     return generate(ast, {
@@ -210,7 +206,7 @@ type ApplyContext = {
   ssr: boolean
 
   importedMacros: ImportedMacro[]
-  state: State
+  state: StateHelper
 }
 
 export function applyMacros({
@@ -226,7 +222,7 @@ export function applyMacros({
   const helper: MacroHelper = Object.freeze({
     ...getTransformHelper(ast),
     ...getPathHelper(filepath),
-    ...getStateHelper(state),
+    ...state,
   })
 
   traverse(ast, {

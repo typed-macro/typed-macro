@@ -1,5 +1,6 @@
 import { validateFnName } from '@/common'
-import { Macro, MacroHandler, MacroWithType } from '@/core/types'
+import { Macro, MacroHandler } from '@/core/macro'
+import { macro, MacroMeta } from '@/core/macro'
 
 type MacroBuilder = {
   /**
@@ -22,14 +23,6 @@ type MacroBuilder = {
   withHandler: (handler: MacroHandler) => Macro
 }
 
-type MacroMeta = {
-  signatures: {
-    comment?: string
-    signature: string
-  }[]
-  customTypes: string[]
-}
-
 /**
  * Define a macro.
  * @param name the name of the macro, should be a valid identifier name.
@@ -41,12 +34,12 @@ export function defineMacro(name: string): Omit<MacroBuilder, 'withHandler'> {
 
   const meta: MacroMeta = {
     signatures: [],
-    customTypes: [],
+    types: [],
   }
 
   const builder: MacroBuilder = {
     withCustomType(typeDefinition) {
-      meta.customTypes.push(typeDefinition)
+      meta.types.push(typeDefinition)
       return builder
     },
     withSignature(signature, comment) {
@@ -58,29 +51,9 @@ export function defineMacro(name: string): Omit<MacroBuilder, 'withHandler'> {
         throw new Error(
           `Please call .withSignature() before .withHandler() to specify at least one signature for macro '${name}'`
         )
-      return {
-        name,
-        apply: handler,
-        __types: renderMacroType(name, meta),
-      } as MacroWithType
+      return macro(name, meta, handler)
     },
   }
 
   return builder
-}
-
-function renderMacroType(name: string, meta: MacroMeta) {
-  return [
-    meta.customTypes.join('\n'),
-    meta.signatures
-      .map((s) =>
-        s.comment
-          ? `  /** ${s.comment} **/
-  export function ${name}${s.signature}`
-          : `  export function ${name}${s.signature}`
-      )
-      .join('\n'),
-  ]
-    .filter((t) => !!t)
-    .join('\n')
 }

@@ -4,7 +4,7 @@ import {
   macroPlugin,
   MacroPluginHooks,
 } from '@/macroPlugin'
-import { NamespacedExportable, normalizeExports } from '@/core/types'
+import { NamespacedExportable, normalizeExports } from '@/core/exports'
 import { FlatOptions } from '@/common'
 
 export type MacroPluginOptions = FlatOptions<

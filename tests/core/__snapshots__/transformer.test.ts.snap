@@ -1,18 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`applyMacros() should work 1`] = `
-Object {
-  "applied": false,
-  "recollectMacros": false,
-}
-`;
+exports[`applyMacros() should work 1`] = `false`;
 
-exports[`applyMacros() should work 2`] = `
-Object {
-  "applied": true,
-  "recollectMacros": false,
-}
-`;
+exports[`applyMacros() should work 2`] = `true`;
 
 exports[`collectImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
 
@@ -78,6 +68,8 @@ Array [
 ]
 `;
 
+exports[`collectImportedMacros() should work 5`] = `Array []`;
+
 exports[`findCalledMacro() should work 1`] = `
 Object {
   "name": "a",
@@ -110,6 +102,8 @@ Object {
 
 exports[`findCalledMacro() should work 8`] = `"a"`;
 
-exports[`transformer should support recollect imported macros 1`] = `"console.log('hello world');"`;
+exports[`findCalledMacro() should work 9`] = `"a"`;
 
-exports[`transformer should work 1`] = `"console.log(\\"yeah yeah yeah\\");"`;
+exports[`transformer should recollect imported macros every loop 1`] = `"console.log('hello world');"`;
+
+exports[`transformer should work 1`] = `"import '@echo';console.log(\\"yeah yeah yeah\\");"`;

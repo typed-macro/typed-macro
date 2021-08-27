@@ -1,8 +1,8 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { NormalizedExports } from '@/core/types'
+import { NormalizedExports } from '@/core/exports'
 import { MacroProvider } from '@/macroProvider'
 import { DevServerHelper, getDevServerHelper } from '@/helper/server'
-import { Runtime, RuntimeOptions } from '@/core'
+import { Runtime, RuntimeOptions } from '@/core/runtime'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -63,12 +63,14 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
     name,
     enforce: 'pre',
-    buildStart(opt) {
-      runtime?.typeRenderer.write().then()
-      return buildStart?.bind(this)(opt)
+    async buildStart(opt) {
+      await Promise.all([
+        runtime?.typeRenderer.write(),
+        buildStart?.bind(this)(opt),
+      ])
     },
     configResolved(config) {
-      runtime?.setDevMode(config.env.DEV)
+      runtime?.setDevMode(config?.env?.DEV ?? false)
       return configResolved?.(config)
     },
     resolveId(id, importer, options, ssr) {
@@ -83,8 +85,7 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
     transform(code, id, ssr) {
       const transformed = runtime?.handleTransform(code, id, ssr)
-      if (transform) return transform.bind(this)(transformed ?? code, id, ssr)
-      return transformed
+      return transform?.bind(this)(transformed ?? code, id, ssr) ?? transformed
     },
     configureServer(server) {
       // hook
@@ -95,5 +96,5 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
 }
 
 export function isMacroPlugin(o: unknown): o is MacroPlugin {
-  return (o as any).__internal_macro_plugin
+  return (o as any).__internal_macro_plugin ?? false
 }

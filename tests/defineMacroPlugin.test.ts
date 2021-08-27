@@ -3,8 +3,7 @@ import { NO_OP } from './testutils'
 import { defineMacroPlugin } from '@/defineMacroPlugin'
 
 describe('defineMacroPlugin', () => {
-  // since defineMacroPlugin is just a wrapper of plugin()
-  // and plugin() is tested.
+  // keep test simple since defineMacroPlugin is just a wrapper of macroPlugin
   it('should work', () => {
     const m = defineMacro('test')
       .withCustomType('type A = string')
@@ -12,14 +11,14 @@ describe('defineMacroPlugin', () => {
       .withHandler(NO_OP)
     expect(() =>
       defineMacroPlugin({
-        dtsPath: '',
+        typesPath: '',
         exports: { '@test': { macros: [m] } },
         name: 't',
       })
     ).not.toThrow()
     expect(() =>
       defineMacroPlugin({
-        dtsPath: '',
+        typesPath: '',
         exports: { '@test': { macros: [m, m] } },
         name: 't',
       })

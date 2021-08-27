@@ -1,12 +1,21 @@
-import { findProgramPath, nodeLoc, validateFnName } from '@/common'
+import {
+  findDuplicatedItem,
+  findProgramPath,
+  nodeLoc,
+  validateFnName,
+} from '@/common'
 import { parse } from '@babel/parser'
 import template from '@babel/template'
-import { getAST } from './testutils'
+import { getAST, getExpression } from './testutils'
 
 describe('nodeLoc()', () => {
   it('should work', () => {
     const ast = getAST(`const a = 1`)
     expect(nodeLoc(ast.program.body[0])).toMatchSnapshot()
+  })
+
+  it('should have fallback text', () => {
+    expect(nodeLoc(getExpression(`1 + 1`))).toMatchSnapshot()
   })
 })
 
@@ -43,5 +52,12 @@ describe('findProgramPath()', () => {
     programA.unshiftContainer('body', template.statement.ast('const b = 2'))
     expect(programA.get('body').length).toBe(2)
     expect(programB.get('body').length).toBe(2)
+  })
+})
+
+describe('findDuplicatedItem()', () => {
+  it('should work', () => {
+    expect(findDuplicatedItem([1, 2, 3], [4, 5, 1])).toBe(1)
+    expect(findDuplicatedItem([1, 2, 3], [4, 5, 6])).toBeUndefined()
   })
 })

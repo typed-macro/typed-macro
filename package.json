@@ -30,7 +30,6 @@
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
     "test": "jest",
-    "test:p": "jest --testNamePattern",
     "lint": "eslint . --cache",
     "lint:nocache": "eslint .",
     "prepare": "is-ci || husky install"

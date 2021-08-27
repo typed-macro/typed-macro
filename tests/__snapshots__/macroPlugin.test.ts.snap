@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MacroPlugin should handle load properly 1`] = `"export function hello(msg) {console.log(msg)}"`;
+
+exports[`MacroPlugin should handle load properly 2`] = `"export {}"`;
+
+exports[`MacroPlugin should handle transform with macro 1`] = `"import { hello } from '@helper';hello('world');"`;
+
+exports[`MacroPlugin should support to be consumed 1`] = `
+Object {
+  "exports": Object {
+    "macros": Object {
+      "@echo": Array [
+        Object {
+          "apply": [Function],
+          "name": "echo",
+        },
+      ],
+    },
+    "modules": Object {
+      "@helper": "export function hello(msg) {console.log(msg)}",
+    },
+    "types": Object {},
+  },
+  "hooks": Object {},
+  "id": "test",
+}
+`;

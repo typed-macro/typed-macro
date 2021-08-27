@@ -6,9 +6,9 @@ import {
 } from '@/macroProvider'
 import { isMacroPlugin, MacroPlugin } from '@/macroPlugin'
 import { getDevServerHelper } from '@/helper/server'
-import { Runtime, RuntimeOptions } from '@/core'
+import { Runtime, RuntimeOptions } from '@/core/runtime'
 
-export class MacroManagerContext {
+class MacroManagerContext {
   private config?: ResolvedConfig
   private devServer?: ViteDevServer
 
@@ -19,7 +19,7 @@ export class MacroManagerContext {
   constructor(private runtime: Runtime) {}
 
   private get isRollup() {
-    return !!this.config
+    return !this.config
   }
 
   add(p: MacroProvider | Plugin) {
@@ -40,7 +40,7 @@ export class MacroManagerContext {
     this.plugins.push(plugin)
   }
 
-  async handleBuildStart() {
+  private async callStartHooks() {
     if (this.isRollup)
       await Promise.all(this.hooks.map((h) => h.onRollupStart?.()))
     else
@@ -54,8 +54,13 @@ export class MacroManagerContext {
         )
       )
     await Promise.all(this.hooks.map((h) => h.onStart?.()))
-    // no need to await
-    this.runtime.typeRenderer.write().then()
+  }
+
+  async handleBuildStart() {
+    await Promise.all([
+      this.runtime.typeRenderer.write(),
+      this.callStartHooks(),
+    ])
   }
 
   handleLoad(id: string) {
@@ -111,8 +116,8 @@ export function macroManager(
     configureServer(server) {
       context.handleConfigureServer(server)
     },
-    async buildStart() {
-      await context.handleBuildStart()
+    buildStart() {
+      return context.handleBuildStart()
     },
     resolveId(id) {
       return context.handleResolveId(id)
@@ -135,4 +140,8 @@ export function macroManager(
   ;(manager as InternalMacroManager).__internal_macro_manager = true
 
   return manager
+}
+
+export function isMacroManager(o: unknown): o is MacroManager {
+  return (o as InternalMacroManager).__internal_macro_manager
 }

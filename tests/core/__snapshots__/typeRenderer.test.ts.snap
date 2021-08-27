@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeRenderer should append() properly and update properly 1`] = `
+"declare module '@macro' {
+type A = string
+type B = string
+}"
+`;
+
+exports[`TypeRenderer should append() properly and update properly 2`] = `
+"declare module '@macro' {
+type A = string
+type C = string
+}"
+`;
+
+exports[`TypeRenderer should append() properly and update properly 3`] = `
+"declare module '@macro' {
+type A = string
+type C = string
+}
+declare module '@another' {
+type B = string
+}"
+`;
+
+exports[`TypeRenderer should append() properly and update properly 4`] = `
+"declare module '@macro' {
+type A = string
+type C = string
+}
+declare module '@another' {
+type C = string
+}"
+`;
+
+exports[`TypeRenderer should render() properly 1`] = `""`;
+
+exports[`TypeRenderer should render() properly 2`] = `
+"declare module '@macro' {
+type A = string
+}"
+`;
+
+exports[`renderTypes() should work 1`] = `
+"declare module '@macro' {
+type A = string
+export function c():A
+}"
+`;
+
+exports[`renderTypes() should work 2`] = `
+"declare module '@macro' {
+export function c():A
+}"
+`;
+
+exports[`renderTypes() should work 3`] = `
+"declare module '@macro' {
+export function c():A
+}
+declare module '@another' {
+type B = string
+export function d():B
+}"
+`;

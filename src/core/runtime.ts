@@ -1,17 +1,20 @@
 import {
   createTypeRenderer,
-  NamespacedMacros,
-  NamespacedModules,
-  NamespacedTypes,
-  NormalizedExports,
   TypeRenderer,
   TypeRendererOptions,
-} from '@/core/types'
+} from '@/core/typeRenderer'
 import {
   createTransformer,
   Transformer,
   TransformerOptions,
 } from '@/core/transformer'
+import {
+  assertNoConflictMacro,
+  NamespacedMacros,
+  NamespacedModules,
+  NamespacedTypes,
+  NormalizedExports,
+} from './exports'
 import { findDuplicatedItem } from '@/common'
 
 export type RuntimeOptions = {
@@ -45,26 +48,10 @@ export class Runtime {
   }
 
   register({ macros, modules, types }: NormalizedExports) {
-    {
-      const duplicated = findDuplicatedItem(
-        Object.keys(types),
-        Object.keys(this.types)
-      )
-      if (duplicated) throw new Error(`duplicated namespace '${duplicated}'.`)
-    }
-    {
-      Object.keys(macros).forEach((ns) => {
-        const mem = Object.create(null)
-        macros[ns].forEach((m) => {
-          if (mem[m.name]) {
-            throw new Error(
-              `a macro with name '${m.name}' in '${ns}' already existed`
-            )
-          }
-          mem[m.name] = 1
-        })
-      })
-    }
+    assertNoDuplicatedNamespace(Object.keys(this.types), Object.keys(types))
+    assertNoDuplicatedNamespace(this.macrosNamespaces, Object.keys(macros))
+    assertNoDuplicatedNamespace(this.modulesNamespaces, Object.keys(modules))
+    assertNoConflictMacro(macros)
     Object.assign(this.macros, macros)
     this.macrosNamespaces = Object.keys(this.macros)
     Object.assign(this.modules, modules)
@@ -85,12 +72,12 @@ export class Runtime {
       return id
   }
 
-  handleTransform(code: string, id: string, ssr = false) {
-    if (/\.[jt]sx?$/.test(id))
+  handleTransform(code: string, filepath: string, ssr = false) {
+    if (/\.[jt]sx?$/.test(filepath))
       return this.transformer(
         {
           code,
-          id,
+          filepath,
           ssr,
           dev: this.devMode,
         },
@@ -109,4 +96,9 @@ export class Runtime {
   get typeRenderer() {
     return this._typeRenderer
   }
+}
+
+export function assertNoDuplicatedNamespace(ns1: string[], ns2: string[]) {
+  const duplicated = findDuplicatedItem(ns1, ns2)
+  if (duplicated) throw new Error(`duplicated namespace '${duplicated}'.`)
 }

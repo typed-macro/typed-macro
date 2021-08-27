@@ -1,4 +1,4 @@
-import { NormalizedExports } from '@/core/types'
+import { NormalizedExports } from '@/core/exports'
 import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
 
@@ -23,7 +23,7 @@ interface InternalMacroProvider extends MacroProvider {
 }
 
 export function isMacroProvider(o: unknown): o is MacroProvider {
-  return (o as any).__internal_macro_provider
+  return (o as any).__internal_macro_provider ?? false
 }
 
 export function macroProvider(provider: MacroProvider): MacroProvider {

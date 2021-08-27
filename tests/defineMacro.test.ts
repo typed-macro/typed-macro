@@ -4,10 +4,12 @@ import { NO_OP } from './testutils'
 describe('defineMacro', () => {
   it('should work', () => {
     expect(() =>
-      defineMacro('test')
-        .withCustomType('type A = string')
-        .withSignature('(): void', 'NO_OP')
-        .withHandler(NO_OP)
+      expect(
+        defineMacro('test')
+          .withCustomType('type A = string')
+          .withSignature('(): void', 'NO_OP')
+          .withHandler(NO_OP)
+      ).toMatchSnapshot()
     ).not.toThrow()
   })
 
