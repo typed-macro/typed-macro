@@ -4,10 +4,12 @@ import {
   macroPlugin,
   MacroPluginHooks,
 } from '@/macroPlugin'
-import { NamespacedExportable, normalizeExports } from './runtime/types'
-import { TransformerOptions } from '@/runtime/transformer'
+import { NamespacedExportable, normalizeExports } from '@/core/types'
+import { FlatOptions } from '@/common'
 
-export type MacroPluginOptions = TransformerOptions & {
+export type MacroPluginOptions = FlatOptions<
+  InternalPluginOptions['runtimeOptions']
+> & {
   /**
    * The name of plugin.
    */
@@ -35,26 +37,24 @@ export type MacroPluginOptions = TransformerOptions & {
    * ```
    */
   exports: NamespacedExportable
-  /**
-   * The path of the automatically generated type declaration file.
-   */
-  dtsPath: string
 }
 
 function normalizeOption({
   name,
-  dtsPath,
   hooks = {},
+  exports,
+  typesPath,
   maxRecursion,
   parserPlugins,
-  exports,
 }: MacroPluginOptions): InternalPluginOptions {
   return {
     name,
-    dtsPath,
     hooks,
     exports: normalizeExports(exports),
-    transformer: { maxRecursion, parserPlugins },
+    runtimeOptions: {
+      transformer: { maxRecursion, parserPlugins },
+      typeRenderer: { typesPath },
+    },
   }
 }
 

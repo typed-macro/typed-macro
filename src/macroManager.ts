@@ -4,33 +4,21 @@ import {
   MacroProvider,
   MacroProviderHooks,
 } from '@/macroProvider'
-import { TransformerOptions } from '@/runtime/transformer'
 import { isMacroPlugin, MacroPlugin } from '@/macroPlugin'
 import { getDevServerHelper } from '@/helper/server'
-import { Runtime } from '@/runtime'
-
-type MacroManagerContextOptions = {
-  transformer: TransformerOptions
-  dtsPath: string
-}
+import { Runtime, RuntimeOptions } from '@/core'
 
 export class MacroManagerContext {
-  private config?: ResolvedConfig = undefined
-  private devServer?: ViteDevServer = undefined
+  private config?: ResolvedConfig
+  private devServer?: ViteDevServer
 
   plugins: Plugin[] = []
 
   private hooks: MacroProviderHooks[] = []
 
-  private runtime: Runtime
-  private dtsPath: string
+  constructor(private runtime: Runtime) {}
 
-  constructor({ transformer, dtsPath }: MacroManagerContextOptions) {
-    this.runtime = new Runtime({ transformer })
-    this.dtsPath = dtsPath
-  }
-
-  get isRollup() {
+  private get isRollup() {
     return !!this.config
   }
 
@@ -67,7 +55,7 @@ export class MacroManagerContext {
       )
     await Promise.all(this.hooks.map((h) => h.onStart?.()))
     // no need to await
-    this.runtime.generateDts(this.dtsPath).then()
+    this.runtime.typeRenderer.write().then()
   }
 
   handleLoad(id: string) {
@@ -94,14 +82,12 @@ export class MacroManagerContext {
 }
 
 export type MacroManager = Plugin[] & {
-  use: {
-    (provider: MacroProvider): MacroManager
-    (plugin: Plugin): MacroManager
-  }
+  use: (...sources: (MacroProvider | Plugin)[]) => MacroManager
 }
 
-export type InternalMacroManagerOptions = MacroManagerContextOptions & {
+export type InternalMacroManagerOptions = {
   name: string
+  runtimeOptions: RuntimeOptions
 }
 
 interface InternalMacroManager extends MacroManager {
@@ -111,12 +97,9 @@ interface InternalMacroManager extends MacroManager {
 export function macroManager(
   options: InternalMacroManagerOptions
 ): MacroManager {
-  const { name, dtsPath, transformer } = options
+  const { name, runtimeOptions } = options
 
-  const context = new MacroManagerContext({
-    transformer,
-    dtsPath,
-  })
+  const context = new MacroManagerContext(new Runtime(runtimeOptions))
 
   const manager = context.plugins as MacroManager
   manager.push({
@@ -141,9 +124,9 @@ export function macroManager(
       return context.handleTransform(code, id, ssr)
     },
   })
-  manager.use = (p) => {
+  manager.use = (...sources) => {
     try {
-      context.add(p)
+      sources.forEach((s) => context.add(s))
     } catch (e) {
       throw new Error(`Error when use provider/plugin: ${e.message || e}`)
     }

@@ -3,7 +3,7 @@ import {
   MacroProvider,
   MacroProviderHooks,
 } from '@/macroProvider'
-import { NamespacedExportable, normalizeExports } from '@/runtime/types'
+import { NamespacedExportable, normalizeExports } from '@/core/types'
 
 export type MacroProviderOptions = {
   id: string

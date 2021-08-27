@@ -26,3 +26,11 @@ export const findDuplicatedItem = <T>(a: T[], b: T[]) => {
   }
   return undefined
 }
+
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
+  ? I
+  : never
+
+export type FlatOptions<T extends object> = UnionToIntersection<T[keyof T]>

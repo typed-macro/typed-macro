@@ -2,6 +2,7 @@ import template from '@babel/template'
 import traverse from '@babel/traverse'
 import * as types from '@babel/types'
 import { parse, parseExpression } from '@babel/parser'
+import generate from '@babel/generator'
 
 export type Babel = {
   /**
@@ -59,6 +60,16 @@ export type Babel = {
    * ```
    */
   parseExpression: typeof parseExpression
+  /**
+   * From @babel/generator.
+   * Help generate code string from ast.
+   *
+   * e.g.
+   * ```typescript
+   *  generate(someNode)
+   * ```
+   */
+  generate: typeof generate
 }
 
 export const BABEL_TOOLS: Babel = Object.freeze({
@@ -67,4 +78,5 @@ export const BABEL_TOOLS: Babel = Object.freeze({
   types,
   parse,
   parseExpression,
+  generate,
 })

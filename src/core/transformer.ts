@@ -15,10 +15,13 @@ import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
 import { Macro, MacroHelper, NamespacedMacros } from './types'
-import { getTransformHelper } from '@/helper/transform'
-import { getPathHelper } from '@/helper/path'
-import { getStateHelper, State } from '@/helper/state'
-import { BABEL_TOOLS } from '@/helper/babel'
+import {
+  BABEL_TOOLS,
+  getPathHelper,
+  getStateHelper,
+  getTransformHelper,
+  State,
+} from '@/core/helper'
 
 export type TransformerOptions = {
   maxRecursion?: number

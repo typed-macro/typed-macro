@@ -1,5 +1,5 @@
 import { validateFnName } from '@/common'
-import { Macro, MacroHandler, MacroWithType } from '@/runtime/types'
+import { Macro, MacroHandler, MacroWithType } from '@/core/types'
 
 type MacroBuilder = {
   /**

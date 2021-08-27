@@ -1,9 +1,8 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { TransformerOptions } from '@/runtime/transformer'
-import { NormalizedExports } from '@/runtime/types'
+import { NormalizedExports } from '@/core/types'
 import { MacroProvider } from '@/macroProvider'
 import { DevServerHelper, getDevServerHelper } from '@/helper/server'
-import { Runtime } from '@/runtime'
+import { Runtime, RuntimeOptions } from '@/core'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -17,8 +16,7 @@ export type MacroPluginHooks = Omit<
 
 export type InternalPluginOptions = {
   name: string
-  dtsPath: string
-  transformer: TransformerOptions
+  runtimeOptions: RuntimeOptions
   exports: NormalizedExports
   hooks: MacroPluginHooks
 }
@@ -34,9 +32,8 @@ interface InternalMacroPlugin extends MacroPlugin {
 export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
   const {
     name,
-    dtsPath,
     exports,
-    transformer,
+    runtimeOptions,
     hooks: {
       buildStart,
       configResolved,
@@ -48,7 +45,7 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
   } = options
 
-  let runtime: Runtime | undefined = new Runtime({ transformer })
+  let runtime: Runtime | undefined = new Runtime(runtimeOptions)
 
   runtime.register(exports)
 
@@ -58,7 +55,7 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
       if (!runtime) throw new Error(`plugin '${name}' is used more than once.`)
       const provider: MacroProvider = {
         id: name,
-        exports: runtime.container,
+        exports: runtime.exports,
         hooks: {},
       }
       runtime = undefined
@@ -67,35 +64,27 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     name,
     enforce: 'pre',
     buildStart(opt) {
-      runtime?.generateDts(dtsPath).then()
-      // hook
+      runtime?.typeRenderer.write().then()
       return buildStart?.bind(this)(opt)
     },
     configResolved(config) {
       runtime?.setDevMode(config.env.DEV)
-      // hook
       return configResolved?.(config)
     },
     resolveId(id, importer, options, ssr) {
       const result = runtime?.handleResolveId(id)
       if (result) return result
-      // hook
       return resolveId?.bind(this)(id, importer, options, ssr)
     },
     load(id, ssr) {
       const result = runtime?.handleLoad(id)
       if (result) return result
-      // hook
       return load?.bind(this)(id, ssr)
     },
     transform(code, id, ssr) {
       const transformed = runtime?.handleTransform(code, id, ssr)
-      if (transformed !== undefined)
-        return transform
-          ? transform.bind(this)(transformed, id, ssr)
-          : transformed
-      // hook
-      return transform?.bind(this)(code, id, ssr)
+      if (transform) return transform.bind(this)(transformed ?? code, id, ssr)
+      return transformed
     },
     configureServer(server) {
       // hook

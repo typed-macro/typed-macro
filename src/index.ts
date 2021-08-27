@@ -3,11 +3,9 @@ export * from './defineMacroPlugin'
 export * from './defineMacroProvider'
 export * from './createMacroManager'
 
-import vitePluginMacro from './plugin'
-export default vitePluginMacro
+export { vitePluginMacro } from './plugin'
 
 // export types
-export type { MacroHandler, MacroContext } from '@/runtime/types'
-export type { Babel } from '@/helper/babel'
-export type { DevServerHelper } from '@/helper/server'
-export type { ImportOption } from '@/helper/import'
+export type { MacroHandler, MacroContext } from './core/types'
+export type { Babel, ImportOption } from './core/helper'
+export type { DevServerHelper } from './helper/server'

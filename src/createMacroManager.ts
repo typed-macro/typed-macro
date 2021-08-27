@@ -2,26 +2,29 @@ import {
   InternalMacroManagerOptions,
   macroManager,
   MacroManager,
-} from './macroManager'
-import { TransformerOptions } from '@/runtime/transformer'
+} from '@/macroManager'
+import { FlatOptions } from '@/common'
 
-export type MacroManagerOptions = TransformerOptions & {
+export type MacroManagerOptions = FlatOptions<
+  InternalMacroManagerOptions['runtimeOptions']
+> & {
   name: string
-  dtsPath: string
 }
 
 function normalizeOption({
   name,
-  dtsPath,
+  typesPath,
   maxRecursion,
   parserPlugins,
 }: MacroManagerOptions): InternalMacroManagerOptions {
   return {
     name,
-    dtsPath,
-    transformer: {
-      maxRecursion,
-      parserPlugins,
+    runtimeOptions: {
+      typeRenderer: { typesPath },
+      transformer: {
+        maxRecursion,
+        parserPlugins,
+      },
     },
   }
 }

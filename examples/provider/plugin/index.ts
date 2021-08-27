@@ -1,9 +1,8 @@
-import { defineMacro, defineMacroPlugin } from 'vite-plugin-macro'
-import { join } from 'path'
+import { defineMacro, defineMacroProvider } from 'vite-plugin-macro'
 
 const run = <T>(block: () => T) => block()
 
-export function vitePluginBasic() {
+export function provideEcho() {
   const echoMacro = defineMacro('echo')
     .withSignature('(msg: string, repeat?: number): void')
     .withHandler(({ path, args }, { template, types }) => {
@@ -31,6 +30,17 @@ export function vitePluginBasic() {
       )
     })
 
+  return defineMacroProvider({
+    id: 'echo',
+    exports: {
+      '@echo': {
+        macros: [echoMacro],
+      },
+    },
+  })
+}
+
+export function provideLoad() {
   const loadMacro = defineMacro('load')
     .withSignature('(glob: string): void')
     .withHandler(({ path, args, filepath }, { template, types }) => {
@@ -53,15 +63,9 @@ export function vitePluginBasic() {
         )
       )
     })
-
-  return defineMacroPlugin({
-    name: 'macro-test-plugin',
-    typesPath: join(__dirname, '../macros.d.ts'),
+  return defineMacroProvider({
+    id: 'load',
     exports: {
-      '@echo': {
-        customTypes: `export interface DummyType {}`,
-        macros: [echoMacro],
-      },
       '@load': {
         macros: [loadMacro],
       },

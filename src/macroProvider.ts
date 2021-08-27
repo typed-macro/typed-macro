@@ -1,4 +1,4 @@
-import { NormalizedExports } from '@/runtime/types'
+import { NormalizedExports } from '@/core/types'
 import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
 

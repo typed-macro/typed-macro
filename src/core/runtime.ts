@@ -1,20 +1,22 @@
 import {
+  createTypeRenderer,
   NamespacedMacros,
   NamespacedModules,
   NamespacedTypes,
   NormalizedExports,
-} from '@/runtime/types'
+  TypeRenderer,
+  TypeRendererOptions,
+} from '@/core/types'
 import {
   createTransformer,
   Transformer,
   TransformerOptions,
-} from '@/runtime/transformer'
+} from '@/core/transformer'
 import { findDuplicatedItem } from '@/common'
-import { mkdir, writeFile } from 'fs/promises'
-import { dirname } from 'path'
 
 export type RuntimeOptions = {
   transformer: TransformerOptions
+  typeRenderer: Pick<TypeRendererOptions, 'typesPath'>
 }
 
 export class Runtime {
@@ -28,9 +30,14 @@ export class Runtime {
   private devMode = false
 
   private readonly transformer: Transformer
+  private readonly _typeRenderer: TypeRenderer
 
   constructor(options: RuntimeOptions) {
     this.transformer = createTransformer(options.transformer)
+    this._typeRenderer = createTypeRenderer({
+      types: this.types,
+      typesPath: options.typeRenderer.typesPath,
+    })
   }
 
   setDevMode(dev = true) {
@@ -91,7 +98,7 @@ export class Runtime {
       )
   }
 
-  get container() {
+  get exports(): NormalizedExports {
     return {
       macros: this.macros,
       modules: this.modules,
@@ -99,20 +106,7 @@ export class Runtime {
     }
   }
 
-  async generateDts(path: string) {
-    await mkdir(dirname(path), { recursive: true })
-    await writeFile(path, renderTypes(this.types))
+  get typeRenderer() {
+    return this._typeRenderer
   }
-}
-
-export function renderTypes(types: NamespacedTypes) {
-  const namespaces = Object.keys(types)
-  return namespaces
-    .map((ns) => {
-      const item = types[ns]
-      return `declare module '${ns}' {
-${[item.moduleScope, item.macroScope.join('\n')].filter((t) => !!t).join('\n')}
-}`
-    })
-    .join('\n')
 }
