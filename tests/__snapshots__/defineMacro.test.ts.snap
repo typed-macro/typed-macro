@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`defineMacro should work 1`] = `
+Object {
+  "__types": "type A = string
+  /** NO_OP **/
+  export function test(): void",
+  "apply": [Function],
+  "name": "test",
+}
+`;

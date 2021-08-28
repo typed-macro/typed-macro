@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`nodeLoc() should work 1`] = `"line 1, column 0"`;

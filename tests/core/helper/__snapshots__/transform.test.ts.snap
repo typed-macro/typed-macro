@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TransformHelper pre-/ap-pendImports() should insert new import stmts 1`] = `
+"import * as _nb from 'b';
+import nb from 'b';
+import 'b';
+import { b } from 'b';
+import { b as _b } from 'b';
+const a = 1;"
+`;
+
+exports[`TransformHelper pre-/ap-pendImports() should insert new import stmts 2`] = `
+"import { b as _b } from 'b';
+import { b } from 'b';
+import 'b';
+import nb from 'b';
+import * as _nb from 'b';
+const a = 1;"
+`;
+
+exports[`TransformHelper pre-/ap-pendImports() should unshift to body if no existed import stmt 1`] = `
+"import 'a';
+const b = 1;"
+`;
+
+exports[`TransformHelper pre-/ap-pendImports() should unshift to body if no existed import stmt 2`] = `
+"import 'a';
+const b = 1;"
+`;
+
+exports[`TransformHelper pre-/ap-pendToBody() should work 1`] = `
+"console.log('prepended');
+const b = 1;"
+`;
+
+exports[`TransformHelper pre-/ap-pendToBody() should work 2`] = `
+"const b = 1;
+console.log('appended');"
+`;

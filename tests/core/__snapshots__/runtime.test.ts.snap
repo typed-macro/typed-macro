@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Runtime should work with handleLoad/handleResolveId() 1`] = `"export {}"`;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 2`] = `"export const a = 1"`;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 3`] = `"@m"`;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 4`] = `"@u"`;
+
+exports[`Runtime should work with handleTransform() 1`] = `"console.log('helloworld');"`;
+
+exports[`Runtime should work with register() and .exports 1`] = `
+Object {
+  "macros": Object {
+    "@m1": Array [
+      Object {
+        "apply": [Function],
+        "name": "m",
+      },
+    ],
+  },
+  "modules": Object {
+    "@u1": "export const a = 1",
+  },
+  "types": Object {},
+}
+`;
+
+exports[`Runtime should work with register() and .exports 2`] = `
+Object {
+  "macros": Object {
+    "@m1": Array [
+      Object {
+        "apply": [Function],
+        "name": "m",
+      },
+    ],
+    "@m2": Array [
+      Object {
+        "apply": [Function],
+        "name": "m",
+      },
+    ],
+  },
+  "modules": Object {
+    "@u1": "export const a = 1",
+    "@u2": "export const a = 1",
+  },
+  "types": Object {},
+}
+`;
+
+exports[`Runtime should work with typeRenderer() 1`] = `
+"declare module '@t' {
+type A = string
+}"
+`;
+
+exports[`Runtime should work with typeRenderer() 2`] = `
+"declare module '@t' {
+type A = string
+}
+declare module '@n' {
+type B = string
+export function a(): void
+}"
+`;
+
+exports[`Runtime should work with typeRenderer() 3`] = `
+"declare module '@t' {
+type A = string
+}
+declare module '@n' {
+type B = string
+export function a(): void
+}
+declare module '@l' {
+type C = string
+}"
+`;
+
+exports[`Runtime should work with typeRenderer() 4`] = `
+"declare module '@t' {
+type A = string
+}
+declare module '@n' {
+type B = string
+export function a(): void
+}
+declare module '@l' {
+type G = number
+}"
+`;

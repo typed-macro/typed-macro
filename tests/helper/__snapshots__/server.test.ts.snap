@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DevServerHelper should work 1`] = `
+Set {
+  ModuleNode {
+    "acceptedHmrDeps": Set {},
+    "file": "/@id/user",
+    "id": "/@id/user",
+    "importedModules": Set {
+      ModuleNode {
+        "acceptedHmrDeps": Set {},
+        "file": "/@id/source",
+        "id": "/@id/source",
+        "importedModules": Set {},
+        "importers": Set {
+          [Circular],
+        },
+        "isSelfAccepting": false,
+        "lastHMRTimestamp": 0,
+        "ssrModule": null,
+        "ssrTransformResult": null,
+        "transformResult": null,
+        "type": "js",
+        "url": "/@id/source",
+      },
+    },
+    "importers": Set {},
+    "isSelfAccepting": false,
+    "lastHMRTimestamp": 0,
+    "ssrModule": null,
+    "ssrTransformResult": null,
+    "transformResult": null,
+    "type": "js",
+    "url": "/@id/user",
+  },
+}
+`;

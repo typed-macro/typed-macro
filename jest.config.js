@@ -5,7 +5,7 @@ module.exports = {
   coverageReporters: ['html', 'lcov', 'text'],
   collectCoverageFrom: [
     'src/**/*.ts',
-    '!test/**',
+    '!tests/**',
     // just entries
     '!**/index.ts',
   ],

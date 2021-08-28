@@ -47,7 +47,7 @@ export default function vitePluginImportAssets() {
         macros: [importMacro],
       },
     },
-    dtsPath: join(__dirname, '../macros.d.ts'),
+    typesPath: join(__dirname, '../macros.d.ts'),
     parserPlugins: ['topLevelAwait'],
   })
 }

@@ -2,7 +2,7 @@ import { defineComponent } from 'vue'
 import { $ref } from '@ref-sugar'
 
 export default defineComponent(() => {
-  let count = $ref(0)
+  let count = $ref<number>(0)
   return () => (
     <div>
       <p>

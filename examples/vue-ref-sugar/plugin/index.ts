@@ -101,7 +101,7 @@ const refMacro = defineMacro('$ref')
 export default function refSugar() {
   return defineMacroPlugin({
     name: 'ref-sugar',
-    dtsPath: join(__dirname, '../macros.d.ts'),
+    typesPath: join(__dirname, '../macros.d.ts'),
     exports: {
       '@ref-sugar': {
         macros: [refMacro],

@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`normalizeExports() should work 1`] = `
+Object {
+  "macros": Object {
+    "@macros": Array [
+      Object {
+        "apply": [Function],
+        "name": "macro",
+      },
+    ],
+  },
+  "modules": Object {
+    "@module": "export const a = 1",
+  },
+  "types": Object {
+    "@macros": Object {
+      "macroScope": Array [
+        "export function macro()",
+      ],
+      "moduleScope": Array [
+        "type A = string",
+      ],
+    },
+    "@module": Object {
+      "macroScope": Array [],
+      "moduleScope": Array [
+        "export const a:number",
+      ],
+    },
+  },
+}
+`;
