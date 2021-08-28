@@ -100,7 +100,7 @@ describe('Runtime', () => {
     expect(
       runtime.handleTransform(
         `import {m} from '@m'; m(); console.log('helloworld')`,
-        'a'
+        'test.js'
       )
     ).toMatchSnapshot()
   })

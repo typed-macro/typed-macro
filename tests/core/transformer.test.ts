@@ -145,6 +145,7 @@ describe('applyMacros()', () => {
     const testCases: {
       code: string
       macros: Record<string, Macro[]>
+      applied: boolean
     }[] = [
       {
         code: `import {a} from '@a'`,
@@ -156,6 +157,7 @@ describe('applyMacros()', () => {
             },
           ],
         },
+        applied: false,
       },
       {
         code: `import {a} from '@a'; a()`,
@@ -167,6 +169,7 @@ describe('applyMacros()', () => {
             },
           ],
         },
+        applied: true,
       },
     ]
     testCases.forEach((c) => {
@@ -182,7 +185,7 @@ describe('applyMacros()', () => {
           ssr: false,
           state: getStateHelper(),
         })
-      ).toMatchSnapshot()
+      ).toBe(c.applied)
     })
   })
 

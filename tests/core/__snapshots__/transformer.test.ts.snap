@@ -1,9 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`applyMacros() should work 1`] = `false`;
-
-exports[`applyMacros() should work 2`] = `true`;
-
 exports[`collectImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
 
 exports[`collectImportedMacros() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
