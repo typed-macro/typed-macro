@@ -89,28 +89,27 @@ describe('TypeRenderer#write()', () => {
     },
   }
 
-  it('should ensure directory existed', (done) => {
-    withTempPath('not/exist/a.d.ts', (tempPath) =>
-      createTypeRenderer({
-        typesPath: tempPath,
-        types,
-      })
-        .write()
-        .then(() => done())
-    )
+  it('should ensure directory existed', () => {
+    expect(async () => {
+      await withTempPath('not/exist/a.d.ts', (tempPath) =>
+        createTypeRenderer({
+          typesPath: tempPath,
+          types,
+        }).write()
+      )
+    }).not.toThrow()
   })
 
-  it('should truncate file', (done) => {
-    withTempPath('./a.d.ts', (tempPath) => {
+  it('should truncate file', async () => {
+    await withTempPath('./a.d.ts', async (tempPath) => {
       writeFileSync(tempPath, 'hello\n'.repeat(10))
       const renderer = createTypeRenderer({
         typesPath: tempPath,
         types,
       })
-      return renderer.write().then(() => {
-        expect(readFileSync(tempPath).toString()).toBe(renderer.render())
-        done()
-      })
+      await renderer.write()
+
+      expect(readFileSync(tempPath).toString()).toBe(renderer.render())
     })
   })
 })

@@ -4,25 +4,68 @@ import {
   MacroProvider,
   MacroProviderHooks,
 } from '@/macroProvider'
-import { isMacroPlugin, MacroPlugin } from '@/macroPlugin'
+import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/macroPlugin'
 import { getDevServerHelper } from '@/helper/server'
-import { Runtime, RuntimeOptions } from '@/core/runtime'
+import { Runtime } from '@/core/runtime'
 
-class MacroManagerContext {
+export type MacroManager = {
+  use(...sources: (MacroProvider | Plugin)[]): MacroManager
+  toPlugin(): Plugin[]
+}
+
+export type InternalMacroManagerOptions = {
+  name: string
+  runtime: Runtime
+}
+
+export function macroManager(
+  options: InternalMacroManagerOptions
+): MacroManager {
+  const { name, runtime } = options
+
+  return new MacroManagerImpl(name, runtime)
+}
+
+class MacroManagerImpl {
   private config?: ResolvedConfig
   private devServer?: ViteDevServer
 
-  plugins: Plugin[] = []
+  private plugins: Plugin[] = []
 
   private hooks: MacroProviderHooks[] = []
 
-  constructor(private runtime: Runtime) {}
+  constructor(name: string, private runtime: Runtime) {
+    this.plugins.push(
+      macroPlugin({
+        name,
+        runtime,
+        hooks: {
+          configResolved: (config) => this.handleConfigResolved(config),
+          configureServer: (server) => this.handleConfigureServer(server),
+          buildStart: () => this.handleBuildStart(),
+        },
+      })
+    )
+  }
+
+  toPlugin() {
+    return this.plugins.slice()
+  }
 
   private get isRollup() {
     return !this.config
   }
 
-  add(p: MacroProvider | Plugin) {
+  use(...sources: (MacroProvider | Plugin)[]) {
+    try {
+      sources.forEach((s) => this.add(s))
+    } catch (e) {
+      throw new Error(`Error when use provider/plugin: ${e.message || e}`)
+    }
+    return this
+  }
+
+  private add(p: MacroProvider | Plugin) {
     if (isMacroProvider(p)) this.addProvider(p)
     else if (isMacroPlugin(p)) this.addPlugin(p)
     else
@@ -40,7 +83,7 @@ class MacroManagerContext {
     this.plugins.push(plugin)
   }
 
-  private async callStartHooks() {
+  async handleBuildStart() {
     if (this.isRollup)
       await Promise.all(this.hooks.map((h) => h.onRollupStart?.()))
     else
@@ -56,25 +99,6 @@ class MacroManagerContext {
     await Promise.all(this.hooks.map((h) => h.onStart?.()))
   }
 
-  async handleBuildStart() {
-    await Promise.all([
-      this.runtime.typeRenderer.write(),
-      this.callStartHooks(),
-    ])
-  }
-
-  handleLoad(id: string) {
-    return this.runtime.handleLoad(id)
-  }
-
-  handleResolveId(id: string) {
-    return this.runtime.handleResolveId(id)
-  }
-
-  handleTransform(code: string, id: string, ssr = false) {
-    return this.runtime.handleTransform(code, id, ssr)
-  }
-
   handleConfigureServer(server: ViteDevServer) {
     this.devServer = server
     this.runtime.setDevMode()
@@ -84,64 +108,4 @@ class MacroManagerContext {
     this.config = config
     this.runtime.setDevMode()
   }
-}
-
-export type MacroManager = Plugin[] & {
-  use: (...sources: (MacroProvider | Plugin)[]) => MacroManager
-}
-
-export type InternalMacroManagerOptions = {
-  name: string
-  runtimeOptions: RuntimeOptions
-}
-
-interface InternalMacroManager extends MacroManager {
-  __internal_macro_manager: true
-}
-
-export function macroManager(
-  options: InternalMacroManagerOptions
-): MacroManager {
-  const { name, runtimeOptions } = options
-
-  const context = new MacroManagerContext(new Runtime(runtimeOptions))
-
-  const manager = context.plugins as MacroManager
-  manager.push({
-    name,
-    enforce: 'pre',
-    configResolved(config) {
-      context.handleConfigResolved(config)
-    },
-    configureServer(server) {
-      context.handleConfigureServer(server)
-    },
-    buildStart() {
-      return context.handleBuildStart()
-    },
-    resolveId(id) {
-      return context.handleResolveId(id)
-    },
-    load(id) {
-      return context.handleLoad(id)
-    },
-    transform(code, id, ssr) {
-      return context.handleTransform(code, id, ssr)
-    },
-  })
-  manager.use = (...sources) => {
-    try {
-      sources.forEach((s) => context.add(s))
-    } catch (e) {
-      throw new Error(`Error when use provider/plugin: ${e.message || e}`)
-    }
-    return manager
-  }
-  ;(manager as InternalMacroManager).__internal_macro_manager = true
-
-  return manager
-}
-
-export function isMacroManager(o: unknown): o is MacroManager {
-  return (o as InternalMacroManager).__internal_macro_manager
 }

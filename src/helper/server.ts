@@ -21,6 +21,9 @@ export type DevServerHelper = {
 export function getDevServerHelper(server: ViteDevServer): DevServerHelper {
   function findImporters(ns: string) {
     const result = new Set<ModuleNode>()
+    // prefix `/@id/` is added by plugin `vite:import-analysis`
+    // see:
+    // https://github.com/vitejs/vite/blob/da0abc59935/packages/vite/src/node/plugins/importAnalysis.ts#L214
     server.moduleGraph
       .getModuleById(`/@id/${ns}`)
       ?.importers.forEach((m) => result.add(m))

@@ -1,32 +1,14 @@
 import { MacroPlugin, macroPlugin } from '@/macroPlugin'
-import { isMacroManager, MacroManager, macroManager } from '@/macroManager'
+import { MacroManager, macroManager } from '@/macroManager'
 import { macroProvider, MacroProvider } from '@/macroProvider'
-import { withTempPath } from './testutils'
+import { withDevServer, withTempPath } from './testutils'
+import { Runtime } from '@/core/runtime'
 
-describe('macroManager() & isMacroManager()', () => {
-  it('should work', () => {
-    expect(
-      isMacroManager(
-        macroManager({
-          name: 'test',
-          runtimeOptions: {
-            typeRenderer: {
-              typesPath: '',
-            },
-            transformer: {},
-          },
-        })
-      )
-    ).toBe(true)
-  })
-})
-
-// No need to test MacroManagerContext because
-// MacroManager is just a simple wrapper of it
+// MacroManager is just a simple wrapper of MacroPlugin
 describe('MacroManager', () => {
   let _provider: MacroProvider
   let _plugin: MacroPlugin
-  let _manager: MacroManager
+  let manager: MacroManager
   beforeEach(() => {
     _provider = macroProvider({
       id: 'provider',
@@ -56,97 +38,60 @@ describe('MacroManager', () => {
     _plugin = macroPlugin({
       name: 'plugin',
       hooks: {},
-      runtimeOptions: {
-        typeRenderer: { typesPath: '' },
-        transformer: {},
-      },
-      exports: {
-        modules: {},
-        macros: {
-          '@noop': [
-            {
-              name: 'noop',
-              apply: ({ path }) => path.remove(),
-            },
-          ],
+      runtime: new Runtime(
+        {
+          typeRenderer: { typesPath: '' },
+          transformer: {},
         },
-        types: {},
-      },
+        {
+          modules: {},
+          macros: {
+            '@noop': [
+              {
+                name: 'noop',
+                apply: ({ path }) => path.remove(),
+              },
+            ],
+          },
+          types: {},
+        }
+      ),
     })
-    _manager = macroManager({
+    manager = macroManager({
       name: 'test',
-      runtimeOptions: {
-        transformer: {},
+      runtime: new Runtime({
         typeRenderer: { typesPath: '' },
-      },
+        transformer: {},
+      }),
     })
   })
 
   it('should support consume providers/plugins', () => {
-    expect(_manager.length).toBe(1)
-    expect(() => _manager.use(_plugin)).not.toThrow()
-    expect(() => _manager.use(_provider)).not.toThrow()
-    expect(_manager.length).toBe(2)
+    expect(() => manager.use(_plugin)).not.toThrow()
+    expect(() => manager.use(_provider)).not.toThrow()
+  })
+
+  it('should return shallow copy for toPlugin()', () => {
+    const pluginA = manager.toPlugin()
+    expect(pluginA.length).toBe(1)
+    expect(() => manager.use(_plugin)).not.toThrow()
+    const pluginB = manager.toPlugin()
+    expect(pluginA.length).toBe(1)
+    expect(pluginB.length).toBe(2)
   })
 
   it('should throw error when consume something not a provider/plugin', () => {
-    expect(() => _manager.use({} as any)).toThrow()
+    expect(() => manager.use({} as any)).toThrow()
   })
 
-  it('should handle transform with macro', () => {
-    _manager.use(_provider)
-    const realPlugin = _manager[0]
-
-    expect(
-      realPlugin.transform!.call(
-        null as any,
-        `import { echo } from '@echo'`,
-        ''
-      )
-    ).toBeUndefined()
-    expect(
-      realPlugin.transform!.call(
-        null as any,
-        `import { echo } from '@echo'; echo()`,
-        'a.ts'
-      )
-    ).toMatchSnapshot()
-  })
-
-  it('should handle load properly', () => {
-    _manager.use(_provider)
-    const realPlugin = _manager[0]
-
-    expect(realPlugin.load!.call(null as any, '@helper')).toMatchSnapshot()
-    expect(realPlugin.load!.call(null as any, '@echo')).toMatchSnapshot()
-
-    expect(realPlugin.load!.call(null as any, '@others')).toBeUndefined()
-  })
-
-  it('should handle resolveId properly', () => {
-    _manager.use(_provider)
-    const realPlugin = _manager[0]
-
-    expect(realPlugin.resolveId!.call(null as any, '@helper', '', {})).toBe(
-      '@helper'
-    )
-    expect(realPlugin.resolveId!.call(null as any, '@echo', '', {})).toBe(
-      '@echo'
-    )
-
-    expect(
-      realPlugin.resolveId!.call(null as any, '@others', '', {})
-    ).toBeUndefined()
-  })
-
-  it('should handle hooks in buildStart() in expected order', (done) => {
-    withTempPath('./a.d.ts', async (tempPath) => {
+  it('should handle hooks in buildStart() in expected order', async () => {
+    await withTempPath('./a.d.ts', async (tempPath) => {
       const manager = macroManager({
         name: 'test',
-        runtimeOptions: {
+        runtime: new Runtime({
           transformer: {},
           typeRenderer: { typesPath: tempPath },
-        },
+        }),
       })
 
       const stack: string[] = []
@@ -167,16 +112,18 @@ describe('MacroManager', () => {
           exports: { modules: {}, macros: {}, types: {} },
         })
       )
-      const realPlugin = manager[0]
+      const plugin = manager.toPlugin()[0]
       // rollup
-      await realPlugin.buildStart!.call(null as any, {} as any)
+      await plugin.buildStart!.call(null as any, {} as any)
       expect(stack).toEqual(['onRollupStart', 'onStart'])
       // vite
       stack.length = 0
-      await realPlugin.configResolved!.call(null as any, {} as any)
-      await realPlugin.buildStart!.call(null as any, {} as any)
+      await withDevServer(async (server) => {
+        await plugin.configResolved!.call(null as any, {} as any)
+        await plugin.configureServer!.call(null as any, server)
+        await plugin.buildStart!.call(null as any, {} as any)
+      })
       expect(stack).toEqual(['onViteStart', 'onStart'])
-      done()
     })
   })
 })

@@ -4,10 +4,9 @@ import {
   MacroManager,
 } from '@/macroManager'
 import { FlatOptions } from '@/common'
+import { Runtime, RuntimeOptions } from './core/runtime'
 
-export type MacroManagerOptions = FlatOptions<
-  InternalMacroManagerOptions['runtimeOptions']
-> & {
+export type MacroManagerOptions = FlatOptions<RuntimeOptions> & {
   name: string
 }
 
@@ -19,13 +18,13 @@ function normalizeOption({
 }: MacroManagerOptions): InternalMacroManagerOptions {
   return {
     name,
-    runtimeOptions: {
+    runtime: new Runtime({
       typeRenderer: { typesPath },
       transformer: {
         maxRecursion,
         parserPlugins,
       },
-    },
+    }),
   }
 }
 

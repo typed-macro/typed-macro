@@ -5,11 +5,10 @@ import {
   MacroPluginHooks,
 } from '@/macroPlugin'
 import { NamespacedExportable, normalizeExports } from '@/core/exports'
+import { Runtime, RuntimeOptions } from '@/core/runtime'
 import { FlatOptions } from '@/common'
 
-export type MacroPluginOptions = FlatOptions<
-  InternalPluginOptions['runtimeOptions']
-> & {
+export type MacroPluginOptions = FlatOptions<RuntimeOptions> & {
   /**
    * The name of plugin.
    */
@@ -50,11 +49,13 @@ function normalizeOption({
   return {
     name,
     hooks,
-    exports: normalizeExports(exports),
-    runtimeOptions: {
-      transformer: { maxRecursion, parserPlugins },
-      typeRenderer: { typesPath },
-    },
+    runtime: new Runtime(
+      {
+        transformer: { maxRecursion, parserPlugins },
+        typeRenderer: { typesPath },
+      },
+      normalizeExports(exports)
+    ),
   }
 }
 

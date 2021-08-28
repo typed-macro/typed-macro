@@ -35,12 +35,13 @@ export class Runtime {
   private readonly transformer: Transformer
   private readonly _typeRenderer: TypeRenderer
 
-  constructor(options: RuntimeOptions) {
+  constructor(options: RuntimeOptions, defaultExports?: NormalizedExports) {
     this.transformer = createTransformer(options.transformer)
     this._typeRenderer = createTypeRenderer({
       types: this.types,
       typesPath: options.typeRenderer.typesPath,
     })
+    if (defaultExports) this.register(defaultExports)
   }
 
   setDevMode(dev = true) {

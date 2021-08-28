@@ -1,8 +1,7 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { NormalizedExports } from '@/core/exports'
 import { MacroProvider } from '@/macroProvider'
 import { DevServerHelper, getDevServerHelper } from '@/helper/server'
-import { Runtime, RuntimeOptions } from '@/core/runtime'
+import { Runtime } from '@/core/runtime'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -16,8 +15,7 @@ export type MacroPluginHooks = Omit<
 
 export type InternalPluginOptions = {
   name: string
-  runtimeOptions: RuntimeOptions
-  exports: NormalizedExports
+  runtime: Runtime
   hooks: MacroPluginHooks
 }
 
@@ -32,8 +30,6 @@ interface InternalMacroPlugin extends MacroPlugin {
 export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
   const {
     name,
-    exports,
-    runtimeOptions,
     hooks: {
       buildStart,
       configResolved,
@@ -45,9 +41,7 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
   } = options
 
-  let runtime: Runtime | undefined = new Runtime(runtimeOptions)
-
-  runtime.register(exports)
+  let runtime: Runtime | undefined = options.runtime
 
   return {
     __internal_macro_plugin: true,
@@ -63,15 +57,18 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
     name,
     enforce: 'pre',
+    configResolved(config) {
+      runtime?.setDevMode(config?.env?.DEV ?? false)
+      return configResolved?.(config)
+    },
+    configureServer(server) {
+      if (configureServer) configureServer(server, getDevServerHelper(server))
+    },
     async buildStart(opt) {
       await Promise.all([
         runtime?.typeRenderer.write(),
         buildStart?.bind(this)(opt),
       ])
-    },
-    configResolved(config) {
-      runtime?.setDevMode(config?.env?.DEV ?? false)
-      return configResolved?.(config)
     },
     resolveId(id, importer, options, ssr) {
       const result = runtime?.handleResolveId(id)
@@ -86,10 +83,6 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     transform(code, id, ssr) {
       const transformed = runtime?.handleTransform(code, id, ssr)
       return transform?.bind(this)(transformed ?? code, id, ssr) ?? transformed
-    },
-    configureServer(server) {
-      // hook
-      if (configureServer) configureServer(server, getDevServerHelper(server))
     },
     ...otherHooks,
   } as InternalMacroPlugin

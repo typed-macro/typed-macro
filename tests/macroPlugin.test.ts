@@ -1,24 +1,18 @@
+import { Runtime } from '@/core/runtime'
 import { isMacroPlugin, MacroPlugin, macroPlugin } from '@/macroPlugin'
-import { withTempPath } from './testutils'
+import { withDevServer, withTempPath } from './testutils'
 
 describe('macroPlugin() & isMacroPlugin()', () => {
   it('should work', () => {
     expect(
       isMacroPlugin(
         macroPlugin({
-          exports: {
-            types: {},
-            modules: {},
-            macros: {},
-          },
           hooks: {},
           name: 'test',
-          runtimeOptions: {
-            typeRenderer: {
-              typesPath: '',
-            },
+          runtime: new Runtime({
+            typeRenderer: { typesPath: '' },
             transformer: {},
-          },
+          }),
         })
       )
     ).toBe(true)
@@ -26,33 +20,51 @@ describe('macroPlugin() & isMacroPlugin()', () => {
 })
 
 describe('MacroPlugin', () => {
-  let _plugin: MacroPlugin
+  it('should support to be consumed', () => {
+    const plugin = macroPlugin({
+      name: 'test',
+      hooks: {},
+      runtime: new Runtime(
+        {
+          transformer: {},
+          typeRenderer: { typesPath: '' },
+        },
+        {
+          modules: {
+            '@helper': `export function hello(msg) {console.log(msg)}`,
+          },
+          macros: {
+            '@echo': [
+              {
+                name: 'echo',
+                apply: ({ path }, { template }, { prependToBody }) => {
+                  prependToBody(
+                    template.statements.ast(
+                      `import { hello } from '@helper'; hello('world')`
+                    )
+                  )
+                  path.remove()
+                },
+              },
+            ],
+          },
+          types: {},
+        }
+      ),
+    })
+    expect(plugin.__consume()).toMatchSnapshot()
+    // consume more than once
+    expect(() => plugin.__consume()).toThrow()
+  })
+})
+
+describe('MacroPlugin Hooks', () => {
   let mockedHook: jest.Mock
+  let plugin: MacroPlugin
   beforeEach(() => {
     mockedHook = jest.fn()
-    _plugin = macroPlugin({
+    plugin = macroPlugin({
       name: 'test',
-      exports: {
-        modules: {
-          '@helper': `export function hello(msg) {console.log(msg)}`,
-        },
-        macros: {
-          '@echo': [
-            {
-              name: 'echo',
-              apply: ({ path }, { template }, { prependToBody }) => {
-                prependToBody(
-                  template.statements.ast(
-                    `import { hello } from '@helper'; hello('world')`
-                  )
-                )
-                path.remove()
-              },
-            },
-          ],
-        },
-        types: {},
-      },
       hooks: {
         transform: mockedHook,
         resolveId: mockedHook,
@@ -61,25 +73,42 @@ describe('MacroPlugin', () => {
         configResolved: mockedHook,
         buildStart: mockedHook,
       },
-      runtimeOptions: {
-        transformer: {},
-        typeRenderer: { typesPath: '' },
-      },
+      runtime: new Runtime(
+        {
+          transformer: {},
+          typeRenderer: { typesPath: '' },
+        },
+        {
+          modules: {
+            '@helper': `export function hello(msg) {console.log(msg)}`,
+          },
+          macros: {
+            '@echo': [
+              {
+                name: 'echo',
+                apply: ({ path }, { template }, { prependToBody }) => {
+                  prependToBody(
+                    template.statements.ast(
+                      `import { hello } from '@helper'; hello('world')`
+                    )
+                  )
+                  path.remove()
+                },
+              },
+            ],
+          },
+          types: {},
+        }
+      ),
     })
-  })
-
-  it('should support to be consumed', () => {
-    expect(_plugin.__consume()).toMatchSnapshot()
-    // consume more than once
-    expect(() => _plugin.__consume()).toThrow()
   })
 
   it('should handle transform with macro', () => {
     expect(
-      _plugin.transform!.call(null as any, `import { echo } from '@echo'`, '')
+      plugin.transform!.call(null as any, `import { echo } from '@echo'`, '')
     ).toBeUndefined()
     expect(
-      _plugin.transform!.call(
+      plugin.transform!.call(
         null as any,
         `import { echo } from '@echo'; echo()`,
         'a.ts'
@@ -88,10 +117,59 @@ describe('MacroPlugin', () => {
     expect(mockedHook.mock.calls.length).toBe(2)
   })
 
-  it('should stop handling transform after consumed', () => {
-    _plugin.__consume()
+  it('should handle load properly', () => {
+    expect(plugin.load!.call(null as any, '@helper')).toMatchSnapshot()
+    expect(plugin.load!.call(null as any, '@echo')).toMatchSnapshot()
+
+    expect(plugin.load!.call(null as any, '@others')).toBeUndefined()
+    expect(mockedHook.mock.calls.length).toBe(1)
+  })
+
+  it('should handle resolveId properly', () => {
+    expect(plugin.resolveId!.call(null as any, '@helper', '', {})).toBe(
+      '@helper'
+    )
+    expect(plugin.resolveId!.call(null as any, '@echo', '', {})).toBe('@echo')
+
     expect(
-      _plugin.transform!.call(
+      plugin.resolveId!.call(null as any, '@others', '', {})
+    ).toBeUndefined()
+    expect(mockedHook.mock.calls.length).toBe(1)
+  })
+
+  it('should handle buildStart properly', async () => {
+    await withTempPath('a.d.ts', async (tempPath) => {
+      plugin = macroPlugin({
+        name: 'test',
+        runtime: new Runtime({
+          transformer: {},
+          typeRenderer: { typesPath: tempPath },
+        }),
+        hooks: { buildStart: mockedHook },
+      })
+      await plugin.buildStart!.call(null as any, {} as any)
+      expect(mockedHook.mock.calls.length).toBe(1)
+    })
+  })
+
+  it('should handle configResolved properly', async () => {
+    await plugin.configResolved!.call(null as any, {} as any)
+    expect(mockedHook.mock.calls.length).toBe(1)
+  })
+
+  it('should handle configureServer properly', async () => {
+    await withDevServer(async (server) => {
+      await plugin.configureServer!.call(null as any, server)
+      expect(mockedHook.mock.calls.length).toBe(1)
+    })
+  })
+
+  // __CONSUMED__
+
+  it('should stop handling transform after consumed', () => {
+    plugin.__consume()
+    expect(
+      plugin.transform!.call(
         null as any,
         `import { echo } from '@echo'; echo()`,
         'a.ts'
@@ -100,71 +178,23 @@ describe('MacroPlugin', () => {
     expect(mockedHook.mock.calls.length).toBe(1)
   })
 
-  it('should handle load properly', () => {
-    expect(_plugin.load!.call(null as any, '@helper')).toMatchSnapshot()
-    expect(_plugin.load!.call(null as any, '@echo')).toMatchSnapshot()
-
-    expect(_plugin.load!.call(null as any, '@others')).toBeUndefined()
-    expect(mockedHook.mock.calls.length).toBe(1)
-  })
-
   it('should stop handling load after consumed', () => {
-    _plugin.__consume()
-    expect(_plugin.load!.call(null as any, '@helper')).toBeUndefined()
-    expect(_plugin.load!.call(null as any, '@echo')).toBeUndefined()
-    expect(_plugin.load!.call(null as any, '@others')).toBeUndefined()
+    plugin.__consume()
+    expect(plugin.load!.call(null as any, '@helper')).toBeUndefined()
+    expect(plugin.load!.call(null as any, '@echo')).toBeUndefined()
+    expect(plugin.load!.call(null as any, '@others')).toBeUndefined()
     expect(mockedHook.mock.calls.length).toBe(3)
-  })
-
-  it('should handle resolveId properly', () => {
-    expect(_plugin.resolveId!.call(null as any, '@helper', '', {})).toBe(
-      '@helper'
-    )
-    expect(_plugin.resolveId!.call(null as any, '@echo', '', {})).toBe('@echo')
-
-    expect(
-      _plugin.resolveId!.call(null as any, '@others', '', {})
-    ).toBeUndefined()
-    expect(mockedHook.mock.calls.length).toBe(1)
   })
 
   it('should stop handling resolveId after consumed', () => {
-    _plugin.__consume()
+    plugin.__consume()
     expect(
-      _plugin.resolveId!.call(null as any, '@helper', '', {})
+      plugin.resolveId!.call(null as any, '@helper', '', {})
     ).toBeUndefined()
+    expect(plugin.resolveId!.call(null as any, '@echo', '', {})).toBeUndefined()
     expect(
-      _plugin.resolveId!.call(null as any, '@echo', '', {})
-    ).toBeUndefined()
-    expect(
-      _plugin.resolveId!.call(null as any, '@others', '', {})
+      plugin.resolveId!.call(null as any, '@others', '', {})
     ).toBeUndefined()
     expect(mockedHook.mock.calls.length).toBe(3)
-  })
-
-  it('should handle buildStart properly', (done) => {
-    withTempPath('a.d.ts', async (tempPath) => {
-      _plugin = macroPlugin({
-        name: 'test',
-        exports: {
-          modules: {},
-          macros: {},
-          types: {},
-        },
-        hooks: { buildStart: mockedHook },
-        runtimeOptions: {
-          transformer: {},
-          typeRenderer: { typesPath: tempPath },
-        },
-      })
-      await _plugin.buildStart!.call(null as any, {} as any)
-      expect(mockedHook.mock.calls.length).toBe(1)
-      done()
-    })
-  })
-
-  it('should handle configResolved properly', async () => {
-    await _plugin.configResolved!.call(null as any, {} as any)
-    expect(mockedHook.mock.calls.length).toBe(1)
   })
 })
