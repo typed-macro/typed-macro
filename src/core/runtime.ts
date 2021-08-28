@@ -18,7 +18,13 @@ import {
 import { findDuplicatedItem } from '@/common'
 
 export type RuntimeOptions = {
+  /**
+   * The options for transformer.
+   */
   transformer: TransformerOptions
+  /**
+   * The options for typeRenderer.
+   */
   typeRenderer: Pick<TypeRendererOptions, 'typesPath'>
 }
 

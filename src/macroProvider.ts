@@ -3,12 +3,21 @@ import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
 
 export type MacroProviderHooks = {
+  /**
+   * A startup hook called only if running in Vite.
+   */
   onViteStart?: (
     config: ResolvedConfig,
     server: ViteDevServer,
     helper: DevServerHelper
   ) => void | Promise<void>
+  /**
+   * A startup hook called only if running in Rollup.
+   */
   onRollupStart?: () => void | Promise<void>
+  /**
+   * A startup hook, called immediately after {@link onViteStart}/{@link onRollupStart}.
+   */
   onStart?: () => void | Promise<void>
 }
 

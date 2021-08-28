@@ -11,7 +11,34 @@ export type NamespacedTypes = {
   }
 }
 
-export type Exportable = ({ macros: Macro[] } | { code: string }) & {
+export type Exportable = (
+  | {
+      /**
+       * as macros
+       */
+      macros: Macro[]
+    }
+  | {
+      /**
+       * as module, code will be used as source code of the module
+       */
+      code: string
+    }
+) & {
+  /**
+   * Type definitions, will be written to d.ts.
+   *
+   * e.g.
+   * ```typescript
+   * { exports: { '@macros': { customTypes: `type A = string` } } }
+   * ```
+   * will generate
+   * ```typescript
+   * declare module '@macros' {
+   *   type A = string
+   * }
+   * ```
+   */
   customTypes?: string
 }
 

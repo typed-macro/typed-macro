@@ -7,13 +7,16 @@ import { FlatOptions } from '@/common'
 import { Runtime, RuntimeOptions } from './core/runtime'
 
 export type MacroManagerOptions = FlatOptions<RuntimeOptions> & {
+  /**
+   * The name of macro manager, also the name of the final plugin.
+   */
   name: string
 }
 
 function normalizeOption({
   name,
   typesPath,
-  maxRecursion,
+  maxRecursions,
   parserPlugins,
 }: MacroManagerOptions): InternalMacroManagerOptions {
   return {
@@ -21,13 +24,17 @@ function normalizeOption({
     runtime: new Runtime({
       typeRenderer: { typesPath },
       transformer: {
-        maxRecursion,
+        maxRecursions,
         parserPlugins,
       },
     }),
   }
 }
 
+/**
+ * Define a macro manager.
+ * @param options manager options.
+ */
 export function createMacroManager(options: MacroManagerOptions): MacroManager {
   return macroManager(normalizeOption(options))
 }

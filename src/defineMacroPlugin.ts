@@ -14,26 +14,12 @@ export type MacroPluginOptions = FlatOptions<RuntimeOptions> & {
    */
   name: string
   /**
-   * Vite plugin hooks.
+   * Plugin hooks.
    */
   hooks?: MacroPluginHooks
   /**
-   * Exports macros so macros can be imported and called,
-   * the value of the key will be the name of namespace(or called module).
-   *
-   * e.g.
-   * ```typescript
-   * const macroA = defineMacro('macroA')
-   *   .withSignature('(...args: any[]): void')
-   *   .withHandler(()=>...)
-   *
-   * { exports: {'@macros': {macros: [macroA]}} }
-   * ```
-   * Then in some .js(x) or .ts(x) file you can
-   * ```typescript
-   * import { macroA } from '@macros'
-   * macroA(someArgs)
-   * ```
+   * Exports macros or modules in different namespaces.
+   * @see MacroProviderOptions.exports
    */
   exports: NamespacedExportable
 }
@@ -43,7 +29,7 @@ function normalizeOption({
   hooks = {},
   exports,
   typesPath,
-  maxRecursion,
+  maxRecursions,
   parserPlugins,
 }: MacroPluginOptions): InternalPluginOptions {
   return {
@@ -51,7 +37,7 @@ function normalizeOption({
     hooks,
     runtime: new Runtime(
       {
-        transformer: { maxRecursion, parserPlugins },
+        transformer: { maxRecursions, parserPlugins },
         typeRenderer: { typesPath },
       },
       normalizeExports(exports)
@@ -60,8 +46,9 @@ function normalizeOption({
 }
 
 /**
- * Define the macro plugin. It can be used as vite plugin directly.
+ * Define a macro plugin.
  * @param options plugin options.
+ * @return A vite plugin, can be used as rollup plugin as well.
  */
 export function defineMacroPlugin(options: MacroPluginOptions): Plugin {
   return macroPlugin(normalizeOption(options))

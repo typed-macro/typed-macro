@@ -15,6 +15,7 @@ export type Babel = {
    * ```
    */
   template: typeof template
+
   /**
    * From @babel/traverse.
    * Help traverse from a node.
@@ -29,6 +30,7 @@ export type Babel = {
    * ```
    */
   traverse: typeof traverse
+
   /**
    * From @babel/types.
    * Help check node type and create nodes of specific type.
@@ -40,6 +42,7 @@ export type Babel = {
    * ```
    */
   types: typeof types
+
   /**
    * From @babel/parser.
    * Help parse code string to ast.
@@ -50,6 +53,7 @@ export type Babel = {
    * ```
    */
   parse: typeof parse
+
   /**
    * From @babel/parser.
    * Help parse code string to expression.
@@ -60,6 +64,7 @@ export type Babel = {
    * ```
    */
   parseExpression: typeof parseExpression
+
   /**
    * From @babel/generator.
    * Help generate code string from ast.

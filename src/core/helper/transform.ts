@@ -33,7 +33,7 @@ export type TransformHelper = {
 
   /**
    * Find an import statement that has been in the target program already.
-   * Note that findImported() will not trim extension for moduleName.
+   * Note that findImported() will not resolve extension for moduleName automatically.
    * @param imports an import
    * @param loose match loosely, defaults to true, e.g:
    * `import { a as _a } from 'a'` will match `{ moduleName: 'a' }` and `{ moduleName: 'a', exportName: 'a' }`
@@ -47,7 +47,7 @@ export type TransformHelper = {
 
   /**
    * Check if an import statement has been in the target program already.
-   * Note that hasImported() will not trim extension for moduleName.
+   * Note that hasImported() will not resolve extension for moduleName automatically.
    * @param imports an import
    * @param loose match loosely, defaults to true, e.g:
    * `import { a as _a } from 'a'` will match `{ moduleName: 'a' }` and `{ moduleName: 'a', exportName: 'a' }`

@@ -6,7 +6,7 @@ describe('createMacroManager', () => {
     expect(() =>
       createMacroManager({
         name: '',
-        maxRecursion: 0,
+        maxRecursions: 5,
         parserPlugins: [],
         typesPath: '',
       })

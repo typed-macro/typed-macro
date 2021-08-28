@@ -8,8 +8,29 @@ import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/macroPlugin'
 import { getDevServerHelper } from '@/helper/server'
 import { Runtime } from '@/core/runtime'
 
+/**
+ * A manager/container of macros.
+ */
 export type MacroManager = {
+  /**
+   * Register {@link MacroProvider} or {@link MacroPlugin} to this macro manager so that
+   * all macros in providers and plugins share the same runtime.
+   *
+   * For macro plugins:
+   *  > Some options like `maxRecursions` or `typesPath` will be overridden by
+   *  > manager's.
+   *  >
+   *  > After registered, the original macro plugin will be attached to the manager,
+   *  > which means there is no need to add the plugin to Vite/Rollup 's
+   *  > plugins array again.
+   * @param sources macro providers or plugins.
+   */
   use(...sources: (MacroProvider | Plugin)[]): MacroManager
+  /**
+   * Get a shallow copy of the underlying plugins of the macro manager.
+   * In most cases, it can be used as one plugin directly since Vite flats
+   * plugin array automatically.
+   */
   toPlugin(): Plugin[]
 }
 
@@ -60,7 +81,7 @@ class MacroManagerImpl {
     try {
       sources.forEach((s) => this.add(s))
     } catch (e) {
-      throw new Error(`Error when use provider/plugin: ${e.message || e}`)
+      throw new Error(`Error when use provider/plugin: ${e}`)
     }
     return this
   }
@@ -69,7 +90,11 @@ class MacroManagerImpl {
     if (isMacroProvider(p)) this.addProvider(p)
     else if (isMacroPlugin(p)) this.addPlugin(p)
     else
-      throw new Error(`argument is neither a macro provider nor a macro plugin`)
+      throw new Error(
+        'the argument is neither a macro provider nor a macro plugin, ' +
+          'please use defineMacroProvider() and defineMacroPlugin() to ' +
+          'define providers and plugins.'
+      )
   }
 
   private addProvider(provider: MacroProvider) {

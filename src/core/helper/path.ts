@@ -41,6 +41,7 @@ export type PathHelper = {
      */
     resolveImportPath: (path: string) => string
   }
+
   /**
    * Get the directory of the root project or the nearest project.
    * @param which 'root' or 'leaf'

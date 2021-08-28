@@ -223,7 +223,7 @@ describe('transformer', () => {
   it('should work', () => {
     const transform = createTransformer({
       parserPlugins: [],
-      maxRecursion: 5,
+      maxRecursions: 5,
     })
 
     expect(
@@ -267,7 +267,7 @@ describe('transformer', () => {
     }
     const transformer = createTransformer({
       parserPlugins: [],
-      maxRecursion: 5,
+      maxRecursions: 5,
     })
     const transform = (code: string) =>
       transformer(
@@ -291,7 +291,7 @@ describe('transformer', () => {
   it('should throw errors if reached max recursion', () => {
     const transform = createTransformer({
       parserPlugins: [],
-      maxRecursion: 5,
+      maxRecursions: 5,
     })
     // recursion
     expect(() =>
@@ -317,7 +317,7 @@ describe('transformer', () => {
     const fn = jest.fn()
     const transform = createTransformer({
       parserPlugins: [],
-      maxRecursion: 5,
+      maxRecursions: 5,
     })
 
     expect(

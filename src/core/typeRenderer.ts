@@ -4,6 +4,9 @@ import { NamespacedTypes } from './exports'
 
 export type TypeRendererOptions = {
   types: NamespacedTypes
+  /**
+   * The path of the automatically generated type declaration file.
+   */
   typesPath: string
 }
 

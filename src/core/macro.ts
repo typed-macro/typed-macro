@@ -15,11 +15,11 @@ export type MacroContext = {
    * The arguments nodes of the call-macro expression currently being handled.
    */
   args: CallExpression['arguments']
-  /*
+  /**
    * The NodePath of the call-macro expression currently being handled.
    */
   path: NodePath
-  /*
+  /**
    * Whether in ssr mode.
    */
   ssr: boolean

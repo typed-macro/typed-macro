@@ -25,7 +25,20 @@ import { NamespacedMacros } from './exports'
 import { Macro, MacroHelper } from './macro'
 
 export type TransformerOptions = {
-  maxRecursion?: number
+  /**
+   * The max recursion for applying macros, default to 5.
+   *
+   * After reached the maxRecursions, plugin will throw out an error.
+   *
+   * It's usually caused by forgetting to remove/modify the call expression
+   * in macros.
+   */
+  maxRecursions?: number
+  /**
+   * Babel plugins to be applied during parsing.
+   *
+   * By default 'typescript' and 'jsx' are included and cannot be removed.
+   */
   parserPlugins?: ParserPlugin[]
 }
 
@@ -43,9 +56,9 @@ export type Transformer = (
 
 export function createTransformer({
   parserPlugins = [],
-  maxRecursion = 0,
+  maxRecursions = 0,
 }: TransformerOptions): Transformer {
-  maxRecursion = maxRecursion > 0 ? maxRecursion : 5
+  maxRecursions = maxRecursions > 0 ? maxRecursions : 5
   parserPlugins = ['typescript', 'jsx', ...parserPlugins]
 
   return ({ code, filepath, ssr = false, dev }, macros) => {
@@ -64,7 +77,7 @@ export function createTransformer({
 
     let loopCount = 0
     while (
-      loopCount++ < maxRecursion &&
+      loopCount++ < maxRecursions &&
       applyMacros({
         code,
         filepath,
@@ -76,7 +89,7 @@ export function createTransformer({
       importedMacros.push(...collect()) &&
       state.clearTurnState()
     ) {
-      if (loopCount === maxRecursion)
+      if (loopCount === maxRecursions)
         throw new Error(
           `Reached the maximum recursion when apply macros on ${filepath}`
         )
