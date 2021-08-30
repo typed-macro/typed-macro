@@ -4,10 +4,7 @@ exports[`normalizeExports() should work 1`] = `
 Object {
   "macros": Object {
     "@macros": Array [
-      Object {
-        "apply": [Function],
-        "name": "macro",
-      },
+      Macro { "name": "macro", "__types": "  export function macro(): void" },
     ],
   },
   "modules": Object {
@@ -16,7 +13,7 @@ Object {
   "types": Object {
     "@macros": Object {
       "macroScope": Array [
-        "export function macro()",
+        "  export function macro(): void",
       ],
       "moduleScope": Array [
         "type A = string",

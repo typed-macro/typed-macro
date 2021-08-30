@@ -1,6 +1,13 @@
 import { Runtime } from '@/core/runtime'
 import { isMacroPlugin, MacroPlugin, macroPlugin } from '@/macroPlugin'
-import { withDevServer, withTempPath } from './testutils'
+import {
+  macroSerializer,
+  mockMacro,
+  withDevServer,
+  withTempPath,
+} from './testutils'
+
+expect.addSnapshotSerializer(macroSerializer)
 
 describe('macroPlugin() & isMacroPlugin()', () => {
   it('should work', () => {
@@ -16,6 +23,8 @@ describe('macroPlugin() & isMacroPlugin()', () => {
         })
       )
     ).toBe(true)
+    expect(isMacroPlugin(undefined)).toBe(false)
+    expect(isMacroPlugin(false)).toBe(false)
   })
 })
 
@@ -35,17 +44,14 @@ describe('MacroPlugin', () => {
           },
           macros: {
             '@echo': [
-              {
-                name: 'echo',
-                apply: ({ path }, { template }, { prependToBody }) => {
-                  prependToBody(
-                    template.statements.ast(
-                      `import { hello } from '@helper'; hello('world')`
-                    )
+              mockMacro('echo', ({ path }, { template }, { prependToBody }) => {
+                prependToBody(
+                  template.statements.ast(
+                    `import { hello } from '@helper'; hello('world')`
                   )
-                  path.remove()
-                },
-              },
+                )
+                path.remove()
+              }),
             ],
           },
           types: {},
@@ -84,17 +90,14 @@ describe('MacroPlugin Hooks', () => {
           },
           macros: {
             '@echo': [
-              {
-                name: 'echo',
-                apply: ({ path }, { template }, { prependToBody }) => {
-                  prependToBody(
-                    template.statements.ast(
-                      `import { hello } from '@helper'; hello('world')`
-                    )
+              mockMacro('echo', ({ path }, { template }, { prependToBody }) => {
+                prependToBody(
+                  template.statements.ast(
+                    `import { hello } from '@helper'; hello('world')`
                   )
-                  path.remove()
-                },
-              },
+                )
+                path.remove()
+              }),
             ],
           },
           types: {},

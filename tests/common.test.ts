@@ -1,11 +1,4 @@
-import {
-  findDuplicatedItem,
-  findProgramPath,
-  nodeLoc,
-  validateFnName,
-} from '@/common'
-import { parse } from '@babel/parser'
-import template from '@babel/template'
+import { findDuplicatedItem, nodeLoc, validateFnName } from '@/common'
 import { getAST, getExpression } from './testutils'
 
 describe('nodeLoc()', () => {
@@ -34,24 +27,6 @@ describe('validateFnName()', () => {
     fnNames.forEach((item) => {
       expect(validateFnName(item.name)).toBe(item.ok)
     })
-  })
-})
-
-describe('findProgramPath()', () => {
-  it('should work', () => {
-    const ast = parse(`const a = 1`)
-    const program = findProgramPath(ast)
-    expect(program).not.toBeNull()
-    expect(program).not.toBeUndefined()
-  })
-
-  it('should be synchronized when changed', () => {
-    const ast = parse(`const a = 1`)
-    const programA = findProgramPath(ast)
-    const programB = findProgramPath(ast)
-    programA.unshiftContainer('body', template.statement.ast('const b = 2'))
-    expect(programA.get('body').length).toBe(2)
-    expect(programB.get('body').length).toBe(2)
   })
 })
 

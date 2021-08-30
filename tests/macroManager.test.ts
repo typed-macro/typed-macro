@@ -1,7 +1,7 @@
 import { MacroPlugin, macroPlugin } from '@/macroPlugin'
 import { MacroManager, macroManager } from '@/macroManager'
 import { macroProvider, MacroProvider } from '@/macroProvider'
-import { withDevServer, withTempPath } from './testutils'
+import { mockMacro, withDevServer, withTempPath } from './testutils'
 import { Runtime } from '@/core/runtime'
 
 // MacroManager is just a simple wrapper of MacroPlugin
@@ -19,17 +19,14 @@ describe('MacroManager', () => {
         },
         macros: {
           '@echo': [
-            {
-              name: 'echo',
-              apply: ({ path }, { template }, { prependToBody }) => {
-                prependToBody(
-                  template.statements.ast(
-                    `import { hello } from '@helper'; hello('world')`
-                  )
+            mockMacro('plain', ({ path }, { template }, { prependToBody }) => {
+              prependToBody(
+                template.statements.ast(
+                  `import { hello } from '@helper'; hello('world')`
                 )
-                path.remove()
-              },
-            },
+              )
+              path.remove()
+            }),
           ],
         },
         types: {},
@@ -46,12 +43,7 @@ describe('MacroManager', () => {
         {
           modules: {},
           macros: {
-            '@noop': [
-              {
-                name: 'noop',
-                apply: ({ path }) => path.remove(),
-              },
-            ],
+            '@noop': [mockMacro('noop', ({ path }) => path.remove())],
           },
           types: {},
         }

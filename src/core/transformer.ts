@@ -1,28 +1,18 @@
-import {
-  CallExpression,
-  File,
-  ImportDeclaration,
-  isIdentifier,
-  isImportDefaultSpecifier,
-  isImportNamespaceSpecifier,
-  isMemberExpression,
-  isStringLiteral,
-  Node,
-} from '@babel/types'
+import { File, ImportDeclaration, Node } from '@babel/types'
 import traverse, { NodePath } from '@babel/traverse'
 import template from '@babel/template'
 import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
-import {
-  BABEL_TOOLS,
-  getPathHelper,
-  getStateHelper,
-  getTransformHelper,
-  StateHelper,
-} from '@/core/helper'
 import { NamespacedMacros } from './exports'
-import { Macro, MacroHelper } from './macro'
+import { Macro } from './macro'
+import { versioned } from '@/core/version'
+import {
+  findImportedMacros,
+  findProgramPath,
+  getCalledMacro,
+} from '@/core/helper/traverse'
+import { createState, State } from './helper/state'
 
 export type TransformerOptions = {
   /**
@@ -73,23 +63,21 @@ export function createTransformer({
     const importedMacros = collect()
     if (!importedMacros.length) return
 
-    const state = getStateHelper()
+    const transformState = createState()
 
     let loopCount = 0
     while (
-      loopCount++ < maxRecursions &&
       applyMacros({
         code,
         filepath,
         ast,
         ssr,
         importedMacros,
-        state,
+        transformState,
       }) &&
-      importedMacros.push(...collect()) &&
-      state.clearTurnState()
+      importedMacros.push(...collect())
     ) {
-      if (loopCount === maxRecursions)
+      if (loopCount++ >= maxRecursions)
         throw new Error(
           `Reached the maximum recursion when apply macros on ${filepath}`
         )
@@ -123,93 +111,18 @@ export function collectImportedMacros(
   macros: NamespacedMacros,
   keepImportStmt = false
 ) {
-  const importedMacros: ImportedMacro[] = []
-  const namespaces = Object.keys(macros)
-  {
-    const importPaths: NodePath<ImportDeclaration>[] = []
-    traverse(ast, {
-      ImportDeclaration(path) {
-        const ns = path.node.source.value
-        if (!namespaces.includes(ns)) return
-
-        // case - import 'a'
-        if (!path.node.specifiers.length) return
-
-        path.node.specifiers.forEach((s) => {
-          if (isImportDefaultSpecifier(s) || isImportNamespaceSpecifier(s)) {
-            // case - import a from 'a'
-            // or
-            // case - import * as a from 'a'
-            importedMacros.push({
-              importedAsNamespace: true,
-              namespace: path.node.source.value,
-              local: s.local.name,
-              macros: macros[ns],
-            })
-          } else {
-            // case - import { a as a } from 'a'
-            const exportName = isIdentifier(s.imported)
-              ? s.imported.name
-              : s.imported.value
-
-            importedMacros.push({
-              importedAsNamespace: false,
-              namespace: path.node.source.value,
-              local: s.local.name,
-              macro: macros[ns].find((m) => m.name === exportName),
-            })
-          }
-        })
-        importPaths.push(path)
-      },
-    })
-    if (keepImportStmt) {
-      importPaths.forEach((p) =>
-        p.replaceWith(template.statement.ast(`import '${p.node.source.value}'`))
-      )
-    } else {
-      importPaths.forEach((p) => p.remove())
-    }
+  const importPaths: NodePath<ImportDeclaration>[] = []
+  const importedMacros = findImportedMacros(ast, macros, (path) =>
+    importPaths.push(path)
+  )
+  if (keepImportStmt) {
+    importPaths.forEach((p) =>
+      p.replaceWith(template.statement.ast(`import '${p.node.source.value}'`))
+    )
+  } else {
+    importPaths.forEach((p) => p.remove())
   }
   return importedMacros
-}
-
-// find macros to be applied from call expr, returns a
-// - Macro: the macro to be applied
-// - string: is a macro call but no macro found
-// - undefined: not a macro call
-export function findCalledMacro(
-  callee: CallExpression['callee'],
-  importedMacros: Array<ImportedMacro>
-) {
-  if (isMemberExpression(callee)) {
-    const ns = callee.object
-    if (isIdentifier(ns)) {
-      const maybeMacro = importedMacros.find(
-        (m) => m.importedAsNamespace && m.local === ns.name
-      ) as ImportedAsNS
-      if (!maybeMacro) return
-      const method = callee.property
-      if (isIdentifier(method)) {
-        // case - namespace.method()
-        return (
-          maybeMacro.macros.find((m) => m.name === method.name) || method.name
-        )
-      } else if (isStringLiteral(method)) {
-        // case - namespace['method']()
-        return (
-          maybeMacro.macros.find((m) => m.name === method.value) || method.value
-        )
-      }
-    }
-  } else if (isIdentifier(callee)) {
-    // case - method()
-    const maybeMacro = importedMacros.find(
-      (m) => !m.importedAsNamespace && m.local === callee.name
-    ) as ImportedAsNamed
-    if (!maybeMacro) return
-    return maybeMacro.macro || callee.name
-  }
 }
 
 type ApplyContext = {
@@ -219,7 +132,7 @@ type ApplyContext = {
   ssr: boolean
 
   importedMacros: ImportedMacro[]
-  state: StateHelper
+  transformState: State
 }
 
 export function applyMacros({
@@ -228,37 +141,34 @@ export function applyMacros({
   ast,
   importedMacros,
   ssr,
-  state,
+  transformState,
 }: ApplyContext): boolean {
   let applied = false
-
-  const helper: MacroHelper = Object.freeze({
-    ...getTransformHelper(ast),
-    ...getPathHelper(filepath),
-    ...state,
-  })
+  const program = findProgramPath(ast)
+  const traversalState = createState()
 
   traverse(ast, {
     CallExpression(path) {
-      const macroToApply = findCalledMacro(path.node.callee, importedMacros)
+      const macroToApply = getCalledMacro(path.node.callee, importedMacros)
       if (!macroToApply) return
-
       if (typeof macroToApply === 'string')
         throw new Error(
           `Macro ${macroToApply} is not existed but is called in ${filepath}`
         )
 
       try {
-        macroToApply.apply(
-          {
+        macroToApply(
+          versioned({
             code,
             filepath,
             path,
             ssr,
-            args: path.node.arguments,
-          },
-          BABEL_TOOLS,
-          helper
+            ast,
+            transformState,
+            traversalState,
+            importedMacros,
+            program,
+          })
         )
       } catch (e) {
         throw new Error(

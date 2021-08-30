@@ -1,14 +1,20 @@
-import { getAST, getExpression, matchCodeSnapshot, NO_OP } from '../testutils'
-import { CallExpression, StringLiteral } from '@babel/types'
+import {
+  getAST,
+  macroSerializer,
+  matchCodeSnapshot,
+  mockMacro,
+} from '../testutils'
+import { StringLiteral } from '@babel/types'
 import {
   applyMacros,
   collectImportedMacros,
   createTransformer,
-  findCalledMacro,
 } from '@/core/transformer'
 import { Macro } from '@/core/macro'
 import { NamespacedMacros } from '@/core/exports'
-import { getStateHelper } from '@/core/helper'
+import { createState } from '@/core/helper/state'
+
+expect.addSnapshotSerializer(macroSerializer)
 
 describe('collectImportedMacros()', () => {
   it('should work', () => {
@@ -73,73 +79,6 @@ describe('collectImportedMacros()', () => {
   })
 })
 
-describe('findCalledMacro()', () => {
-  it('should work', () => {
-    const testCases: {
-      code: string
-      macros: Record<string, { name: string }[]>
-      call: string
-    }[] = [
-      {
-        code: `import { a } from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `a()`,
-      },
-      {
-        code: `import { a as _a } from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `a()`,
-      },
-      {
-        code: `import { a as _a } from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `_a()`,
-      },
-      {
-        code: `import a from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `a()`,
-      },
-      {
-        code: `import * as a from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `a()`,
-      },
-      {
-        code: `import * as a from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `a.a()`,
-      },
-      {
-        code: `import * as a from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-        call: `a['a']()`,
-      },
-      {
-        code: `import * as a from '@a'`,
-        macros: { '@a': [{ name: 'b' }] },
-        call: `a.a()`,
-      },
-      {
-        code: `import * as a from '@a'`,
-        macros: { '@a': [{ name: 'b' }] },
-        call: `a['a']()`,
-      },
-    ]
-    testCases.forEach((c) => {
-      const ast = getAST(c.code)
-      const importedMacros = collectImportedMacros(ast, c.macros as any)
-
-      expect(
-        findCalledMacro(
-          (getExpression(c.call) as CallExpression).callee,
-          importedMacros
-        )
-      ).toMatchSnapshot()
-    })
-  })
-})
-
 describe('applyMacros()', () => {
   it('should work', () => {
     const testCases: {
@@ -150,24 +89,14 @@ describe('applyMacros()', () => {
       {
         code: `import {a} from '@a'`,
         macros: {
-          '@a': [
-            {
-              name: 'a',
-              apply: jest.fn(),
-            },
-          ],
+          '@a': [mockMacro('a')],
         },
         applied: false,
       },
       {
         code: `import {a} from '@a'; a()`,
         macros: {
-          '@a': [
-            {
-              name: 'a',
-              apply: jest.fn(),
-            },
-          ],
+          '@a': [mockMacro('a')],
         },
         applied: true,
       },
@@ -183,7 +112,7 @@ describe('applyMacros()', () => {
           ast,
           importedMacros,
           ssr: false,
-          state: getStateHelper(),
+          transformState: createState(),
         })
       ).toBe(c.applied)
     })
@@ -212,7 +141,7 @@ describe('applyMacros()', () => {
           ast,
           importedMacros,
           ssr: false,
-          state: getStateHelper(),
+          transformState: createState(),
         })
       ).toThrow()
     })
@@ -235,18 +164,15 @@ describe('transformer', () => {
         },
         {
           '@echo': [
-            {
-              name: 'echo',
-              apply: ({ path, args }, { template }) => {
-                const msg = (args[0] as StringLiteral).value
-                path.replaceWith(
-                  template.statement.ast`console.log("${Array.from(
-                    { length: 3 },
-                    () => msg
-                  ).join(' ')}")`
-                )
-              },
-            },
+            mockMacro('echo', ({ path, args }, { template }) => {
+              const msg = (args[0] as StringLiteral).value
+              path.replaceWith(
+                template.statement.ast`console.log("${Array.from(
+                  { length: 3 },
+                  () => msg
+                ).join(' ')}")`
+              )
+            }),
           ],
         }
       )
@@ -256,13 +182,10 @@ describe('transformer', () => {
   it('should throw errors if there is wrong in steps', () => {
     const macros: NamespacedMacros = {
       '@echo': [
-        {
-          name: 'echo',
-          apply: ({ path, args }) => {
-            if (args.length === 0) throw new Error('')
-            path.remove()
-          },
-        },
+        mockMacro('echo', ({ path, args }) => {
+          if (args.length === 0) throw new Error('')
+          path.remove()
+        }),
       ],
     }
     const transformer = createTransformer({
@@ -294,7 +217,8 @@ describe('transformer', () => {
       maxRecursions: 5,
     })
     // recursion
-    expect(() =>
+    expect(() => {
+      let max = 5
       transform(
         {
           code: `import {echo} from '@echo'; echo('yeah')`,
@@ -303,14 +227,30 @@ describe('transformer', () => {
         },
         {
           '@echo': [
-            {
-              name: 'echo',
-              apply: NO_OP,
-            },
+            mockMacro('echo', ({ path }) => {
+              if (--max === 0) path.remove()
+            }),
           ],
         }
       )
-    ).toThrow()
+    }).not.toThrow()
+    expect(() => {
+      let max = 6
+      transform(
+        {
+          code: `import {echo} from '@echo'; echo('yeah')`,
+          filepath: '',
+          dev: false,
+        },
+        {
+          '@echo': [
+            mockMacro('echo', ({ path }) => {
+              if (--max === 0) path.remove()
+            }),
+          ],
+        }
+      )
+    }).toThrow()
   })
 
   it('should recollect imported macros every loop', () => {
@@ -329,24 +269,18 @@ describe('transformer', () => {
         },
         {
           '@echo': [
-            {
-              name: 'a',
-              apply: ({ path }, { template }, { appendToBody }) => {
-                appendToBody(
-                  template.statements.ast(`import {b} from '@echo'; b()`)
-                )
-                path.remove()
-              },
-            },
-            {
-              name: 'b',
-              apply: ({ path }, { template }) => {
-                fn()
-                path.replaceWith(
-                  template.statement.ast(`console.log('hello world')`)
-                )
-              },
-            },
+            mockMacro('a', ({ path }, { template }, { appendToBody }) => {
+              appendToBody(
+                template.statements.ast(`import {b} from '@echo'; b()`)
+              )
+              path.remove()
+            }),
+            mockMacro('b', ({ path }, { template }) => {
+              fn()
+              path.replaceWith(
+                template.statement.ast(`console.log('hello world')`)
+              )
+            }),
           ],
         }
       )

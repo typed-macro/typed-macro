@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`findImportedMacros() should work 1`] = `
+Array [
+  Object {
+    "importedAsNamespace": false,
+    "local": "a",
+    "macro": Object {
+      "name": "a",
+    },
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`findImportedMacros() should work 2`] = `
+Array [
+  Object {
+    "importedAsNamespace": false,
+    "local": "_a",
+    "macro": Object {
+      "name": "a",
+    },
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`findImportedMacros() should work 3`] = `
+Array [
+  Object {
+    "importedAsNamespace": true,
+    "local": "a",
+    "macros": Array [
+      Object {
+        "name": "a",
+      },
+    ],
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`findImportedMacros() should work 4`] = `
+Array [
+  Object {
+    "importedAsNamespace": true,
+    "local": "a",
+    "macros": Array [
+      Object {
+        "name": "a",
+      },
+    ],
+    "namespace": "@a",
+  },
+]
+`;
+
+exports[`findImportedMacros() should work 5`] = `Array []`;
+
+exports[`getCalledMacro() should work 1`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`getCalledMacro() should work 2`] = `undefined`;
+
+exports[`getCalledMacro() should work 3`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`getCalledMacro() should work 4`] = `undefined`;
+
+exports[`getCalledMacro() should work 5`] = `undefined`;
+
+exports[`getCalledMacro() should work 6`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`getCalledMacro() should work 7`] = `
+Object {
+  "name": "a",
+}
+`;
+
+exports[`getCalledMacro() should work 8`] = `"a"`;
+
+exports[`getCalledMacro() should work 9`] = `"a"`;

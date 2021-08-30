@@ -1,38 +1,41 @@
-export type StateHelper = {
+export type State = {
   /**
-   * Get the state shared during this traversal.
-   *
-   * What is `turn`:
-   * > In order to recursively expand all macros in a file,
-   * > the transformer will traverse the AST many times,
-   * > and each traversal is called a turn.
+   * Get the state shared during traversal.
    */
-  thisTurnState(): any
+  get<T, K>(key: K): T
+
   /**
-   * Get the state shared during all traversals.
-   *
-   * @see StateHelper.thisTurnState
+   * Set the state shared during traversal.
    */
-  crossTurnState(): any
+  set<T, K>(key: K, value: T): T
+
   /**
-   * Clear the state shared during this traversal.
-   *
-   * Dangerous operation:
-   *   It may affect all macros depends on the state.
-   *
-   * @see StateHelper.thisTurnState
+   * Clear the state shared during traversal.
    */
-  clearTurnState(): any
+  clear(): boolean
+
+  /**
+   * Delete the state shared during traversal.
+   */
+  delete<K>(key: K): void
 }
 
-export function getStateHelper(): StateHelper {
-  const state = { thisTurn: {}, crossTurn: {} }
-  const clearTurnState = () => (state.thisTurn = {})
-  const thisTurnState = () => state.thisTurn
-  const crossTurnState = () => state.crossTurn
+export function createState(): State {
+  const state = new Map<any, any>()
   return {
-    thisTurnState,
-    crossTurnState,
-    clearTurnState,
+    get(key) {
+      return state.get(key)
+    },
+    set(key, value) {
+      state.set(key, value)
+      return value
+    },
+    clear() {
+      state.clear()
+      return true
+    },
+    delete<K>(key: K) {
+      state.delete(key)
+    },
   }
 }

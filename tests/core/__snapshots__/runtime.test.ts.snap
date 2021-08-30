@@ -14,10 +14,7 @@ exports[`Runtime should work with register() and .exports 1`] = `
 Object {
   "macros": Object {
     "@m1": Array [
-      Object {
-        "apply": [Function],
-        "name": "m",
-      },
+      Macro { "name": "m", "__types": "" },
     ],
   },
   "modules": Object {
@@ -31,16 +28,10 @@ exports[`Runtime should work with register() and .exports 2`] = `
 Object {
   "macros": Object {
     "@m1": Array [
-      Object {
-        "apply": [Function],
-        "name": "m",
-      },
+      Macro { "name": "m", "__types": "" },
     ],
     "@m2": Array [
-      Object {
-        "apply": [Function],
-        "name": "m",
-      },
+      Macro { "name": "m", "__types": "" },
     ],
   },
   "modules": Object {

@@ -11,10 +11,7 @@ Object {
   "exports": Object {
     "macros": Object {
       "@echo": Array [
-        Object {
-          "apply": [Function],
-          "name": "echo",
-        },
+        Macro { "name": "echo", "__types": "" },
       ],
     },
     "modules": Object {

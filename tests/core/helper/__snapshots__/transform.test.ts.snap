@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TransformHelper pre-/ap-pendImports() should insert new import stmts 1`] = `
+exports[`pre-/ap-pendImports() should insert new import stmts 1`] = `
 "import * as _nb from 'b';
 import nb from 'b';
 import 'b';
@@ -9,7 +9,7 @@ import { b as _b } from 'b';
 const a = 1;"
 `;
 
-exports[`TransformHelper pre-/ap-pendImports() should insert new import stmts 2`] = `
+exports[`pre-/ap-pendImports() should insert new import stmts 2`] = `
 "import { b as _b } from 'b';
 import { b } from 'b';
 import 'b';
@@ -18,22 +18,5910 @@ import * as _nb from 'b';
 const a = 1;"
 `;
 
-exports[`TransformHelper pre-/ap-pendImports() should unshift to body if no existed import stmt 1`] = `
+exports[`pre-/ap-pendImports() should returns the existed import stmt 1`] = `
+NodePath {
+  "_traverseFlags": 0,
+  "container": Array [
+    Node {
+      "end": 21,
+      "importKind": "value",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "source": Node {
+        "end": 21,
+        "extra": Object {
+          "raw": "'a'",
+          "rawValue": "a",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 18,
+            "line": 1,
+          },
+        },
+        "start": 18,
+        "type": "StringLiteral",
+        "value": "a",
+      },
+      "specifiers": Array [
+        Node {
+          "end": 10,
+          "imported": Node {
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": "a",
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "name": "a",
+            "start": 9,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "local": Node {
+            "end": 10,
+            "extra": undefined,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": "a",
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "name": "a",
+            "range": undefined,
+            "start": 9,
+            "type": "Identifier",
+          },
+          "start": 9,
+          "type": "ImportSpecifier",
+        },
+      ],
+      "start": 0,
+      "type": "ImportDeclaration",
+    },
+  ],
+  "context": TraversalContext {
+    "opts": Object {
+      "Program": Object {
+        "enter": Array [
+          [Function],
+        ],
+      },
+      "_exploded": true,
+      "_verified": true,
+    },
+    "parentPath": undefined,
+    "priorityQueue": Array [],
+    "queue": null,
+    "scope": undefined,
+    "state": undefined,
+  },
+  "contexts": Array [],
+  "data": null,
+  "hub": undefined,
+  "key": 0,
+  "listKey": "body",
+  "node": Node {
+    "end": 21,
+    "importKind": "value",
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 1,
+      },
+      "filename": undefined,
+      "identifierName": undefined,
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "source": Node {
+      "end": 21,
+      "extra": Object {
+        "raw": "'a'",
+        "rawValue": "a",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 18,
+          "line": 1,
+        },
+      },
+      "start": 18,
+      "type": "StringLiteral",
+      "value": "a",
+    },
+    "specifiers": Array [
+      Node {
+        "end": 10,
+        "imported": Node {
+          "end": 10,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": "a",
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "a",
+          "start": 9,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 9,
+            "line": 1,
+          },
+        },
+        "local": Node {
+          "end": 10,
+          "extra": undefined,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": "a",
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "a",
+          "range": undefined,
+          "start": 9,
+          "type": "Identifier",
+        },
+        "start": 9,
+        "type": "ImportSpecifier",
+      },
+    ],
+    "start": 0,
+    "type": "ImportDeclaration",
+  },
+  "opts": Object {
+    "Program": Object {
+      "enter": Array [
+        [Function],
+      ],
+    },
+    "_exploded": true,
+    "_verified": true,
+  },
+  "parent": Node {
+    "body": Array [
+      Node {
+        "end": 21,
+        "importKind": "value",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "source": Node {
+          "end": 21,
+          "extra": Object {
+            "raw": "'a'",
+            "rawValue": "a",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 18,
+              "line": 1,
+            },
+          },
+          "start": 18,
+          "type": "StringLiteral",
+          "value": "a",
+        },
+        "specifiers": Array [
+          Node {
+            "end": 10,
+            "imported": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "local": Node {
+              "end": 10,
+              "extra": undefined,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "range": undefined,
+              "start": 9,
+              "type": "Identifier",
+            },
+            "start": 9,
+            "type": "ImportSpecifier",
+          },
+        ],
+        "start": 0,
+        "type": "ImportDeclaration",
+      },
+    ],
+    "directives": Array [],
+    "end": 21,
+    "interpreter": null,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 1,
+      },
+      "filename": undefined,
+      "identifierName": undefined,
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "start": 0,
+    "type": "Program",
+  },
+  "parentPath": NodePath {
+    "_traverseFlags": 0,
+    "container": Node {
+      "comments": Array [],
+      "end": 21,
+      "errors": Array [],
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "program": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "start": 0,
+      "type": "File",
+    },
+    "context": TraversalContext {
+      "opts": Object {
+        "Program": Object {
+          "enter": Array [
+            [Function],
+          ],
+        },
+        "_exploded": true,
+        "_verified": true,
+      },
+      "parentPath": undefined,
+      "priorityQueue": Array [],
+      "queue": null,
+      "scope": undefined,
+      "state": undefined,
+    },
+    "contexts": Array [],
+    "data": null,
+    "hub": undefined,
+    "key": "program",
+    "listKey": undefined,
+    "node": Node {
+      "body": Array [
+        Node {
+          "end": 21,
+          "importKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "source": Node {
+            "end": 21,
+            "extra": Object {
+              "raw": "'a'",
+              "rawValue": "a",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 18,
+                "line": 1,
+              },
+            },
+            "start": 18,
+            "type": "StringLiteral",
+            "value": "a",
+          },
+          "specifiers": Array [
+            Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "start": 0,
+          "type": "ImportDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 21,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "opts": Object {
+      "Program": Object {
+        "enter": Array [
+          [Function],
+        ],
+      },
+      "_exploded": true,
+      "_verified": true,
+    },
+    "parent": Node {
+      "comments": Array [],
+      "end": 21,
+      "errors": Array [],
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "program": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "start": 0,
+      "type": "File",
+    },
+    "parentPath": null,
+    "scope": Scope {
+      "bindings": Object {
+        "a": Binding {
+          "constant": true,
+          "constantViolations": Array [],
+          "hasDeoptedValue": false,
+          "hasValue": false,
+          "identifier": Node {
+            "end": 10,
+            "extra": undefined,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": "a",
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "name": "a",
+            "range": undefined,
+            "start": 9,
+            "type": "Identifier",
+          },
+          "kind": "module",
+          "path": NodePath {
+            "_traverseFlags": 0,
+            "container": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "context": TraversalContext {
+              "opts": Object {
+                "ArrowFunctionExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "AssignmentExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "CatchClause": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassMethod": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassPrivateMethod": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareClass": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareExportAllDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareExportDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareFunction": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareInterface": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareModule": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareModuleExports": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareOpaqueType": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareTypeAlias": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareVariable": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "EnumDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ExportAllDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                  "exit": Array [
+                    [Function],
+                  ],
+                },
+                "ExportDefaultDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                  "exit": Array [
+                    [Function],
+                  ],
+                },
+                "ExportNamedDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                  "exit": Array [
+                    [Function],
+                  ],
+                },
+                "ForInStatement": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "ForOfStatement": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "ForStatement": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "FunctionDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "FunctionExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "Identifier": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ImportDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "InterfaceDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "JSXIdentifier": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "LabeledStatement": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ObjectMethod": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "OpaqueType": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSDeclareFunction": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSEnumDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSInterfaceDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSModuleDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSTypeAliasDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TypeAlias": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "UnaryExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "UpdateExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "VariableDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "_exploded": true,
+                "_verified": true,
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "parentPath": [Circular],
+              "priorityQueue": Array [],
+              "queue": null,
+              "scope": [Circular],
+              "state": Object {
+                "assignments": Array [],
+                "constantViolations": Array [],
+                "references": Array [],
+              },
+            },
+            "contexts": Array [],
+            "data": null,
+            "hub": undefined,
+            "key": 0,
+            "listKey": "specifiers",
+            "node": Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+            "opts": Object {
+              "ArrowFunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "AssignmentExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "CatchClause": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassPrivateMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareClass": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareInterface": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModule": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModuleExports": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareOpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareTypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareVariable": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "EnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportDefaultDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportNamedDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ForInStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForOfStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "FunctionDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "FunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "Identifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ImportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "InterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "JSXIdentifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "LabeledStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ObjectMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "OpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSDeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSEnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSInterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSModuleDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSTypeAliasDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UnaryExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UpdateExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "VariableDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "_exploded": true,
+              "_verified": true,
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "parent": Node {
+              "end": 21,
+              "importKind": "value",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "source": Node {
+                "end": 21,
+                "extra": Object {
+                  "raw": "'a'",
+                  "rawValue": "a",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                },
+                "start": 18,
+                "type": "StringLiteral",
+                "value": "a",
+              },
+              "specifiers": Array [
+                Node {
+                  "end": 10,
+                  "imported": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "local": Node {
+                    "end": 10,
+                    "extra": undefined,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "range": undefined,
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "start": 9,
+                  "type": "ImportSpecifier",
+                },
+              ],
+              "start": 0,
+              "type": "ImportDeclaration",
+            },
+            "parentPath": [Circular],
+            "scope": [Circular],
+            "skipKeys": null,
+            "state": Object {
+              "assignments": Array [],
+              "constantViolations": Array [],
+              "references": Array [],
+            },
+            "type": "ImportSpecifier",
+          },
+          "referencePaths": Array [],
+          "referenced": false,
+          "references": 0,
+          "scope": [Circular],
+          "value": null,
+        },
+      },
+      "block": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "crawling": false,
+      "data": Object {},
+      "globals": Object {},
+      "inited": true,
+      "labels": Map {},
+      "path": [Circular],
+      "references": Object {
+        "a": true,
+      },
+      "uid": 3,
+      "uids": Object {},
+    },
+    "skipKeys": null,
+    "state": undefined,
+    "type": "Program",
+  },
+  "scope": Scope {
+    "bindings": Object {
+      "a": Binding {
+        "constant": true,
+        "constantViolations": Array [],
+        "hasDeoptedValue": false,
+        "hasValue": false,
+        "identifier": Node {
+          "end": 10,
+          "extra": undefined,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": "a",
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "a",
+          "range": undefined,
+          "start": 9,
+          "type": "Identifier",
+        },
+        "kind": "module",
+        "path": NodePath {
+          "_traverseFlags": 0,
+          "container": Array [
+            Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "context": TraversalContext {
+            "opts": Object {
+              "ArrowFunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "AssignmentExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "CatchClause": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassPrivateMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareClass": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareInterface": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModule": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModuleExports": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareOpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareTypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareVariable": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "EnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportDefaultDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportNamedDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ForInStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForOfStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "FunctionDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "FunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "Identifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ImportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "InterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "JSXIdentifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "LabeledStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ObjectMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "OpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSDeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSEnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSInterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSModuleDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSTypeAliasDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UnaryExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UpdateExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "VariableDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "_exploded": true,
+              "_verified": true,
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "parentPath": [Circular],
+            "priorityQueue": Array [],
+            "queue": null,
+            "scope": [Circular],
+            "state": Object {
+              "assignments": Array [],
+              "constantViolations": Array [],
+              "references": Array [],
+            },
+          },
+          "contexts": Array [],
+          "data": null,
+          "hub": undefined,
+          "key": 0,
+          "listKey": "specifiers",
+          "node": Node {
+            "end": 10,
+            "imported": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "local": Node {
+              "end": 10,
+              "extra": undefined,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "range": undefined,
+              "start": 9,
+              "type": "Identifier",
+            },
+            "start": 9,
+            "type": "ImportSpecifier",
+          },
+          "opts": Object {
+            "ArrowFunctionExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "AssignmentExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "CatchClause": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassMethod": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassPrivateMethod": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareClass": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareExportAllDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareExportDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareFunction": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareInterface": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareModule": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareModuleExports": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareOpaqueType": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareTypeAlias": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareVariable": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "EnumDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ExportAllDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+              "exit": Array [
+                [Function],
+              ],
+            },
+            "ExportDefaultDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+              "exit": Array [
+                [Function],
+              ],
+            },
+            "ExportNamedDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+              "exit": Array [
+                [Function],
+              ],
+            },
+            "ForInStatement": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "ForOfStatement": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "ForStatement": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "FunctionDeclaration": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "FunctionExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "Identifier": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ImportDeclaration": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "InterfaceDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "JSXIdentifier": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "LabeledStatement": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ObjectMethod": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "OpaqueType": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSDeclareFunction": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSEnumDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSInterfaceDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSModuleDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSTypeAliasDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TypeAlias": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "UnaryExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "UpdateExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "VariableDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "_exploded": true,
+            "_verified": true,
+            "enter": Array [
+              [Function],
+            ],
+          },
+          "parent": Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+          "parentPath": [Circular],
+          "scope": [Circular],
+          "skipKeys": null,
+          "state": Object {
+            "assignments": Array [],
+            "constantViolations": Array [],
+            "references": Array [],
+          },
+          "type": "ImportSpecifier",
+        },
+        "referencePaths": Array [],
+        "referenced": false,
+        "references": 0,
+        "scope": [Circular],
+        "value": null,
+      },
+    },
+    "block": Node {
+      "body": Array [
+        Node {
+          "end": 21,
+          "importKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "source": Node {
+            "end": 21,
+            "extra": Object {
+              "raw": "'a'",
+              "rawValue": "a",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 18,
+                "line": 1,
+              },
+            },
+            "start": 18,
+            "type": "StringLiteral",
+            "value": "a",
+          },
+          "specifiers": Array [
+            Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "start": 0,
+          "type": "ImportDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 21,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "crawling": false,
+    "data": Object {},
+    "globals": Object {},
+    "inited": true,
+    "labels": Map {},
+    "path": NodePath {
+      "_traverseFlags": 0,
+      "container": Node {
+        "comments": Array [],
+        "end": 21,
+        "errors": Array [],
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "program": Node {
+          "body": Array [
+            Node {
+              "end": 21,
+              "importKind": "value",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "source": Node {
+                "end": 21,
+                "extra": Object {
+                  "raw": "'a'",
+                  "rawValue": "a",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                },
+                "start": 18,
+                "type": "StringLiteral",
+                "value": "a",
+              },
+              "specifiers": Array [
+                Node {
+                  "end": 10,
+                  "imported": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "local": Node {
+                    "end": 10,
+                    "extra": undefined,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "range": undefined,
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "start": 9,
+                  "type": "ImportSpecifier",
+                },
+              ],
+              "start": 0,
+              "type": "ImportDeclaration",
+            },
+          ],
+          "directives": Array [],
+          "end": 21,
+          "interpreter": null,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "sourceType": "module",
+          "start": 0,
+          "type": "Program",
+        },
+        "start": 0,
+        "type": "File",
+      },
+      "context": TraversalContext {
+        "opts": Object {
+          "Program": Object {
+            "enter": Array [
+              [Function],
+            ],
+          },
+          "_exploded": true,
+          "_verified": true,
+        },
+        "parentPath": undefined,
+        "priorityQueue": Array [],
+        "queue": null,
+        "scope": undefined,
+        "state": undefined,
+      },
+      "contexts": Array [],
+      "data": null,
+      "hub": undefined,
+      "key": "program",
+      "listKey": undefined,
+      "node": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "opts": Object {
+        "Program": Object {
+          "enter": Array [
+            [Function],
+          ],
+        },
+        "_exploded": true,
+        "_verified": true,
+      },
+      "parent": Node {
+        "comments": Array [],
+        "end": 21,
+        "errors": Array [],
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "program": Node {
+          "body": Array [
+            Node {
+              "end": 21,
+              "importKind": "value",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "source": Node {
+                "end": 21,
+                "extra": Object {
+                  "raw": "'a'",
+                  "rawValue": "a",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                },
+                "start": 18,
+                "type": "StringLiteral",
+                "value": "a",
+              },
+              "specifiers": Array [
+                Node {
+                  "end": 10,
+                  "imported": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "local": Node {
+                    "end": 10,
+                    "extra": undefined,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "range": undefined,
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "start": 9,
+                  "type": "ImportSpecifier",
+                },
+              ],
+              "start": 0,
+              "type": "ImportDeclaration",
+            },
+          ],
+          "directives": Array [],
+          "end": 21,
+          "interpreter": null,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "sourceType": "module",
+          "start": 0,
+          "type": "Program",
+        },
+        "start": 0,
+        "type": "File",
+      },
+      "parentPath": null,
+      "scope": [Circular],
+      "skipKeys": null,
+      "state": undefined,
+      "type": "Program",
+    },
+    "references": Object {
+      "a": true,
+    },
+    "uid": 3,
+    "uids": Object {},
+  },
+  "skipKeys": null,
+  "state": undefined,
+  "type": "ImportDeclaration",
+}
+`;
+
+exports[`pre-/ap-pendImports() should returns the existed import stmt 2`] = `
+NodePath {
+  "_traverseFlags": 0,
+  "container": Array [
+    Node {
+      "end": 21,
+      "importKind": "value",
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "source": Node {
+        "end": 21,
+        "extra": Object {
+          "raw": "'a'",
+          "rawValue": "a",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 18,
+            "line": 1,
+          },
+        },
+        "start": 18,
+        "type": "StringLiteral",
+        "value": "a",
+      },
+      "specifiers": Array [
+        Node {
+          "end": 10,
+          "imported": Node {
+            "end": 10,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": "a",
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "name": "a",
+            "start": 9,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "local": Node {
+            "end": 10,
+            "extra": undefined,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": "a",
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "name": "a",
+            "range": undefined,
+            "start": 9,
+            "type": "Identifier",
+          },
+          "start": 9,
+          "type": "ImportSpecifier",
+        },
+      ],
+      "start": 0,
+      "type": "ImportDeclaration",
+    },
+  ],
+  "context": TraversalContext {
+    "opts": Object {
+      "Program": Object {
+        "enter": Array [
+          [Function],
+        ],
+      },
+      "_exploded": true,
+      "_verified": true,
+    },
+    "parentPath": undefined,
+    "priorityQueue": Array [],
+    "queue": null,
+    "scope": undefined,
+    "state": undefined,
+  },
+  "contexts": Array [],
+  "data": null,
+  "hub": undefined,
+  "key": 0,
+  "listKey": "body",
+  "node": Node {
+    "end": 21,
+    "importKind": "value",
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 1,
+      },
+      "filename": undefined,
+      "identifierName": undefined,
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "source": Node {
+      "end": 21,
+      "extra": Object {
+        "raw": "'a'",
+        "rawValue": "a",
+      },
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 18,
+          "line": 1,
+        },
+      },
+      "start": 18,
+      "type": "StringLiteral",
+      "value": "a",
+    },
+    "specifiers": Array [
+      Node {
+        "end": 10,
+        "imported": Node {
+          "end": 10,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": "a",
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "a",
+          "start": 9,
+          "type": "Identifier",
+        },
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 10,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 9,
+            "line": 1,
+          },
+        },
+        "local": Node {
+          "end": 10,
+          "extra": undefined,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": "a",
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "a",
+          "range": undefined,
+          "start": 9,
+          "type": "Identifier",
+        },
+        "start": 9,
+        "type": "ImportSpecifier",
+      },
+    ],
+    "start": 0,
+    "type": "ImportDeclaration",
+  },
+  "opts": Object {
+    "Program": Object {
+      "enter": Array [
+        [Function],
+      ],
+    },
+    "_exploded": true,
+    "_verified": true,
+  },
+  "parent": Node {
+    "body": Array [
+      Node {
+        "end": 21,
+        "importKind": "value",
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "source": Node {
+          "end": 21,
+          "extra": Object {
+            "raw": "'a'",
+            "rawValue": "a",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 18,
+              "line": 1,
+            },
+          },
+          "start": 18,
+          "type": "StringLiteral",
+          "value": "a",
+        },
+        "specifiers": Array [
+          Node {
+            "end": 10,
+            "imported": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "local": Node {
+              "end": 10,
+              "extra": undefined,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "range": undefined,
+              "start": 9,
+              "type": "Identifier",
+            },
+            "start": 9,
+            "type": "ImportSpecifier",
+          },
+        ],
+        "start": 0,
+        "type": "ImportDeclaration",
+      },
+    ],
+    "directives": Array [],
+    "end": 21,
+    "interpreter": null,
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 21,
+        "line": 1,
+      },
+      "filename": undefined,
+      "identifierName": undefined,
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "sourceType": "module",
+    "start": 0,
+    "type": "Program",
+  },
+  "parentPath": NodePath {
+    "_traverseFlags": 0,
+    "container": Node {
+      "comments": Array [],
+      "end": 21,
+      "errors": Array [],
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "program": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "start": 0,
+      "type": "File",
+    },
+    "context": TraversalContext {
+      "opts": Object {
+        "Program": Object {
+          "enter": Array [
+            [Function],
+          ],
+        },
+        "_exploded": true,
+        "_verified": true,
+      },
+      "parentPath": undefined,
+      "priorityQueue": Array [],
+      "queue": null,
+      "scope": undefined,
+      "state": undefined,
+    },
+    "contexts": Array [],
+    "data": null,
+    "hub": undefined,
+    "key": "program",
+    "listKey": undefined,
+    "node": Node {
+      "body": Array [
+        Node {
+          "end": 21,
+          "importKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "source": Node {
+            "end": 21,
+            "extra": Object {
+              "raw": "'a'",
+              "rawValue": "a",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 18,
+                "line": 1,
+              },
+            },
+            "start": 18,
+            "type": "StringLiteral",
+            "value": "a",
+          },
+          "specifiers": Array [
+            Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "start": 0,
+          "type": "ImportDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 21,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "opts": Object {
+      "Program": Object {
+        "enter": Array [
+          [Function],
+        ],
+      },
+      "_exploded": true,
+      "_verified": true,
+    },
+    "parent": Node {
+      "comments": Array [],
+      "end": 21,
+      "errors": Array [],
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "program": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "start": 0,
+      "type": "File",
+    },
+    "parentPath": null,
+    "scope": Scope {
+      "bindings": Object {
+        "a": Binding {
+          "constant": true,
+          "constantViolations": Array [],
+          "hasDeoptedValue": false,
+          "hasValue": false,
+          "identifier": Node {
+            "end": 10,
+            "extra": undefined,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": "a",
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "name": "a",
+            "range": undefined,
+            "start": 9,
+            "type": "Identifier",
+          },
+          "kind": "module",
+          "path": NodePath {
+            "_traverseFlags": 0,
+            "container": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "context": TraversalContext {
+              "opts": Object {
+                "ArrowFunctionExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "AssignmentExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "CatchClause": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassMethod": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ClassPrivateMethod": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareClass": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareExportAllDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareExportDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareFunction": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareInterface": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareModule": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareModuleExports": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareOpaqueType": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareTypeAlias": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "DeclareVariable": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "EnumDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ExportAllDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                  "exit": Array [
+                    [Function],
+                  ],
+                },
+                "ExportDefaultDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                  "exit": Array [
+                    [Function],
+                  ],
+                },
+                "ExportNamedDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                  "exit": Array [
+                    [Function],
+                  ],
+                },
+                "ForInStatement": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "ForOfStatement": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "ForStatement": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "FunctionDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "FunctionExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "Identifier": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ImportDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                    [Function],
+                  ],
+                },
+                "InterfaceDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "JSXIdentifier": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "LabeledStatement": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "ObjectMethod": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "OpaqueType": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSDeclareFunction": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSEnumDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSInterfaceDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSModuleDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TSTypeAliasDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "TypeAlias": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "UnaryExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "UpdateExpression": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "VariableDeclaration": Object {
+                  "enter": Array [
+                    [Function],
+                  ],
+                },
+                "_exploded": true,
+                "_verified": true,
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "parentPath": [Circular],
+              "priorityQueue": Array [],
+              "queue": null,
+              "scope": [Circular],
+              "state": Object {
+                "assignments": Array [],
+                "constantViolations": Array [],
+                "references": Array [],
+              },
+            },
+            "contexts": Array [],
+            "data": null,
+            "hub": undefined,
+            "key": 0,
+            "listKey": "specifiers",
+            "node": Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+            "opts": Object {
+              "ArrowFunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "AssignmentExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "CatchClause": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassPrivateMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareClass": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareInterface": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModule": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModuleExports": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareOpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareTypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareVariable": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "EnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportDefaultDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportNamedDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ForInStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForOfStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "FunctionDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "FunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "Identifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ImportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "InterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "JSXIdentifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "LabeledStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ObjectMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "OpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSDeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSEnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSInterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSModuleDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSTypeAliasDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UnaryExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UpdateExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "VariableDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "_exploded": true,
+              "_verified": true,
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "parent": Node {
+              "end": 21,
+              "importKind": "value",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "source": Node {
+                "end": 21,
+                "extra": Object {
+                  "raw": "'a'",
+                  "rawValue": "a",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                },
+                "start": 18,
+                "type": "StringLiteral",
+                "value": "a",
+              },
+              "specifiers": Array [
+                Node {
+                  "end": 10,
+                  "imported": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "local": Node {
+                    "end": 10,
+                    "extra": undefined,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "range": undefined,
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "start": 9,
+                  "type": "ImportSpecifier",
+                },
+              ],
+              "start": 0,
+              "type": "ImportDeclaration",
+            },
+            "parentPath": [Circular],
+            "scope": [Circular],
+            "skipKeys": null,
+            "state": Object {
+              "assignments": Array [],
+              "constantViolations": Array [],
+              "references": Array [],
+            },
+            "type": "ImportSpecifier",
+          },
+          "referencePaths": Array [],
+          "referenced": false,
+          "references": 0,
+          "scope": [Circular],
+          "value": null,
+        },
+      },
+      "block": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "crawling": false,
+      "data": Object {},
+      "globals": Object {},
+      "inited": true,
+      "labels": Map {},
+      "path": [Circular],
+      "references": Object {
+        "a": true,
+      },
+      "uid": 3,
+      "uids": Object {},
+    },
+    "skipKeys": null,
+    "state": undefined,
+    "type": "Program",
+  },
+  "scope": Scope {
+    "bindings": Object {
+      "a": Binding {
+        "constant": true,
+        "constantViolations": Array [],
+        "hasDeoptedValue": false,
+        "hasValue": false,
+        "identifier": Node {
+          "end": 10,
+          "extra": undefined,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 10,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": "a",
+            "start": Position {
+              "column": 9,
+              "line": 1,
+            },
+          },
+          "name": "a",
+          "range": undefined,
+          "start": 9,
+          "type": "Identifier",
+        },
+        "kind": "module",
+        "path": NodePath {
+          "_traverseFlags": 0,
+          "container": Array [
+            Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "context": TraversalContext {
+            "opts": Object {
+              "ArrowFunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "AssignmentExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "CatchClause": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ClassPrivateMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareClass": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareExportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareInterface": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModule": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareModuleExports": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareOpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareTypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "DeclareVariable": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "EnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ExportAllDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportDefaultDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ExportNamedDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+                "exit": Array [
+                  [Function],
+                ],
+              },
+              "ForInStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForOfStatement": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "ForStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "FunctionDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "FunctionExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "Identifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ImportDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                  [Function],
+                ],
+              },
+              "InterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "JSXIdentifier": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "LabeledStatement": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "ObjectMethod": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "OpaqueType": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSDeclareFunction": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSEnumDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSInterfaceDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSModuleDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TSTypeAliasDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "TypeAlias": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UnaryExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "UpdateExpression": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "VariableDeclaration": Object {
+                "enter": Array [
+                  [Function],
+                ],
+              },
+              "_exploded": true,
+              "_verified": true,
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "parentPath": [Circular],
+            "priorityQueue": Array [],
+            "queue": null,
+            "scope": [Circular],
+            "state": Object {
+              "assignments": Array [],
+              "constantViolations": Array [],
+              "references": Array [],
+            },
+          },
+          "contexts": Array [],
+          "data": null,
+          "hub": undefined,
+          "key": 0,
+          "listKey": "specifiers",
+          "node": Node {
+            "end": 10,
+            "imported": Node {
+              "end": 10,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "start": 9,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 9,
+                "line": 1,
+              },
+            },
+            "local": Node {
+              "end": 10,
+              "extra": undefined,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "a",
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "name": "a",
+              "range": undefined,
+              "start": 9,
+              "type": "Identifier",
+            },
+            "start": 9,
+            "type": "ImportSpecifier",
+          },
+          "opts": Object {
+            "ArrowFunctionExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "AssignmentExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "CatchClause": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassMethod": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ClassPrivateMethod": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareClass": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareExportAllDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareExportDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareFunction": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareInterface": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareModule": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareModuleExports": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareOpaqueType": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareTypeAlias": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "DeclareVariable": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "EnumDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ExportAllDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+              "exit": Array [
+                [Function],
+              ],
+            },
+            "ExportDefaultDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+              "exit": Array [
+                [Function],
+              ],
+            },
+            "ExportNamedDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+              "exit": Array [
+                [Function],
+              ],
+            },
+            "ForInStatement": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "ForOfStatement": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "ForStatement": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "FunctionDeclaration": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "FunctionExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "Identifier": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ImportDeclaration": Object {
+              "enter": Array [
+                [Function],
+                [Function],
+              ],
+            },
+            "InterfaceDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "JSXIdentifier": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "LabeledStatement": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "ObjectMethod": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "OpaqueType": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSDeclareFunction": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSEnumDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSInterfaceDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSModuleDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TSTypeAliasDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "TypeAlias": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "UnaryExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "UpdateExpression": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "VariableDeclaration": Object {
+              "enter": Array [
+                [Function],
+              ],
+            },
+            "_exploded": true,
+            "_verified": true,
+            "enter": Array [
+              [Function],
+            ],
+          },
+          "parent": Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+          "parentPath": [Circular],
+          "scope": [Circular],
+          "skipKeys": null,
+          "state": Object {
+            "assignments": Array [],
+            "constantViolations": Array [],
+            "references": Array [],
+          },
+          "type": "ImportSpecifier",
+        },
+        "referencePaths": Array [],
+        "referenced": false,
+        "references": 0,
+        "scope": [Circular],
+        "value": null,
+      },
+    },
+    "block": Node {
+      "body": Array [
+        Node {
+          "end": 21,
+          "importKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "source": Node {
+            "end": 21,
+            "extra": Object {
+              "raw": "'a'",
+              "rawValue": "a",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 18,
+                "line": 1,
+              },
+            },
+            "start": 18,
+            "type": "StringLiteral",
+            "value": "a",
+          },
+          "specifiers": Array [
+            Node {
+              "end": 10,
+              "imported": Node {
+                "end": 10,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 10,
+                "extra": undefined,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": "a",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "a",
+                "range": undefined,
+                "start": 9,
+                "type": "Identifier",
+              },
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "start": 0,
+          "type": "ImportDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 21,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 21,
+          "line": 1,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "crawling": false,
+    "data": Object {},
+    "globals": Object {},
+    "inited": true,
+    "labels": Map {},
+    "path": NodePath {
+      "_traverseFlags": 0,
+      "container": Node {
+        "comments": Array [],
+        "end": 21,
+        "errors": Array [],
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "program": Node {
+          "body": Array [
+            Node {
+              "end": 21,
+              "importKind": "value",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "source": Node {
+                "end": 21,
+                "extra": Object {
+                  "raw": "'a'",
+                  "rawValue": "a",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                },
+                "start": 18,
+                "type": "StringLiteral",
+                "value": "a",
+              },
+              "specifiers": Array [
+                Node {
+                  "end": 10,
+                  "imported": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "local": Node {
+                    "end": 10,
+                    "extra": undefined,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "range": undefined,
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "start": 9,
+                  "type": "ImportSpecifier",
+                },
+              ],
+              "start": 0,
+              "type": "ImportDeclaration",
+            },
+          ],
+          "directives": Array [],
+          "end": 21,
+          "interpreter": null,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "sourceType": "module",
+          "start": 0,
+          "type": "Program",
+        },
+        "start": 0,
+        "type": "File",
+      },
+      "context": TraversalContext {
+        "opts": Object {
+          "Program": Object {
+            "enter": Array [
+              [Function],
+            ],
+          },
+          "_exploded": true,
+          "_verified": true,
+        },
+        "parentPath": undefined,
+        "priorityQueue": Array [],
+        "queue": null,
+        "scope": undefined,
+        "state": undefined,
+      },
+      "contexts": Array [],
+      "data": null,
+      "hub": undefined,
+      "key": "program",
+      "listKey": undefined,
+      "node": Node {
+        "body": Array [
+          Node {
+            "end": 21,
+            "importKind": "value",
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 21,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "source": Node {
+              "end": 21,
+              "extra": Object {
+                "raw": "'a'",
+                "rawValue": "a",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+              },
+              "start": 18,
+              "type": "StringLiteral",
+              "value": "a",
+            },
+            "specifiers": Array [
+              Node {
+                "end": 10,
+                "imported": Node {
+                  "end": 10,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 10,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "local": Node {
+                  "end": 10,
+                  "extra": undefined,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": "a",
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "name": "a",
+                  "range": undefined,
+                  "start": 9,
+                  "type": "Identifier",
+                },
+                "start": 9,
+                "type": "ImportSpecifier",
+              },
+            ],
+            "start": 0,
+            "type": "ImportDeclaration",
+          },
+        ],
+        "directives": Array [],
+        "end": 21,
+        "interpreter": null,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "sourceType": "module",
+        "start": 0,
+        "type": "Program",
+      },
+      "opts": Object {
+        "Program": Object {
+          "enter": Array [
+            [Function],
+          ],
+        },
+        "_exploded": true,
+        "_verified": true,
+      },
+      "parent": Node {
+        "comments": Array [],
+        "end": 21,
+        "errors": Array [],
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 21,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "line": 1,
+          },
+        },
+        "program": Node {
+          "body": Array [
+            Node {
+              "end": 21,
+              "importKind": "value",
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 21,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "source": Node {
+                "end": 21,
+                "extra": Object {
+                  "raw": "'a'",
+                  "rawValue": "a",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 21,
+                    "line": 1,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                },
+                "start": 18,
+                "type": "StringLiteral",
+                "value": "a",
+              },
+              "specifiers": Array [
+                Node {
+                  "end": 10,
+                  "imported": Node {
+                    "end": 10,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 10,
+                      "line": 1,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 9,
+                      "line": 1,
+                    },
+                  },
+                  "local": Node {
+                    "end": 10,
+                    "extra": undefined,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 1,
+                      },
+                      "filename": undefined,
+                      "identifierName": "a",
+                      "start": Position {
+                        "column": 9,
+                        "line": 1,
+                      },
+                    },
+                    "name": "a",
+                    "range": undefined,
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "start": 9,
+                  "type": "ImportSpecifier",
+                },
+              ],
+              "start": 0,
+              "type": "ImportDeclaration",
+            },
+          ],
+          "directives": Array [],
+          "end": 21,
+          "interpreter": null,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 21,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "sourceType": "module",
+          "start": 0,
+          "type": "Program",
+        },
+        "start": 0,
+        "type": "File",
+      },
+      "parentPath": null,
+      "scope": [Circular],
+      "skipKeys": null,
+      "state": undefined,
+      "type": "Program",
+    },
+    "references": Object {
+      "a": true,
+    },
+    "uid": 3,
+    "uids": Object {},
+  },
+  "skipKeys": null,
+  "state": undefined,
+  "type": "ImportDeclaration",
+}
+`;
+
+exports[`pre-/ap-pendImports() should unshift to body if no existed import stmt 1`] = `
 "import 'a';
 const b = 1;"
 `;
 
-exports[`TransformHelper pre-/ap-pendImports() should unshift to body if no existed import stmt 2`] = `
+exports[`pre-/ap-pendImports() should unshift to body if no existed import stmt 2`] = `
 "import 'a';
 const b = 1;"
 `;
 
-exports[`TransformHelper pre-/ap-pendToBody() should work 1`] = `
+exports[`pre-/ap-pendToBody() should work 1`] = `
 "console.log('prepended');
 const b = 1;"
 `;
 
-exports[`TransformHelper pre-/ap-pendToBody() should work 2`] = `
+exports[`pre-/ap-pendToBody() should work 2`] = `
 "const b = 1;
 console.log('appended');"
 `;

@@ -65,7 +65,7 @@ export function normalizeExports(
     if ('code' in item) {
       modules[ns] = item.code
     } else {
-      macros[ns] = item.macros.map((m) => ({ name: m.name, apply: m.apply }))
+      macros[ns] = item.macros
       types[ns].macroScope = item.macros.map((m) => {
         if (!isMacro(m)) throw new Error(`${m.name} is not a macro`)
         return m.__types
