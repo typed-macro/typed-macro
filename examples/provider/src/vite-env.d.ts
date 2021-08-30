@@ -1,2 +1,2 @@
 /// <reference types="vite/client" />
-/// <reference path="../client.d.ts" />
+/// <reference types="vite-plugin-macro/macros" />

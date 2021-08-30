@@ -1,6 +1,6 @@
 import { assertNoConflictMacro, normalizeExports } from '@/core/exports'
-import { Macro } from '@/core/macro'
-import { NO_OP } from '../testutils'
+import { macroSerializer, mockMacro } from '../testutils'
+expect.addSnapshotSerializer(macroSerializer)
 
 describe('normalizeExports()', () => {
   it('should work', () => {
@@ -8,13 +8,10 @@ describe('normalizeExports()', () => {
       normalizeExports({
         '@macros': {
           macros: [
-            {
-              name: 'macro',
-              apply: () => {
-                console.log(1)
-              },
-              __types: 'export function macro()',
-            } as Macro,
+            mockMacro('macro', undefined, {
+              types: [],
+              signatures: [{ signature: `(): void` }],
+            }),
           ],
           customTypes: 'type A = string',
         },
@@ -31,11 +28,8 @@ describe('normalizeExports()', () => {
       normalizeExports({
         '@macros': {
           macros: [
-            {
-              name: 'macro',
-              apply: () => {
-                console.log(1)
-              },
+            function macro() {
+              console.log(1)
             },
           ],
           customTypes: 'type A = string',
@@ -53,32 +47,13 @@ describe('assertNoConflictMacro()', () => {
   it('should work', () => {
     expect(() =>
       assertNoConflictMacro({
-        '@macros': [
-          {
-            name: 'macro',
-            apply: NO_OP,
-          },
-        ],
-        '@another': [
-          {
-            name: 'macro',
-            apply: NO_OP,
-          },
-        ],
+        '@macros': [mockMacro('macro')],
+        '@another': [mockMacro('macro')],
       })
     ).not.toThrow()
     expect(() =>
       assertNoConflictMacro({
-        '@macros': [
-          {
-            name: 'macro',
-            apply: NO_OP,
-          },
-          {
-            name: 'macro',
-            apply: NO_OP,
-          },
-        ],
+        '@macros': [mockMacro('macro'), mockMacro('macro')],
       })
     ).toThrow()
   })

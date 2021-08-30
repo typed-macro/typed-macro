@@ -32,7 +32,7 @@ interface InternalMacroProvider extends MacroProvider {
 }
 
 export function isMacroProvider(o: unknown): o is MacroProvider {
-  return (o as any).__internal_macro_provider ?? false
+  return (o as any)?.__internal_macro_provider ?? false
 }
 
 export function macroProvider(provider: MacroProvider): MacroProvider {

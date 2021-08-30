@@ -29,7 +29,7 @@
     "bootstrap": "node scripts/bootstrap.mjs",
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
-    "test": "jest",
+    "test": "jest --runInBand",
     "lint": "eslint . --cache",
     "lint:nocache": "eslint .",
     "prepare": "is-ci || husky install"

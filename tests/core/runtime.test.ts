@@ -1,5 +1,7 @@
 import { assertNoDuplicatedNamespace, Runtime } from '@/core/runtime'
-import { NO_OP } from '../testutils'
+import { macroSerializer, mockMacro } from '../testutils'
+
+expect.addSnapshotSerializer(macroSerializer)
 
 describe('assertNoDuplicatedNamespace()', () => {
   it('should work', () => {
@@ -26,13 +28,13 @@ describe('Runtime', () => {
 
   it('should work with register() and .exports', () => {
     runtime.register({
-      macros: { '@m1': [{ name: 'm', apply: NO_OP }] },
+      macros: { '@m1': [mockMacro('m')] },
       modules: { '@u1': 'export const a = 1' },
       types: {},
     })
     expect(runtime.exports).toMatchSnapshot()
     runtime.register({
-      macros: { '@m2': [{ name: 'm', apply: NO_OP }] },
+      macros: { '@m2': [mockMacro('m')] },
       modules: { '@u2': 'export const a = 1' },
       types: {},
     })
@@ -47,10 +49,7 @@ describe('Runtime', () => {
     expect(() => {
       runtime.register({
         macros: {
-          '@m3': [
-            { name: 'm', apply: NO_OP },
-            { name: 'm', apply: NO_OP },
-          ],
+          '@m3': [mockMacro('m'), mockMacro('m')],
         },
         modules: {},
         types: {},
@@ -60,7 +59,7 @@ describe('Runtime', () => {
 
   it('should work with handleLoad/handleResolveId()', () => {
     runtime.register({
-      macros: { '@m': [{ name: 'm', apply: NO_OP }] },
+      macros: { '@m': [mockMacro('m')] },
       modules: { '@u': 'export const a = 1' },
       types: {},
     })
@@ -77,12 +76,9 @@ describe('Runtime', () => {
     runtime.register({
       macros: {
         '@m': [
-          {
-            name: 'm',
-            apply: ({ path }) => {
-              path.remove()
-            },
-          },
+          mockMacro('m', ({ path }) => {
+            path.remove()
+          }),
         ],
       },
       modules: {},

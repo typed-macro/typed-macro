@@ -15,5 +15,7 @@ describe('macroProvider() & isMacroProvider()', () => {
         })
       )
     ).toBe(true)
+    expect(isMacroProvider(undefined)).toBe(false)
+    expect(isMacroProvider(false)).toBe(false)
   })
 })

@@ -1,24 +1,18 @@
-import { getPathHelper, PathHelper } from '@/core/helper/path'
+import { normalizePathPattern, projectDir } from '@/core/helper/path'
 
-describe('PathHelper', () => {
-  let helper: PathHelper
-
-  const reset = (path = '/workspace/project-a/src/test.ts') => {
-    helper = getPathHelper(path)
-  }
-
-  beforeEach(reset)
-
-  it('projectDir() should work', () => {
-    expect(helper.projectDir('leaf')).not.toBeUndefined()
-    expect(helper.projectDir('root')).not.toBeUndefined()
+describe('projectDir()', () => {
+  it('should work', () => {
+    expect(projectDir('leaf')).not.toBeUndefined()
+    expect(projectDir('root')).not.toBeUndefined()
     // in this project it should be equal
-    expect(helper.projectDir('leaf')).toBe(helper.projectDir('root'))
+    expect(projectDir('leaf')).toBe(projectDir('root'))
   })
+})
 
+describe('normalizePathPattern()', () => {
   it('normalizePathPattern() should work', () => {
     {
-      const { normalized, resolveImportPath } = helper.normalizePathPattern(
+      const { normalized, resolveImportPath } = normalizePathPattern(
         '../assets/*.css',
         '/workspace/a',
         '/workspace/a/src/test.ts'
@@ -27,7 +21,7 @@ describe('PathHelper', () => {
       expect(resolveImportPath('assets/hello.css')).toBe('../assets/hello.css')
     }
     {
-      const { normalized, resolveImportPath } = helper.normalizePathPattern(
+      const { normalized, resolveImportPath } = normalizePathPattern(
         '/assets/*.css',
         '/workspace/a',
         '/workspace/a/src/test/test.ts'
@@ -39,7 +33,7 @@ describe('PathHelper', () => {
       )
     }
     {
-      const { normalized, resolveImportPath } = helper.normalizePathPattern(
+      const { normalized, resolveImportPath } = normalizePathPattern(
         './assets/*.css',
         '/workspace/a',
         '/workspace/a/src/test.ts'
@@ -50,7 +44,7 @@ describe('PathHelper', () => {
     {
       // invalid pattern, so throw error
       expect(() =>
-        helper.normalizePathPattern(
+        normalizePathPattern(
           'assets/',
           '/workspace/a',
           '/workspace/a/src/test.ts'

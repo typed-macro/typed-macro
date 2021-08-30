@@ -1,5 +1,4 @@
-import { File, Program, Node } from '@babel/types'
-import traverse, { NodePath } from '@babel/traverse'
+import { Node } from '@babel/types'
 
 export const nodeLoc = (node: Node) =>
   node.loc
@@ -8,17 +7,6 @@ export const nodeLoc = (node: Node) =>
 
 export const validateFnName = (name: string) =>
   /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/.test(name)
-
-export const findProgramPath = (ast: File) => {
-  let path: NodePath<Program>
-  traverse(ast, {
-    Program(p) {
-      path = p
-      p.stop()
-    },
-  })
-  return path!
-}
 
 export const findDuplicatedItem = <T>(a: T[], b: T[]) => {
   for (const item of a) {

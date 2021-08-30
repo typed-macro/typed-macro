@@ -89,5 +89,5 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
 }
 
 export function isMacroPlugin(o: unknown): o is MacroPlugin {
-  return (o as any).__internal_macro_plugin ?? false
+  return (o as any)?.__internal_macro_plugin ?? false
 }

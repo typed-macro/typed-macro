@@ -6,6 +6,7 @@ import { join } from 'path'
 import { tmpdir } from 'os'
 import { createServer, ViteDevServer } from 'vite'
 import { mkdtemp, rm } from 'fs/promises'
+import { isMacro, macro, MacroHandler, MacroMeta } from '@/core/macro'
 
 export function getAST(code: string) {
   return parse(code, {
@@ -29,6 +30,10 @@ export function matchCodeSnapshot(ast: File) {
 /* eslint-disable @typescript-eslint/no-empty-function */
 export const NO_OP = () => {}
 
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export const NO_OP_HANDLER = (_: any) => {}
+
 export async function withTempPath(path: string, fn: (path: string) => any) {
   const tempDir = await mkdtemp(join(tmpdir(), 'macros-'))
   await fn(join(tempDir, path))
@@ -43,3 +48,29 @@ export async function withDevServer(fn: (server: ViteDevServer) => any) {
   await fn(server)
   await server.close()
 }
+
+export function mockMacro(
+  name: string,
+  fn: MacroHandler = NO_OP_HANDLER,
+  meta: MacroMeta = {
+    types: [],
+    signatures: [],
+  }
+) {
+  return macro(name, meta, fn)
+}
+
+export const macroSerializer = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  serialize(val) {
+    if (!isMacro(val)) throw new Error('not a macro')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return `Macro { "name": "${val.name}", "__types": "${val.__types}" }`
+  },
+
+  test(val) {
+    return isMacro(val)
+  },
+} as jest.SnapshotSerializerPlugin

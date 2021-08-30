@@ -6,3 +6,4 @@ dist-ssr
 .eslintcache
 .idea
 coverage
+/*.d.ts

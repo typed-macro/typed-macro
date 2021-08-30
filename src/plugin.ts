@@ -9,6 +9,8 @@ import { join } from 'path'
 export function vitePluginMacro() {
   return createMacroManager({
     name: 'macro-manager',
-    typesPath: join(__dirname, 'macros.d.ts'),
+    // __dirname = vite-plugin-macro/dist/
+    // join(__dirname, '../macros.d.ts') = vite-plugin-macro/macros.d.ts
+    typesPath: join(__dirname, '../macros.d.ts'),
   })
 }

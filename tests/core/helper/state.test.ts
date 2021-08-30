@@ -1,26 +1,40 @@
-import { getStateHelper, StateHelper } from '@/core/helper/state'
+import { createState, State } from '@/core/helper/state'
 
-describe('StateHelper', () => {
-  let helper: StateHelper
+describe('State', () => {
+  let state: State
 
   const reset = () => {
-    helper = getStateHelper()
+    state = createState()
   }
 
   beforeEach(reset)
 
-  it('should work', () => {
-    expect(helper.thisTurnState()).not.toBeUndefined()
-    expect(helper.crossTurnState()).not.toBeUndefined()
-    expect(helper.clearTurnState()).not.toBeUndefined()
+  const key = '_'
 
-    helper.thisTurnState().ok = true
-    helper.crossTurnState().ok = true
-    expect(helper.thisTurnState().ok).toBe(true)
-    expect(helper.crossTurnState().ok).toBe(true)
+  it('should work with get() & set()', () => {
+    expect(state.get(key)).toBeUndefined()
+    state.set(key, true)
+    expect(state.get(key)).toBe(true)
+  })
 
-    helper.clearTurnState()
-    expect(helper.thisTurnState().ok).toBeUndefined()
-    expect(helper.crossTurnState().ok).toBe(true)
+  it('should work with delete()', () => {
+    state.set(key, true)
+    expect(state.get(key)).toBe(true)
+    state.delete(key)
+    expect(state.get(key)).toBeUndefined()
+  })
+
+  it('should work with clear()', () => {
+    const keys = ['a', 'b', 'c']
+    keys.forEach((k) => {
+      state.set(k, true)
+    })
+    keys.forEach((k) => {
+      expect(state.get(k)).toBe(true)
+    })
+    state.clear()
+    keys.forEach((k) => {
+      expect(state.get(k)).toBeUndefined()
+    })
   })
 })

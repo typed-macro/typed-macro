@@ -1,5 +1,5 @@
 import { defineMacro } from '@/defineMacro'
-import { NO_OP } from './testutils'
+import { NO_OP_HANDLER } from './testutils'
 import { defineMacroPlugin } from '@/defineMacroPlugin'
 
 describe('defineMacroPlugin', () => {
@@ -8,7 +8,7 @@ describe('defineMacroPlugin', () => {
     const m = defineMacro('test')
       .withCustomType('type A = string')
       .withSignature('(): void', 'NO_OP')
-      .withHandler(NO_OP)
+      .withHandler(NO_OP_HANDLER)
     expect(() =>
       defineMacroPlugin({
         typesPath: '',
