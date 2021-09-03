@@ -3,6 +3,7 @@ import {
   isMacroProvider,
   MacroProvider,
   MacroProviderHooks,
+  ViteStartContext,
 } from '@/macroProvider'
 import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/macroPlugin'
 import { getDevServerHelper } from '@/helper/server'
@@ -108,26 +109,26 @@ class MacroManagerImpl {
     this.plugins.push(plugin)
   }
 
+  private get viteStartContext(): ViteStartContext {
+    return this.isDev
+      ? {
+          dev: true,
+          config: this.config!,
+          server: this.devServer!,
+          helper: getDevServerHelper(this.devServer!),
+        }
+      : {
+          dev: false,
+          config: this.config!,
+        }
+  }
+
   async handleBuildStart() {
     if (this.isRollup)
       await Promise.all(this.hooks.map((h) => h.onRollupStart?.()))
     else
       await Promise.all(
-        this.hooks.map((h) =>
-          h.onViteStart?.(
-            this.isDev
-              ? {
-                  dev: true,
-                  config: this.config!,
-                  server: this.devServer!,
-                  helper: getDevServerHelper(this.devServer!),
-                }
-              : {
-                  dev: false,
-                  config: this.config!,
-                }
-          )
-        )
+        this.hooks.map((h) => h.onViteStart?.(this.viteStartContext))
       )
     await Promise.all(this.hooks.map((h) => h.onStart?.()))
   }

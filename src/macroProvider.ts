@@ -5,12 +5,31 @@ import { RuntimeOptions } from '@/core/runtime'
 
 export type ViteStartContext = (
   | {
+      /**
+       * Is in dev mode.
+       */
       dev: true
+      /**
+       * Vite dev server.
+       */
       server: ViteDevServer
+      /**
+       * Wrappers on vite dev server.
+       */
       helper: DevServerHelper
     }
-  | { dev: false }
-) & { config: ResolvedConfig }
+  | {
+      /**
+       * Is in dev mode.
+       */
+      dev: false
+    }
+) & {
+  /**
+   * Vite resolved config.
+   */
+  config: ResolvedConfig
+}
 
 export type MacroProviderHooks = {
   /**
