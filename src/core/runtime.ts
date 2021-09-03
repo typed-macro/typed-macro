@@ -43,10 +43,10 @@ export class Runtime {
 
   private devMode = false
 
-  private _options: RuntimeOptions
-
-  constructor(options: RuntimeOptions, defaultExports?: NormalizedExports) {
-    this._options = options
+  constructor(
+    private readonly _options: RuntimeOptions,
+    defaultExports?: NormalizedExports
+  ) {
     if (defaultExports) this.addExports(defaultExports)
   }
 

@@ -51,6 +51,9 @@ export type MacroProviderOptions = {
    * Provider options.
    */
   options?: {
+    /**
+     * @see TransformerOptions.parserPlugins
+     */
     parserPlugins?: ParserPlugin[]
   }
 }

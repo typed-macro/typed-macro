@@ -26,7 +26,7 @@ describe('Runtime', () => {
     expect((runtime as any).devMode).toBe(true)
   })
 
-  it('should work with register() and .exports', () => {
+  it('should work with addExports() and .exports', () => {
     runtime.addExports({
       macros: { '@m1': [mockMacro('m')] },
       modules: { '@u1': 'export const a = 1' },
@@ -55,6 +55,25 @@ describe('Runtime', () => {
         types: {},
       })
     }).toThrow()
+  })
+
+  it('should work with mergeOptions() and .options', () => {
+    expect(runtime.options.transformer).toEqual({})
+    runtime.mergeOptions({})
+    expect(runtime.options.transformer).toEqual({})
+    runtime.mergeOptions({ transformer: { parserPlugins: ['topLevelAwait'] } })
+    expect(runtime.options.transformer.parserPlugins).toEqual(['topLevelAwait'])
+    runtime.mergeOptions({
+      transformer: { parserPlugins: ['topLevelAwait', 'decorators'] },
+    })
+    expect(runtime.options.transformer.parserPlugins).toEqual([
+      'topLevelAwait',
+      'decorators',
+    ])
+    runtime.mergeOptions({
+      transformer: { maxRecursions: 5 },
+    })
+    expect(runtime.options.transformer.maxRecursions).toBeUndefined()
   })
 
   it('should work with handleLoad/handleResolveId()', () => {
