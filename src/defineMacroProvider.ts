@@ -59,16 +59,20 @@ export type MacroProviderOptions = {
 }
 
 function normalizeProvider(raw: MacroProviderOptions): MacroProvider {
-  const { id, hooks = {}, exports, options = {} } = raw
+  const { id, hooks = {}, exports } = raw
+  const options = raw.options?.parserPlugins?.length
+    ? {
+        transformer: {
+          parserPlugins: raw.options?.parserPlugins,
+        },
+      }
+    : undefined
+
   return {
     id,
     hooks,
     exports: normalizeExports(exports),
-    options: {
-      transformer: {
-        parserPlugins: options.parserPlugins,
-      },
-    },
+    options,
   }
 }
 

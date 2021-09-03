@@ -3,15 +3,20 @@ import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
 import { RuntimeOptions } from '@/core/runtime'
 
+export type ViteStartContext = (
+  | {
+      dev: true
+      server: ViteDevServer
+      helper: DevServerHelper
+    }
+  | { dev: false }
+) & { config: ResolvedConfig }
+
 export type MacroProviderHooks = {
   /**
    * A startup hook called only if running in Vite.
    */
-  onViteStart?: (
-    config: ResolvedConfig,
-    server: ViteDevServer,
-    helper: DevServerHelper
-  ) => void | Promise<void>
+  onViteStart?: (ctx: ViteStartContext) => void | Promise<void>
   /**
    * A startup hook called only if running in Rollup.
    */

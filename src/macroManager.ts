@@ -76,6 +76,10 @@ class MacroManagerImpl {
     return !this.config
   }
 
+  private get isDev() {
+    return !!this.devServer
+  }
+
   use(...sources: (MacroProvider | Plugin)[]) {
     sources.forEach((s) => this.add(s))
     return this
@@ -111,9 +115,17 @@ class MacroManagerImpl {
       await Promise.all(
         this.hooks.map((h) =>
           h.onViteStart?.(
-            this.config!,
-            this.devServer!,
-            getDevServerHelper(this.devServer!)
+            this.isDev
+              ? {
+                  dev: true,
+                  config: this.config!,
+                  server: this.devServer!,
+                  helper: getDevServerHelper(this.devServer!),
+                }
+              : {
+                  dev: false,
+                  config: this.config!,
+                }
           )
         )
       )
@@ -127,6 +139,5 @@ class MacroManagerImpl {
 
   handleConfigResolved(config: ResolvedConfig) {
     this.config = config
-    this.runtime.setDevMode()
   }
 }
