@@ -1,4 +1,4 @@
-import { createMacroManager } from '@/createMacroManager'
+import { createMacroManager, MacroManagerOptions } from '@/createMacroManager'
 import { join } from 'path'
 
 /**
@@ -6,11 +6,12 @@ import { join } from 'path'
  *
  * @see MacroManager
  */
-export function vitePluginMacro() {
+export function vitePluginMacro(options?: Partial<MacroManagerOptions>) {
   return createMacroManager({
     name: 'macro-manager',
     // __dirname = vite-plugin-macro/dist/
     // join(__dirname, '../macros.d.ts') = vite-plugin-macro/macros.d.ts
     typesPath: join(__dirname, '../macros.d.ts'),
+    ...options,
   })
 }
