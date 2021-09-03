@@ -72,7 +72,7 @@ export default defineConfig({
           macros: [echoMacro],
         },
       },
-      dtsPath: join(__dirname, 'macros.d.ts'),
+      typesPath: join(__dirname, 'macros.d.ts'),
     }),
   ],
 })
