@@ -1,6 +1,6 @@
 import type { Plugin, ViteDevServer } from 'vite'
 import { DevServerHelper, getDevServerHelper } from '@/helper/server'
-import { Mergeable, Runtime } from '@/core/runtime'
+import { Attachable, Runtime } from '@/core/runtime'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -19,7 +19,7 @@ export type InternalPluginOptions = {
 }
 
 export interface MacroPlugin extends Plugin {
-  __consume: () => Mergeable
+  __consume: () => Attachable
 }
 
 interface InternalMacroPlugin extends MacroPlugin {

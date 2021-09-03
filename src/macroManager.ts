@@ -94,13 +94,13 @@ class MacroManagerImpl {
 
   private addProvider(provider: MacroProvider) {
     const { exports, options } = provider
-    this.runtime.merge({ exports, options })
+    this.runtime.attach({ exports, options })
     this.hooks.push(provider.hooks)
   }
 
   private addPlugin(plugin: MacroPlugin) {
     const { exports, options } = plugin.__consume()
-    this.runtime.merge({ exports, options })
+    this.runtime.attach({ exports, options })
     this.plugins.push(plugin)
   }
 

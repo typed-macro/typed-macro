@@ -28,9 +28,9 @@ export type RuntimeOptions = {
   typeRenderer: Pick<TypeRendererOptions, 'typesPath'>
 }
 
-export type Mergeable = {
+export type Attachable = {
   exports: NormalizedExports
-  options: DeepPartial<RuntimeOptions>
+  options?: DeepPartial<RuntimeOptions>
 }
 
 export class Runtime {
@@ -143,11 +143,11 @@ export class Runtime {
     }
   }
 
-  merge({ exports, options }: Mergeable) {
+  attach({ exports, options }: Attachable) {
     // merge exports
     this.addExports(exports)
     // merge options
-    this.mergeOptions(options)
+    options && this.mergeOptions(options)
   }
 }
 

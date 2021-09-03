@@ -26,7 +26,7 @@ export type MacroProvider = {
   id: string
   exports: NormalizedExports
   hooks: MacroProviderHooks
-  options: Pick<RuntimeOptions, 'transformer'>
+  options?: Partial<Pick<RuntimeOptions, 'transformer'>>
 }
 
 interface InternalMacroProvider extends MacroProvider {

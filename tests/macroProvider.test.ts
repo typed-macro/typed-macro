@@ -12,7 +12,6 @@ describe('macroProvider() & isMacroProvider()', () => {
           },
           hooks: {},
           id: 'test',
-          options: { transformer: {} },
         })
       )
     ).toBe(true)

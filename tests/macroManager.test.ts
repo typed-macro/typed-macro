@@ -31,7 +31,6 @@ describe('MacroManager', () => {
         },
         types: {},
       },
-      options: { transformer: {} },
     })
     _plugin = macroPlugin({
       name: 'plugin',
@@ -103,7 +102,6 @@ describe('MacroManager', () => {
             },
           },
           exports: { modules: {}, macros: {}, types: {} },
-          options: { transformer: {} },
         })
       )
       const plugin = manager.toPlugin()[0]
