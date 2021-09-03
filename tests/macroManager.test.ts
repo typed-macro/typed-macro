@@ -1,6 +1,6 @@
 import { MacroPlugin, macroPlugin } from '@/macroPlugin'
 import { MacroManager, macroManager } from '@/macroManager'
-import { macroProvider, MacroProvider } from '@/macroProvider'
+import { macroProvider, MacroProvider, ViteStartContext } from '@/macroProvider'
 import { mockMacro, withDevServer, withTempPath } from './testutils'
 import { Runtime } from '@/core/runtime'
 
@@ -87,6 +87,7 @@ describe('MacroManager', () => {
       })
 
       const stack: string[] = []
+      let viteStartCtx: ViteStartContext | undefined
       manager.use(
         macroProvider({
           id: 'provider',
@@ -94,7 +95,8 @@ describe('MacroManager', () => {
             onRollupStart: () => {
               stack.push('onRollupStart')
             },
-            onViteStart: () => {
+            onViteStart: (ctx) => {
+              viteStartCtx = ctx
               stack.push('onViteStart')
             },
             onStart: () => {
@@ -108,14 +110,51 @@ describe('MacroManager', () => {
       // rollup
       await plugin.buildStart!.call(null as any, {} as any)
       expect(stack).toEqual(['onRollupStart', 'onStart'])
-      // vite
+      // vite dev
       stack.length = 0
       await withDevServer(async (server) => {
         await plugin.configResolved!.call(null as any, {} as any)
         await plugin.configureServer!.call(null as any, server)
         await plugin.buildStart!.call(null as any, {} as any)
       })
+      expect(viteStartCtx!.dev).toBe(true)
+      expect((viteStartCtx as any).server).not.toBeUndefined()
+      expect((viteStartCtx as any).helper).not.toBeUndefined()
+      expect((viteStartCtx as any).config).not.toBeUndefined()
       expect(stack).toEqual(['onViteStart', 'onStart'])
+    })
+  })
+
+  it('should not pass server/helper when vite in build mode', async () => {
+    await withTempPath('./a.d.ts', async (tempPath) => {
+      const manager = macroManager({
+        name: 'test',
+        runtime: new Runtime({
+          transformer: {},
+          typeRenderer: { typesPath: tempPath },
+        }),
+      })
+
+      let viteStartCtx: ViteStartContext | undefined
+      manager.use(
+        macroProvider({
+          id: 'provider',
+          hooks: {
+            onViteStart: (ctx) => {
+              viteStartCtx = ctx
+            },
+          },
+          exports: { modules: {}, macros: {}, types: {} },
+        })
+      )
+      const plugin = manager.toPlugin()[0]
+      // vite build
+      await plugin.configResolved!.call(null as any, {} as any)
+      await plugin.buildStart!.call(null as any, {} as any)
+      expect(viteStartCtx!.dev).toBe(false)
+      expect((viteStartCtx as any).server).toBeUndefined()
+      expect((viteStartCtx as any).helper).toBeUndefined()
+      expect((viteStartCtx as any).config).not.toBeUndefined()
     })
   })
 })

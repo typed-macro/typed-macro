@@ -1,16 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Runtime should work with handleLoad/handleResolveId() 1`] = `"export {}"`;
-
-exports[`Runtime should work with handleLoad/handleResolveId() 2`] = `"export const a = 1"`;
-
-exports[`Runtime should work with handleLoad/handleResolveId() 3`] = `"@m"`;
-
-exports[`Runtime should work with handleLoad/handleResolveId() 4`] = `"@u"`;
-
-exports[`Runtime should work with handleTransform() 1`] = `"console.log('helloworld');"`;
-
-exports[`Runtime should work with register() and .exports 1`] = `
+exports[`Runtime should work with addExports() and .exports 1`] = `
 Object {
   "macros": Object {
     "@m1": Array [
@@ -24,7 +14,7 @@ Object {
 }
 `;
 
-exports[`Runtime should work with register() and .exports 2`] = `
+exports[`Runtime should work with addExports() and .exports 2`] = `
 Object {
   "macros": Object {
     "@m1": Array [
@@ -41,6 +31,16 @@ Object {
   "types": Object {},
 }
 `;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 1`] = `"export {}"`;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 2`] = `"export const a = 1"`;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 3`] = `"@m"`;
+
+exports[`Runtime should work with handleLoad/handleResolveId() 4`] = `"@u"`;
+
+exports[`Runtime should work with handleTransform() 1`] = `"console.log('helloworld');"`;
 
 exports[`Runtime should work with typeRenderer() 1`] = `
 "declare module '@t' {

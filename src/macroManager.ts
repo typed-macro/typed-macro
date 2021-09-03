@@ -3,6 +3,7 @@ import {
   isMacroProvider,
   MacroProvider,
   MacroProviderHooks,
+  ViteStartContext,
 } from '@/macroProvider'
 import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/macroPlugin'
 import { getDevServerHelper } from '@/helper/server'
@@ -18,11 +19,10 @@ export type MacroManager = {
    *
    * For macro plugins:
    *  > Some options like `maxRecursions` or `typesPath` will be overridden by
-   *  > manager's.
+   *  > manager's, `parserPlugins` will be merged with the manager's one.
    *  >
    *  > After registered, the original macro plugin will be attached to the manager,
-   *  > which means there is no need to add the plugin to Vite/Rollup 's
-   *  > plugins array again.
+   *  > which means no need to add the plugin to Vite/Rollup 's plugins array again.
    * @param sources macro providers or plugins.
    */
   use(...sources: (MacroProvider | Plugin)[]): MacroManager
@@ -77,12 +77,12 @@ class MacroManagerImpl {
     return !this.config
   }
 
+  private get isDev() {
+    return !!this.devServer
+  }
+
   use(...sources: (MacroProvider | Plugin)[]) {
-    try {
-      sources.forEach((s) => this.add(s))
-    } catch (e) {
-      throw new Error(`Error when use provider/plugin: ${e}`)
-    }
+    sources.forEach((s) => this.add(s))
     return this
   }
 
@@ -98,14 +98,29 @@ class MacroManagerImpl {
   }
 
   private addProvider(provider: MacroProvider) {
-    this.runtime.register(provider.exports)
+    const { exports, options } = provider
+    this.runtime.attach({ exports, options })
     this.hooks.push(provider.hooks)
   }
 
   private addPlugin(plugin: MacroPlugin) {
-    const provider = plugin.__consume()
-    this.addProvider(provider)
+    const { exports, options } = plugin.__consume()
+    this.runtime.attach({ exports, options })
     this.plugins.push(plugin)
+  }
+
+  private get viteStartContext(): ViteStartContext {
+    return this.isDev
+      ? {
+          dev: true,
+          config: this.config!,
+          server: this.devServer!,
+          helper: getDevServerHelper(this.devServer!),
+        }
+      : {
+          dev: false,
+          config: this.config!,
+        }
   }
 
   async handleBuildStart() {
@@ -113,13 +128,7 @@ class MacroManagerImpl {
       await Promise.all(this.hooks.map((h) => h.onRollupStart?.()))
     else
       await Promise.all(
-        this.hooks.map((h) =>
-          h.onViteStart?.(
-            this.config!,
-            this.devServer!,
-            getDevServerHelper(this.devServer!)
-          )
-        )
+        this.hooks.map((h) => h.onViteStart?.(this.viteStartContext))
       )
     await Promise.all(this.hooks.map((h) => h.onStart?.()))
   }
@@ -131,6 +140,5 @@ class MacroManagerImpl {
 
   handleConfigResolved(config: ResolvedConfig) {
     this.config = config
-    this.runtime.setDevMode()
   }
 }

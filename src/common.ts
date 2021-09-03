@@ -22,3 +22,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   : never
 
 export type FlatOptions<T extends object> = UnionToIntersection<T[keyof T]>
+
+export type DeepPartial<T, RT = Required<T>> = {
+  [P in keyof RT]?: RT[P] extends Array<infer I> ? Array<I> : DeepPartial<RT[P]>
+}

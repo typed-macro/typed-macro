@@ -1,16 +1,41 @@
 import { NormalizedExports } from '@/core/exports'
 import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
+import { RuntimeOptions } from '@/core/runtime'
+
+export type ViteStartContext = (
+  | {
+      /**
+       * Is in dev mode.
+       */
+      dev: true
+      /**
+       * Vite dev server.
+       */
+      server: ViteDevServer
+      /**
+       * Wrappers on vite dev server.
+       */
+      helper: DevServerHelper
+    }
+  | {
+      /**
+       * Is in dev mode.
+       */
+      dev: false
+    }
+) & {
+  /**
+   * Vite resolved config.
+   */
+  config: ResolvedConfig
+}
 
 export type MacroProviderHooks = {
   /**
    * A startup hook called only if running in Vite.
    */
-  onViteStart?: (
-    config: ResolvedConfig,
-    server: ViteDevServer,
-    helper: DevServerHelper
-  ) => void | Promise<void>
+  onViteStart?: (ctx: ViteStartContext) => void | Promise<void>
   /**
    * A startup hook called only if running in Rollup.
    */
@@ -25,6 +50,7 @@ export type MacroProvider = {
   id: string
   exports: NormalizedExports
   hooks: MacroProviderHooks
+  options?: Partial<Pick<RuntimeOptions, 'transformer'>>
 }
 
 interface InternalMacroProvider extends MacroProvider {

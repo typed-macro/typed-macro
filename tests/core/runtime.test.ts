@@ -26,28 +26,28 @@ describe('Runtime', () => {
     expect((runtime as any).devMode).toBe(true)
   })
 
-  it('should work with register() and .exports', () => {
-    runtime.register({
+  it('should work with addExports() and .exports', () => {
+    runtime.addExports({
       macros: { '@m1': [mockMacro('m')] },
       modules: { '@u1': 'export const a = 1' },
       types: {},
     })
     expect(runtime.exports).toMatchSnapshot()
-    runtime.register({
+    runtime.addExports({
       macros: { '@m2': [mockMacro('m')] },
       modules: { '@u2': 'export const a = 1' },
       types: {},
     })
     expect(runtime.exports).toMatchSnapshot()
     expect(() => {
-      runtime.register({
+      runtime.addExports({
         macros: { '@m2': [] },
         modules: {},
         types: {},
       })
     }).toThrow()
     expect(() => {
-      runtime.register({
+      runtime.addExports({
         macros: {
           '@m3': [mockMacro('m'), mockMacro('m')],
         },
@@ -57,8 +57,27 @@ describe('Runtime', () => {
     }).toThrow()
   })
 
+  it('should work with mergeOptions() and .options', () => {
+    expect(runtime.options.transformer).toEqual({})
+    runtime.mergeOptions({})
+    expect(runtime.options.transformer).toEqual({})
+    runtime.mergeOptions({ transformer: { parserPlugins: ['topLevelAwait'] } })
+    expect(runtime.options.transformer.parserPlugins).toEqual(['topLevelAwait'])
+    runtime.mergeOptions({
+      transformer: { parserPlugins: ['topLevelAwait', 'decorators'] },
+    })
+    expect(runtime.options.transformer.parserPlugins).toEqual([
+      'topLevelAwait',
+      'decorators',
+    ])
+    runtime.mergeOptions({
+      transformer: { maxRecursions: 5 },
+    })
+    expect(runtime.options.transformer.maxRecursions).toBeUndefined()
+  })
+
   it('should work with handleLoad/handleResolveId()', () => {
-    runtime.register({
+    runtime.addExports({
       macros: { '@m': [mockMacro('m')] },
       modules: { '@u': 'export const a = 1' },
       types: {},
@@ -73,7 +92,7 @@ describe('Runtime', () => {
   })
 
   it('should work with handleTransform()', () => {
-    runtime.register({
+    runtime.addExports({
       macros: {
         '@m': [
           mockMacro('m', ({ path }) => {
@@ -102,7 +121,7 @@ describe('Runtime', () => {
   })
 
   it('should work with typeRenderer()', () => {
-    runtime.register({
+    runtime.addExports({
       macros: {},
       modules: {},
       types: {
@@ -115,7 +134,7 @@ describe('Runtime', () => {
 
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
 
-    runtime.register({
+    runtime.addExports({
       macros: {},
       modules: {},
       types: {
