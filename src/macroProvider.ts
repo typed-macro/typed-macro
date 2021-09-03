@@ -1,6 +1,7 @@
 import { NormalizedExports } from '@/core/exports'
 import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/helper/server'
+import { RuntimeOptions } from '@/core/runtime'
 
 export type MacroProviderHooks = {
   /**
@@ -25,6 +26,7 @@ export type MacroProvider = {
   id: string
   exports: NormalizedExports
   hooks: MacroProviderHooks
+  options: Pick<RuntimeOptions, 'transformer'>
 }
 
 interface InternalMacroProvider extends MacroProvider {

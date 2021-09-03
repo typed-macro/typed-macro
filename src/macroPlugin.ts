@@ -1,7 +1,6 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { MacroProvider } from '@/macroProvider'
 import { DevServerHelper, getDevServerHelper } from '@/helper/server'
-import { Runtime } from '@/core/runtime'
+import { Mergeable, Runtime } from '@/core/runtime'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -20,7 +19,7 @@ export type InternalPluginOptions = {
 }
 
 export interface MacroPlugin extends Plugin {
-  __consume: () => MacroProvider
+  __consume: () => Mergeable
 }
 
 interface InternalMacroPlugin extends MacroPlugin {
@@ -47,13 +46,12 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     __internal_macro_plugin: true,
     __consume() {
       if (!runtime) throw new Error(`plugin '${name}' is used more than once.`)
-      const provider: MacroProvider = {
-        id: name,
+      const consume = {
         exports: runtime.exports,
-        hooks: {},
+        options: runtime.options,
       }
       runtime = undefined
-      return provider
+      return consume
     },
     name,
     enforce: 'pre',

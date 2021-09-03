@@ -1,7 +1,7 @@
 import { CallExpression, File, Program } from '@babel/types'
 import { NodePath } from '@babel/traverse'
 
-import { CURRENT_CALL_VERSION, Versioned } from '@/core/version'
+import { CURRENT_MACRO_CALL_VERSION, Versioned } from '@/core/version'
 import { State } from '../helper/state'
 import { HELPER, MacroHelper } from './helper'
 import { Babel, BABEL_TOOLS } from './babel'
@@ -116,7 +116,7 @@ type MacroCallNormalizer = (raw: RawMacroCall) => {
 }
 
 function ensureCompatible(raw: RawMacroCall) {
-  if (raw.__version !== CURRENT_CALL_VERSION)
+  if (raw.__version !== CURRENT_MACRO_CALL_VERSION)
     throw new Error('the macro is incompatible with the runtime')
 }
 

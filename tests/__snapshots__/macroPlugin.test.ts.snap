@@ -19,7 +19,11 @@ Object {
     },
     "types": Object {},
   },
-  "hooks": Object {},
-  "id": "test",
+  "options": Object {
+    "transformer": Object {},
+    "typeRenderer": Object {
+      "typesPath": "",
+    },
+  },
 }
 `;

@@ -4,6 +4,7 @@ import {
   MacroProviderHooks,
 } from '@/macroProvider'
 import { NamespacedExportable, normalizeExports } from '@/core/exports'
+import { ParserPlugin } from '@babel/parser'
 
 export type MacroProviderOptions = {
   /**
@@ -46,14 +47,25 @@ export type MacroProviderOptions = {
    * ```
    */
   exports: NamespacedExportable
+  /**
+   * Provider options.
+   */
+  options?: {
+    parserPlugins?: ParserPlugin[]
+  }
 }
 
 function normalizeProvider(raw: MacroProviderOptions): MacroProvider {
-  const { id, hooks = {}, exports } = raw
+  const { id, hooks = {}, exports, options = {} } = raw
   return {
     id,
     hooks,
     exports: normalizeExports(exports),
+    options: {
+      transformer: {
+        parserPlugins: options.parserPlugins,
+      },
+    },
   }
 }
 

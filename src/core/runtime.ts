@@ -15,7 +15,7 @@ import {
   NamespacedTypes,
   NormalizedExports,
 } from './exports'
-import { findDuplicatedItem } from '@/common'
+import { DeepPartial, findDuplicatedItem } from '@/common'
 
 export type RuntimeOptions = {
   /**
@@ -28,6 +28,11 @@ export type RuntimeOptions = {
   typeRenderer: Pick<TypeRendererOptions, 'typesPath'>
 }
 
+export type Mergeable = {
+  exports: NormalizedExports
+  options: DeepPartial<RuntimeOptions>
+}
+
 export class Runtime {
   private macros: NamespacedMacros = Object.create(null)
   private modules: NamespacedModules = Object.create(null)
@@ -38,23 +43,18 @@ export class Runtime {
 
   private devMode = false
 
-  private readonly transformer: Transformer
-  private readonly _typeRenderer: TypeRenderer
+  private _options: RuntimeOptions
 
   constructor(options: RuntimeOptions, defaultExports?: NormalizedExports) {
-    this.transformer = createTransformer(options.transformer)
-    this._typeRenderer = createTypeRenderer({
-      types: this.types,
-      typesPath: options.typeRenderer.typesPath,
-    })
-    if (defaultExports) this.register(defaultExports)
+    this._options = options
+    if (defaultExports) this.addExports(defaultExports)
   }
 
   setDevMode(dev = true) {
     this.devMode = dev
   }
 
-  register({ macros, modules, types }: NormalizedExports) {
+  addExports({ macros, modules, types }: NormalizedExports) {
     assertNoDuplicatedNamespace(Object.keys(this.types), Object.keys(types))
     assertNoDuplicatedNamespace(this.macrosNamespaces, Object.keys(macros))
     assertNoDuplicatedNamespace(this.modulesNamespaces, Object.keys(modules))
@@ -79,6 +79,30 @@ export class Runtime {
       return id
   }
 
+  private _transformer?: Transformer
+  private _typeRenderer?: TypeRenderer
+
+  get options() {
+    return this._options
+  }
+
+  get transformer() {
+    return (
+      this._transformer ||
+      (this._transformer = createTransformer(this._options.transformer))
+    )
+  }
+
+  get typeRenderer() {
+    return (
+      this._typeRenderer ||
+      (this._typeRenderer = createTypeRenderer({
+        types: this.types,
+        typesPath: this._options.typeRenderer.typesPath,
+      }))
+    )
+  }
+
   handleTransform(code: string, filepath: string, ssr = false) {
     if (/\.[jt]sx?$/.test(filepath))
       return this.transformer(
@@ -100,8 +124,30 @@ export class Runtime {
     }
   }
 
-  get typeRenderer() {
-    return this._typeRenderer
+  mergeOptions(options: DeepPartial<RuntimeOptions>) {
+    if (options.transformer) {
+      // reset transformer
+      this._transformer = undefined
+      // merge transformer#parserPlugins
+      if (
+        options.transformer.parserPlugins &&
+        options.transformer.parserPlugins.length
+      ) {
+        this._options.transformer.parserPlugins = Array.from(
+          new Set([
+            ...(this._options.transformer.parserPlugins || []),
+            ...options.transformer.parserPlugins,
+          ])
+        )
+      }
+    }
+  }
+
+  merge({ exports, options }: Mergeable) {
+    // merge exports
+    this.addExports(exports)
+    // merge options
+    this.mergeOptions(options)
   }
 }
 

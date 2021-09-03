@@ -18,11 +18,10 @@ export type MacroManager = {
    *
    * For macro plugins:
    *  > Some options like `maxRecursions` or `typesPath` will be overridden by
-   *  > manager's.
+   *  > manager's, `parserPlugins` will be merged with the manager's one.
    *  >
    *  > After registered, the original macro plugin will be attached to the manager,
-   *  > which means there is no need to add the plugin to Vite/Rollup 's
-   *  > plugins array again.
+   *  > which means no need to add the plugin to Vite/Rollup 's plugins array again.
    * @param sources macro providers or plugins.
    */
   use(...sources: (MacroProvider | Plugin)[]): MacroManager
@@ -78,11 +77,7 @@ class MacroManagerImpl {
   }
 
   use(...sources: (MacroProvider | Plugin)[]) {
-    try {
-      sources.forEach((s) => this.add(s))
-    } catch (e) {
-      throw new Error(`Error when use provider/plugin: ${e}`)
-    }
+    sources.forEach((s) => this.add(s))
     return this
   }
 
@@ -98,13 +93,13 @@ class MacroManagerImpl {
   }
 
   private addProvider(provider: MacroProvider) {
-    this.runtime.register(provider.exports)
+    this.runtime.merge(provider)
     this.hooks.push(provider.hooks)
   }
 
   private addPlugin(plugin: MacroPlugin) {
-    const provider = plugin.__consume()
-    this.addProvider(provider)
+    const consume = plugin.__consume()
+    this.runtime.merge(consume)
     this.plugins.push(plugin)
   }
 
