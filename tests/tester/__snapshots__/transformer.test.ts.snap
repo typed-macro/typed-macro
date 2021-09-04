@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createTestTransformer() should work 1`] = `"console.log('a');"`;
+
+exports[`createTestTransformer() should work 2`] = `"import '@macro';console.log('a');"`;

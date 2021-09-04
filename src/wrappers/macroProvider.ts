@@ -1,6 +1,6 @@
 import { NormalizedExports } from '@/core/exports'
 import { ResolvedConfig, ViteDevServer } from 'vite'
-import { DevServerHelper } from '@/helper/server'
+import { DevServerHelper } from '@/wrappers/helper/server'
 import { RuntimeOptions } from '@/core/runtime'
 
 export type ViteStartContext = (

@@ -2,7 +2,7 @@ import {
   InternalMacroManagerOptions,
   macroManager,
   MacroManager,
-} from '@/macroManager'
+} from '@/wrappers/macroManager'
 import { FlatOptions } from '@/common'
 import { Runtime, RuntimeOptions } from './core/runtime'
 

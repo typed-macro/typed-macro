@@ -21,7 +21,7 @@ export type PathPatternNormalizer = {
 export function normalizePathPattern(
   pattern: string,
   importer: string,
-  root = projectDir('leaf')
+  root: string
 ): PathPatternNormalizer {
   if (!pattern.startsWith('.') && !pattern.startsWith('/')) {
     throw new Error(

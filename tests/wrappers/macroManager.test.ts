@@ -1,7 +1,11 @@
-import { MacroPlugin, macroPlugin } from '@/macroPlugin'
-import { MacroManager, macroManager } from '@/macroManager'
-import { macroProvider, MacroProvider, ViteStartContext } from '@/macroProvider'
-import { mockMacro, withDevServer, withTempPath } from './testutils'
+import { MacroPlugin, macroPlugin } from '@/wrappers/macroPlugin'
+import { MacroManager, macroManager } from '@/wrappers/macroManager'
+import {
+  macroProvider,
+  MacroProvider,
+  ViteStartContext,
+} from '@/wrappers/macroProvider'
+import { mockMacro, withDevServer, withTempPath } from '../testutils'
 import { Runtime } from '@/core/runtime'
 
 // MacroManager is just a simple wrapper of MacroPlugin
