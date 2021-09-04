@@ -99,7 +99,7 @@ export type MacroHelper = {
    * Normalize path pattern so can resolve file paths as import paths
    * @param path relative path or path pattern
    * @param root absolute file path of the project dir, default to projectDir('leaf')
-   * @param importer absolute file path of the importer, default to current module
+   * @param importer absolute file path of the importer, default to current file
    *
    * e.g. search files by glob pattern and then import them
    *
