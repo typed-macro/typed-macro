@@ -3,7 +3,7 @@ import { NodePath } from '@babel/traverse'
 
 import { CURRENT_MACRO_CALL_VERSION, Versioned } from '@/core/version'
 import { State } from '../helper/state'
-import { HELPER, MacroHelper } from './helper'
+import { createHelper, MacroHelper } from './helper'
 import { Babel, BABEL_TOOLS } from './babel'
 import { ImportedMacro } from '@/core/helper/traverse'
 
@@ -161,17 +161,12 @@ export function getNormalizer(handler: MacroHandler): MacroCallNormalizer {
     default:
       return (raw: RawMacroCall) => {
         ensureCompatible(raw)
-        const ctx = normalizeContext(raw)
         const { path, filepath, program, importedMacros } = raw.value
-        HELPER.props
-          .setImportedMacros(importedMacros)
-          .setPath(path)
-          .setFilepath(filepath)
-          .setProgram(program)
+        const ctx = normalizeContext(raw)
         return {
           ctx,
           babel: BABEL_TOOLS,
-          helper: HELPER.instance,
+          helper: createHelper(path, program, filepath, importedMacros),
         }
       }
   }
@@ -187,7 +182,7 @@ export function renderMetaType(name: string, meta: MacroMeta) {
     meta.signatures
       .map((s) =>
         s.comment
-          ? `  /** ${s.comment} **/
+          ? `  /* ${s.comment} */
   export function ${name}${s.signature}`
           : `  export function ${name}${s.signature}`
       )

@@ -2,6 +2,6 @@
 
 exports[`defineMacro should work 1`] = `
 Macro { "name": "test", "__types": "type A = string
-  /** NO_OP **/
+  /* NO_OP */
   export function test(): void" }
 `;

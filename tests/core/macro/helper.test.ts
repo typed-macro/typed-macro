@@ -1,10 +1,11 @@
-import { HELPER } from '@/core/macro/helper'
+import { createHelper, MacroHelper } from '@/core/macro/helper'
 import { getAST } from '../../testutils'
 import { findImportedMacros, findProgramPath } from '@/core/helper/traverse'
 import { NodePath } from '@babel/traverse'
 import { CallExpression, ExpressionStatement } from '@babel/types'
 
 describe('MacroHelper', () => {
+  let helper: MacroHelper
   beforeEach(() => {
     const ast = getAST(`
   import { c } from 'c'
@@ -17,55 +18,52 @@ describe('MacroHelper', () => {
     const path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
       'expression'
     ) as NodePath<CallExpression>
-    HELPER.props
-      .setProgram(program)
-      .setFilepath('/workspace/src/main.ts')
-      .setImportedMacros(importedMacros)
-      .setPath(path)
+    helper = createHelper(
+      path,
+      program,
+      '/workspace/src/main.ts',
+      importedMacros
+    )
   })
 
   it('findImported()', () => {
     expect(
-      HELPER.instance.findImported({ moduleName: 'c', exportName: 'c' })
+      helper.findImported({ moduleName: 'c', exportName: 'c' })
     ).not.toBeUndefined()
     expect(
-      HELPER.instance.findImported({ moduleName: 'c', exportName: 'd' })
+      helper.findImported({ moduleName: 'c', exportName: 'd' })
     ).toBeUndefined()
   })
 
   it('hasImported()', () => {
-    expect(
-      HELPER.instance.hasImported({ moduleName: 'c', exportName: 'c' })
-    ).toBe(true)
-    expect(
-      HELPER.instance.hasImported({ moduleName: 'c', exportName: 'd' })
-    ).toBe(false)
+    expect(helper.hasImported({ moduleName: 'c', exportName: 'c' })).toBe(true)
+    expect(helper.hasImported({ moduleName: 'c', exportName: 'd' })).toBe(false)
   })
 
   it('prependImports()', () => {
-    expect(HELPER.instance.prependImports([])).toBeUndefined()
-    const inserted = HELPER.instance.prependImports({
+    expect(helper.prependImports([])).toBeUndefined()
+    const inserted = helper.prependImports({
       moduleName: 'c',
       exportName: 'd',
     })
     expect(inserted).toBe(
-      HELPER.instance.findImported({ moduleName: 'c', exportName: 'd' })
+      helper.findImported({ moduleName: 'c', exportName: 'd' })
     )
   })
 
   it('appendImports()', () => {
-    expect(HELPER.instance.appendImports([])).toBeUndefined()
-    const inserted = HELPER.instance.appendImports({
+    expect(helper.appendImports([])).toBeUndefined()
+    const inserted = helper.appendImports({
       moduleName: 'c',
       exportName: 'd',
     })
     expect(inserted).toBe(
-      HELPER.instance.findImported({ moduleName: 'c', exportName: 'd' })
+      helper.findImported({ moduleName: 'c', exportName: 'd' })
     )
   })
 
   it('normalizePathPattern()', () => {
-    const { normalized } = HELPER.instance.normalizePathPattern(
+    const { normalized } = helper.normalizePathPattern(
       '../another',
       '/workspace/src'
     )
@@ -73,6 +71,6 @@ describe('MacroHelper', () => {
   })
 
   it('containsMacros()', () => {
-    expect(HELPER.instance.containsMacros()).toEqual([true, false])
+    expect(helper.containsMacros()).toEqual([true, false])
   })
 })

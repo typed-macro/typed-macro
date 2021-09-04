@@ -3,7 +3,10 @@ export type State = {
    * Get the state shared during traversal.
    */
   get<T, K>(key: K): T
-
+  /**
+   * Get the state shared during traversal or set the state if it's missing.
+   */
+  getOrSet<T, K>(key: K, or: T): T
   /**
    * Set the state shared during traversal.
    */
@@ -25,6 +28,12 @@ export function createState(): State {
   return {
     get(key) {
       return state.get(key)
+    },
+    getOrSet(key, or) {
+      const v = state.get(key)
+      if (v !== undefined) return v
+      state.set(key, or)
+      return or
     },
     set(key, value) {
       state.set(key, value)

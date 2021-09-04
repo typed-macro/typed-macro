@@ -134,91 +134,54 @@ export type MacroHelper = {
   containsMacros: (...paths: NodePath[]) => boolean[]
 }
 
-function createHelper() {
-  return impl.call({
-    program: undefined as any,
-    path: undefined as any,
-    filepath: undefined as any,
-    importedMacros: undefined as any,
-  })
+export function createHelper(
+  thisPath: NodePath<CallExpression>,
+  thisProgram: NodePath<Program>,
+  thisFilepath: string,
+  importedMacros: ImportedMacro[]
+) {
+  const helpers: MacroHelper = {
+    findImported: (imp, loose = true, program = thisProgram) => {
+      return findImported(program, imp, loose)
+    },
 
-  function impl(this: {
-    path: NodePath<CallExpression>
-    program: NodePath<Program>
-    filepath: string
-    importedMacros: ImportedMacro[]
-  }) {
-    const setters = {
-      setProgram: (program: NodePath<Program>) => {
-        this.program = program
-        return setters
-      },
+    hasImported: (imp, loose = true, program = thisProgram) => {
+      return findImported(program, imp, loose) !== undefined
+    },
 
-      setFilepath: (filepath: string) => {
-        this.filepath = filepath
-        return setters
-      },
+    prependImports: (imports, program = thisProgram) => {
+      return prependImports(program, imports)
+    },
 
-      setPath: (path: NodePath<CallExpression>) => {
-        this.path = path
-        return setters
-      },
+    appendImports: (imports, program = thisProgram) => {
+      return appendImports(program, imports)
+    },
 
-      setImportedMacros: (macros: ImportedMacro[]) => {
-        this.importedMacros = macros
-        return setters
-      },
-    }
+    prependToBody: (nodes, program = thisProgram) => {
+      return prependToBody(program, nodes)
+    },
 
-    const helpers: MacroHelper = {
-      findImported: (imp, loose = true, program = this.program) => {
-        return findImported(program, imp, loose)
-      },
+    appendToBody: (nodes, program = thisProgram) => {
+      return appendToBody(program, nodes)
+    },
 
-      hasImported: (imp, loose = true, program = this.program) => {
-        return findImported(program, imp, loose) !== undefined
-      },
+    normalizePathPattern: (
+      pattern,
+      root = projectDir('leaf'),
+      importer = thisFilepath
+    ) => {
+      return normalizePathPattern(pattern, importer, root)
+    },
 
-      prependImports: (imports, program = this.program) => {
-        return prependImports(program, imports)
-      },
+    projectDir,
 
-      appendImports: (imports, program = this.program) => {
-        return appendImports(program, imports)
-      },
-
-      prependToBody: (nodes, program = this.program) => {
-        return prependToBody(program, nodes)
-      },
-
-      appendToBody: (nodes, program = this.program) => {
-        return appendToBody(program, nodes)
-      },
-
-      normalizePathPattern: (
-        pattern,
-        root = projectDir('leaf'),
-        importer = this.filepath
-      ) => {
-        return normalizePathPattern(pattern, importer, root)
-      },
-
-      projectDir,
-
-      containsMacros: (...paths) => {
-        return containsMacros(
-          paths.length ? paths : this.path.get('arguments'),
-          this.importedMacros
-        )
-      },
-    }
-
-    return {
-      props: setters,
-      instance: helpers,
-    }
+    containsMacros: (...paths) => {
+      return containsMacros(
+        paths.length ? paths : thisPath.get('arguments'),
+        importedMacros
+      )
+    },
   }
-}
 
-// Global instance of helper since Javascript is single threaded...
-export const HELPER = createHelper()
+  return helpers
+}

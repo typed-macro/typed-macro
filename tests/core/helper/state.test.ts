@@ -17,6 +17,12 @@ describe('State', () => {
     expect(state.get(key)).toBe(true)
   })
 
+  it('should work with getOrSet()', () => {
+    expect(state.getOrSet(key, true)).toBe(true)
+    expect(state.get(key)).toBe(true)
+    expect(state.getOrSet(key, false)).toBe(true)
+  })
+
   it('should work with delete()', () => {
     state.set(key, true)
     expect(state.get(key)).toBe(true)

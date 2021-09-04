@@ -2,6 +2,6 @@
 
 exports[`renderMetaType() should work 1`] = `
 "type A = string
-  /** hello **/
+  /* hello */
   export function macro(): A"
 `;
