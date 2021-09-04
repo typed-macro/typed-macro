@@ -1,5 +1,5 @@
 import type { Plugin, ViteDevServer } from 'vite'
-import { DevServerHelper, getDevServerHelper } from '@/helper/server'
+import { DevServerHelper, getDevServerHelper } from '@/wrappers/helper/server'
 import { Attachable, Runtime } from '@/core/runtime'
 
 export type MacroPluginHooks = Omit<

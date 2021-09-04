@@ -1,11 +1,11 @@
 import { Runtime } from '@/core/runtime'
-import { isMacroPlugin, MacroPlugin, macroPlugin } from '@/macroPlugin'
+import { isMacroPlugin, MacroPlugin, macroPlugin } from '@/wrappers/macroPlugin'
 import {
   macroSerializer,
   mockMacro,
   withDevServer,
   withTempPath,
-} from './testutils'
+} from '../testutils'
 
 expect.addSnapshotSerializer(macroSerializer)
 

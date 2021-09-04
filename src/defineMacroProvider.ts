@@ -2,7 +2,7 @@ import {
   macroProvider,
   MacroProvider,
   MacroProviderHooks,
-} from '@/macroProvider'
+} from '@/wrappers/macroProvider'
 import { NamespacedExportable, normalizeExports } from '@/core/exports'
 import { ParserPlugin } from '@babel/parser'
 

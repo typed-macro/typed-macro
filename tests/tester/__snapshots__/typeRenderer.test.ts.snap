@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createTypeRenderer() should work 1`] = `
+"declare module '@macro' {
+  export function echo(): void
+}
+declare module '@helper' {
+export const a: number
+}"
+`;

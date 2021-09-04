@@ -1,4 +1,4 @@
-import { isMacroProvider, macroProvider } from '@/macroProvider'
+import { isMacroProvider, macroProvider } from '@/wrappers/macroProvider'
 
 describe('macroProvider() & isMacroProvider()', () => {
   it('should work', () => {

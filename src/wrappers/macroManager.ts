@@ -4,9 +4,9 @@ import {
   MacroProvider,
   MacroProviderHooks,
   ViteStartContext,
-} from '@/macroProvider'
-import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/macroPlugin'
-import { getDevServerHelper } from '@/helper/server'
+} from '@/wrappers/macroProvider'
+import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/wrappers/macroPlugin'
+import { getDevServerHelper } from '@/wrappers/helper/server'
 import { Runtime } from '@/core/runtime'
 
 /**

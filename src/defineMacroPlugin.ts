@@ -3,7 +3,7 @@ import {
   InternalPluginOptions,
   macroPlugin,
   MacroPluginHooks,
-} from '@/macroPlugin'
+} from '@/wrappers/macroPlugin'
 import { NamespacedExportable, normalizeExports } from '@/core/exports'
 import { Runtime, RuntimeOptions } from '@/core/runtime'
 import { FlatOptions } from '@/common'

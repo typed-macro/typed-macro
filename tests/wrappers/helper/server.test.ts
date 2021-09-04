@@ -1,5 +1,5 @@
-import { getDevServerHelper } from '@/helper/server'
-import { withDevServer } from '../testutils'
+import { getDevServerHelper } from '@/wrappers/helper/server'
+import { withDevServer } from '../../testutils'
 
 describe('DevServerHelper', () => {
   it('should work', async () => {
