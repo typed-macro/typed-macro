@@ -3,20 +3,17 @@ on:
   push:
     branches:
       - '**'
-    tags:
-      - '!v*.*.*'
   pull_request:
     branches:
       - master
 jobs:
-  test:
+  test-unit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: 14
       - run: yarn --frozen-lockfile --network-timeout 180000
       - run: yarn test --ci --coverage
       - uses: actions/upload-artifact@v2
@@ -27,3 +24,13 @@ jobs:
         with:
           directory: coverage
           verbose: true
+
+  test-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: yarn --frozen-lockfile --network-timeout 180000
+      - run: yarn test:fixtures --ci
