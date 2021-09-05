@@ -138,6 +138,7 @@ export function getCalledMacro(
       if (!maybeMacro) return
       const method = node.property
       if (isIdentifier(method)) {
+        // case - namespace.method()
         return (
           maybeMacro.macros.find((m) => m.name === method.name) || method.name
         )
