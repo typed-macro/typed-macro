@@ -80,5 +80,9 @@ export function projectDir(which: 'root' | 'leaf') {
     }
   }
 
+  /* istanbul ignore next */
+  /* This error is for special circumstances like not in a node project,
+   * and is hard and meaningless to test under this project.
+   */
   throw new Error('can not find project root')
 }

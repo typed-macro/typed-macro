@@ -29,6 +29,11 @@ export function createTypeRenderer({
         await mkdir(dirname(typesPath), { recursive: true })
         await writeFile(typesPath, renderTypes(types))
       } catch (e) {
+        /* istanbul ignore next */
+        /* This error is raised only when the file system has problems like
+         * permissions,
+         * which cannot be easily tested.
+         */
         throw new Error(`Error when write type declaration file: ${e}`)
       }
     },
