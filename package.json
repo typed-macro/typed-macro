@@ -24,7 +24,7 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "version": "0.2.0-alpha.3",
+  "version": "0.2.0-beta",
   "scripts": {
     "bootstrap": "node scripts/bootstrap.mjs",
     "dev": "node scripts/dev.mjs",
