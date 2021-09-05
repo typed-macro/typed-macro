@@ -12,9 +12,13 @@ describe('MacroHelper', () => {
   import { a } from '@a'
   a(a(), c())`)
     const program = findProgramPath(ast)
-    const importedMacros = findImportedMacros(ast, {
-      '@a': [{ name: 'a' } as any],
-    })
+    const importedMacros = findImportedMacros(
+      ast,
+      {
+        '@a': [{ name: 'a' } as any],
+      },
+      true
+    )
     const path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
       'expression'
     ) as NodePath<CallExpression>

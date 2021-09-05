@@ -1,83 +1,12 @@
-import {
-  getAST,
-  macroSerializer,
-  matchCodeSnapshot,
-  mockMacro,
-} from '../testutils'
+import { getAST, macroSerializer, mockMacro } from '../testutils'
 import { StringLiteral } from '@babel/types'
-import {
-  applyMacros,
-  collectImportedMacros,
-  createTransformer,
-} from '@/core/transformer'
+import { applyMacros, createTransformer } from '@/core/transformer'
 import { Macro } from '@/core/macro'
 import { NamespacedMacros } from '@/core/exports'
 import { createState } from '@/core/helper/state'
+import { findImportedMacros } from '@/core/helper/traverse'
 
 expect.addSnapshotSerializer(macroSerializer)
-
-describe('collectImportedMacros()', () => {
-  it('should work', () => {
-    const testCases: {
-      code: string
-      macros: Record<string, { name: string }[]>
-    }[] = [
-      { code: `import { a } from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      {
-        code: `import { a as _a } from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-      },
-      { code: `import a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      { code: `import * as a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      { code: `import { b } from '@b'`, macros: { '@a': [{ name: 'a' }] } },
-    ]
-    testCases.forEach((c) => {
-      expect(
-        collectImportedMacros(getAST(c.code), c.macros as any)
-      ).toMatchSnapshot()
-    })
-  })
-
-  it('should rewrite import stmts if keep=true', () => {
-    const testCases: {
-      code: string
-      macros: Record<string, { name: string }[]>
-    }[] = [
-      { code: `import { a } from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      {
-        code: `import { a as _a } from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-      },
-      { code: `import a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      { code: `import * as a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-    ]
-    testCases.forEach((c) => {
-      const ast = getAST(c.code)
-      collectImportedMacros(ast, c.macros as any, true)
-      matchCodeSnapshot(ast)
-    })
-  })
-
-  it('should remove import stmts if keep=false', () => {
-    const testCases: {
-      code: string
-      macros: Record<string, { name: string }[]>
-    }[] = [
-      { code: `import { a } from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      {
-        code: `import { a as _a } from '@a'`,
-        macros: { '@a': [{ name: 'a' }] },
-      },
-      { code: `import a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-      { code: `import * as a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
-    ]
-    testCases.forEach((c) => {
-      const ast = getAST(c.code)
-      collectImportedMacros(ast, c.macros as any)
-      expect(ast.program.body.length).toBe(0)
-    })
-  })
-})
 
 describe('applyMacros()', () => {
   it('should work', () => {
@@ -103,7 +32,7 @@ describe('applyMacros()', () => {
     ]
     testCases.forEach((c) => {
       const ast = getAST(c.code)
-      const importedMacros = collectImportedMacros(ast, c.macros)
+      const importedMacros = findImportedMacros(ast, c.macros)
 
       expect(
         applyMacros({
@@ -132,7 +61,7 @@ describe('applyMacros()', () => {
     ]
     testCases.forEach((c) => {
       const ast = getAST(c.code)
-      const importedMacros = collectImportedMacros(ast, c.macros as any)
+      const importedMacros = findImportedMacros(ast, c.macros as any)
 
       expect(() =>
         applyMacros({
@@ -286,5 +215,55 @@ describe('transformer', () => {
       )
     ).toMatchSnapshot()
     expect(fn).toBeCalled()
+  })
+
+  it('should not transform normal function calls', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+
+    const macros = {
+      '@macro': [
+        mockMacro('a', ({ path }) => {
+          path.remove()
+        }),
+      ],
+    }
+
+    expect(
+      transform(
+        {
+          code: `    
+  import { a } from '@macro'
+  a()
+  {
+    const a = () => {}
+    a()
+  }
+  `,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+    ).toMatchSnapshot()
+    expect(
+      transform(
+        {
+          code: `    
+  import ns from '@macro'
+  ns.a()
+  {
+    const ns = {}
+    ns.a()
+  }
+  `,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+    ).toMatchSnapshot()
   })
 })

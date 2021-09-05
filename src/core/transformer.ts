@@ -1,6 +1,5 @@
-import { File, ImportDeclaration, Node } from '@babel/types'
-import traverse, { NodePath } from '@babel/traverse'
-import template from '@babel/template'
+import { File } from '@babel/types'
+import traverse from '@babel/traverse'
 import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
@@ -57,8 +56,8 @@ export function createTransformer({
       plugins: parserPlugins,
     })
 
-    // Note: keep import statements in dev mode so can invalidate macro modules
-    const collect = () => collectImportedMacros(ast, macros, dev)
+    // keep import statements in dev mode so can invalidate macro modules
+    const collect = () => findImportedMacros(ast, macros, dev)
 
     const importedMacros = collect()
     if (!importedMacros.length) return
@@ -79,7 +78,7 @@ export function createTransformer({
     ) {
       if (loopCount++ >= maxRecursions)
         throw new Error(
-          `Reached the maximum recursion when apply macros on ${filepath}`
+          `Reached the maximum recursion when apply macros on '${filepath}'`
         )
     }
 
@@ -106,25 +105,6 @@ type ImportedAsNamed = {
 
 type ImportedMacro = ImportedAsNS | ImportedAsNamed
 
-export function collectImportedMacros(
-  ast: Node,
-  macros: NamespacedMacros,
-  keepImportStmt = false
-) {
-  const importPaths: NodePath<ImportDeclaration>[] = []
-  const importedMacros = findImportedMacros(ast, macros, (path) =>
-    importPaths.push(path)
-  )
-  if (keepImportStmt) {
-    importPaths.forEach((p) =>
-      p.replaceWith(template.statement.ast(`import '${p.node.source.value}'`))
-    )
-  } else {
-    importPaths.forEach((p) => p.remove())
-  }
-  return importedMacros
-}
-
 type ApplyContext = {
   code: string
   filepath: string
@@ -149,11 +129,11 @@ export function applyMacros({
 
   traverse(ast, {
     CallExpression(path) {
-      const macroToApply = getCalledMacro(path.node.callee, importedMacros)
+      const macroToApply = getCalledMacro(path.get('callee'), importedMacros)
       if (!macroToApply) return
       if (typeof macroToApply === 'string')
         throw new Error(
-          `Macro ${macroToApply} is not existed but is called in ${filepath}`
+          `Macro '${macroToApply}' is not existed but is called in '${filepath}'`
         )
 
       try {
@@ -175,9 +155,9 @@ export function applyMacros({
         )
       } catch (e) {
         throw new Error(
-          `Error when apply macro ${
+          `Error when apply macro '${
             macroToApply.name
-          } in ${filepath} near ${nodeLoc(path.node)}:\n ${e}`
+          }' in '${filepath}' near ${nodeLoc(path.node)}:\n ${e}`
         )
       } finally {
         applied = true

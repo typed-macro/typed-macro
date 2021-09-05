@@ -67,7 +67,7 @@ export function normalizeExports(
     } else {
       macros[ns] = item.macros
       types[ns].macroScope = item.macros.map((m) => {
-        if (!isMacro(m)) throw new Error(`${m.name} is not a macro`)
+        if (!isMacro(m)) throw new Error(`'${m.name}' is not a macro`)
         return m.__types
       })
     }

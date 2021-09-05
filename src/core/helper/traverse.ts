@@ -1,19 +1,18 @@
 import {
   CallExpression,
   File,
-  ImportDeclaration,
   isIdentifier,
   isImportDefaultSpecifier,
   isImportNamespaceSpecifier,
   isMemberExpression,
   isStringLiteral,
-  Node,
   Program,
 } from '@babel/types'
-import traverse, { NodePath } from '@babel/traverse'
+import traverse, { NodePath, Scope } from '@babel/traverse'
 import { ImportOption, matchImportStmt } from '@/core/helper/import'
 import { Macro } from '@/core/macro'
 import { NamespacedMacros } from '@/core/exports'
+import template from '@babel/template'
 
 export function findProgramPath(ast: File) {
   let path: NodePath<Program>
@@ -56,9 +55,9 @@ export type ImportedAsNamed = {
 export type ImportedMacro = ImportedAsNS | ImportedAsNamed
 
 export function findImportedMacros(
-  ast: Node,
+  ast: File,
   macros: NamespacedMacros,
-  callback?: (path: NodePath<ImportDeclaration>) => void
+  keepImportStmt = false
 ) {
   const importedMacros: ImportedMacro[] = []
   const namespaces = Object.keys(macros)
@@ -96,11 +95,26 @@ export function findImportedMacros(
           })
         }
       })
-      callback?.(path)
+      keepImportStmt
+        ? path.replaceWith(
+            template.statement.ast(`import '${path.node.source.value}'`)
+          )
+        : path.remove()
     },
   })
 
+  // update scope so that macros don't have bindings now
+  findProgramPath(ast).scope.crawl()
+
   return importedMacros
+}
+
+function isLocalDefined(scope: Scope, name: string) {
+  // local-defined identifiers must have bindings,
+  // macros don't have bindings,
+  // but no bindings doesn't mean is a macro,
+  // e.g. console.log(), `console` has no bindings too.
+  return scope.getBinding(name)
 }
 
 // find macros to be applied from call expr, returns a
@@ -110,17 +124,19 @@ export function findImportedMacros(
 type CalledMacro = Macro | string | undefined
 
 export function getCalledMacro(
-  callee: CallExpression['callee'],
+  callee: NodePath<CallExpression['callee']>,
   importedMacros: Array<ImportedMacro>
 ): CalledMacro {
-  if (isMemberExpression(callee)) {
-    const ns = callee.object
+  const node = callee.node
+  if (isMemberExpression(node)) {
+    const ns = node.object
     if (isIdentifier(ns)) {
+      if (isLocalDefined(callee.scope, ns.name)) return
       const maybeMacro = importedMacros.find(
         (m) => m.importedAsNamespace && m.local === ns.name
       ) as ImportedAsNS
       if (!maybeMacro) return
-      const method = callee.property
+      const method = node.property
       if (isIdentifier(method)) {
         // case - namespace.method()
         return (
@@ -133,13 +149,14 @@ export function getCalledMacro(
         )
       }
     }
-  } else if (isIdentifier(callee)) {
+  } else if (isIdentifier(node)) {
+    if (isLocalDefined(callee.scope, node.name)) return
     // case - method()
     const maybeMacro = importedMacros.find(
-      (m) => !m.importedAsNamespace && m.local === callee.name
+      (m) => !m.importedAsNamespace && m.local === node.name
     ) as ImportedAsNamed
     if (!maybeMacro) return
-    return maybeMacro.macro || callee.name
+    return maybeMacro.macro || node.name
   }
 }
 
@@ -151,15 +168,15 @@ export function containsMacros(
     // traverse can not process the root path
     if (
       path.isCallExpression() &&
-      getCalledMacro(path.node.callee, importedMacros)
+      getCalledMacro(path.get('callee'), importedMacros)
     )
       return true
     let has = false
     path.traverse({
-      CallExpression({ node: { callee } }) {
-        if (getCalledMacro(callee, importedMacros)) {
+      CallExpression(p) {
+        if (getCalledMacro(p.get('callee'), importedMacros)) {
           has = true
-          path.stop()
+          p.stop()
         }
       },
     })
