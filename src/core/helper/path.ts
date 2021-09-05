@@ -25,7 +25,7 @@ export function normalizePathPattern(
 ): PathPatternNormalizer {
   if (!pattern.startsWith('.') && !pattern.startsWith('/')) {
     throw new Error(
-      `pattern must start with "." or "/" (relative to project root)`
+      `pattern must start with '.' or '/' (relative to project root)`
     )
   }
   let base: string

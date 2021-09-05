@@ -78,7 +78,7 @@ export function createTransformer({
     ) {
       if (loopCount++ >= maxRecursions)
         throw new Error(
-          `Reached the maximum recursion when apply macros on ${filepath}`
+          `Reached the maximum recursion when apply macros on '${filepath}'`
         )
     }
 
@@ -133,7 +133,7 @@ export function applyMacros({
       if (!macroToApply) return
       if (typeof macroToApply === 'string')
         throw new Error(
-          `Macro ${macroToApply} is not existed but is called in ${filepath}`
+          `Macro '${macroToApply}' is not existed but is called in '${filepath}'`
         )
 
       try {
@@ -155,9 +155,9 @@ export function applyMacros({
         )
       } catch (e) {
         throw new Error(
-          `Error when apply macro ${
+          `Error when apply macro '${
             macroToApply.name
-          } in ${filepath} near ${nodeLoc(path.node)}:\n ${e}`
+          }' in '${filepath}' near ${nodeLoc(path.node)}:\n ${e}`
         )
       } finally {
         applied = true

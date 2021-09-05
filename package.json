@@ -29,7 +29,9 @@
     "bootstrap": "node scripts/bootstrap.mjs",
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
-    "test": "jest --runInBand",
+    "test": "yarn test:unit",
+    "test:unit": "jest --runInBand --testPathPattern=tests/",
+    "test:fixture": "jest --runInBand --testPathPattern=fixtures/",
     "lint": "eslint . --cache",
     "lint:nocache": "eslint .",
     "prepare": "is-ci || husky install"

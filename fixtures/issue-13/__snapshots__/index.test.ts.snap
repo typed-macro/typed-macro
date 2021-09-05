@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform should not expand local-defined functions with the same name as macros 1`] = `
+"
+
+
+{
+  const test = () => {};
+  test();
+}"
+`;
+
+exports[`transform should not expand local-defined functions with the same name as macros 2`] = `
+"
+
+
+{
+  const macro = {};
+  macro.test();
+}"
+`;
+
+exports[`transform should not expand local-defined functions with the same name as macros 3`] = `
+"
+
+
+{
+  const console = window.console;
+  console.log();
+}"
+`;
