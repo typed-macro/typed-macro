@@ -1,5 +1,5 @@
 import { parse } from '@babel/parser'
-import { File } from '@babel/types'
+import { File, Program } from '@babel/types'
 import generate from '@babel/generator'
 import template from '@babel/template'
 import { join } from 'path'
@@ -7,6 +7,7 @@ import { tmpdir } from 'os'
 import { createServer, ViteDevServer } from 'vite'
 import { mkdtemp, rm } from 'fs/promises'
 import { isMacro, macro, MacroHandler, MacroMeta } from '@/core/macro'
+import traverse, { NodePath } from '@babel/traverse'
 
 export function getAST(code: string) {
   return parse(code, {
@@ -21,6 +22,17 @@ export function getStatement(code: string) {
 
 export function getExpression(code: string) {
   return template.expression.ast(code)
+}
+
+export function getPath(code: string) {
+  let p: NodePath<Program>
+  traverse(parse(code, { sourceType: 'module' }), {
+    Program(path) {
+      p = path
+      path.stop()
+    },
+  })
+  return p!
 }
 
 export function matchCodeSnapshot(ast: File) {

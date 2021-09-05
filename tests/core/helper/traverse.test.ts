@@ -15,7 +15,7 @@ import {
   Program,
 } from '@babel/types'
 import { NodePath } from '@babel/traverse'
-import { getAST, getExpression } from '../../testutils'
+import { getAST, getPath, matchCodeSnapshot } from '../../testutils'
 
 let ast: File
 let program: NodePath<Program>
@@ -156,6 +156,46 @@ describe('findImportedMacros()', () => {
       ).toMatchSnapshot()
     })
   })
+
+  it('should rewrite import stmts if keep=true', () => {
+    const testCases: {
+      code: string
+      macros: Record<string, { name: string }[]>
+    }[] = [
+      { code: `import { a } from '@a'`, macros: { '@a': [{ name: 'a' }] } },
+      {
+        code: `import { a as _a } from '@a'`,
+        macros: { '@a': [{ name: 'a' }] },
+      },
+      { code: `import a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
+      { code: `import * as a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
+    ]
+    testCases.forEach((c) => {
+      const ast = getAST(c.code)
+      findImportedMacros(ast, c.macros as any, true)
+      matchCodeSnapshot(ast)
+    })
+  })
+
+  it('should remove import stmts if keep=false', () => {
+    const testCases: {
+      code: string
+      macros: Record<string, { name: string }[]>
+    }[] = [
+      { code: `import { a } from '@a'`, macros: { '@a': [{ name: 'a' }] } },
+      {
+        code: `import { a as _a } from '@a'`,
+        macros: { '@a': [{ name: 'a' }] },
+      },
+      { code: `import a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
+      { code: `import * as a from '@a'`, macros: { '@a': [{ name: 'a' }] } },
+    ]
+    testCases.forEach((c) => {
+      const ast = getAST(c.code)
+      findImportedMacros(ast, c.macros as any)
+      expect(ast.program.body.length).toBe(0)
+    })
+  })
 })
 
 describe('getCalledMacro()', () => {
@@ -217,7 +257,11 @@ describe('getCalledMacro()', () => {
 
       expect(
         getCalledMacro(
-          (getExpression(c.call) as CallExpression).callee,
+          (
+            (
+              getPath(c.call).get('body')[0] as NodePath<ExpressionStatement>
+            ).get('expression') as NodePath<CallExpression>
+          ).get('callee'),
           importedMacros
         )
       ).toMatchSnapshot()
@@ -230,10 +274,14 @@ describe('containsMacros()', () => {
     const ast = getAST(`
   import { a } from '@a'
   a(a(), c(), c(a()))`)
+    const importedMacros = findImportedMacros(
+      ast,
+      {
+        '@a': [{ name: 'a' } as any],
+      },
+      true
+    )
     const program = findProgramPath(ast)
-    const importedMacros = findImportedMacros(ast, {
-      '@a': [{ name: 'a' } as any],
-    })
     const paths = (
       (program.get('body')[1] as NodePath<ExpressionStatement>).get(
         'expression'

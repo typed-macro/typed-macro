@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`findImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
+
+exports[`findImportedMacros() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
+
+exports[`findImportedMacros() should rewrite import stmts if keep=true 3`] = `"import '@a';"`;
+
+exports[`findImportedMacros() should rewrite import stmts if keep=true 4`] = `"import '@a';"`;
+
 exports[`findImportedMacros() should work 1`] = `
 Array [
   Object {
