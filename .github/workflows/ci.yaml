@@ -33,4 +33,4 @@ jobs:
         with:
           node-version: 14
       - run: yarn --frozen-lockfile --network-timeout 180000
-      - run: yarn test:fixtures --ci
+      - run: yarn test:fixture --ci
