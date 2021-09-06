@@ -31,8 +31,8 @@ function normalizeOption({
   typesPath,
   maxRecursions,
   parserPlugins,
-  includes,
-  excludes,
+  include,
+  exclude,
 }: MacroPluginOptions): InternalPluginOptions {
   return {
     name,
@@ -42,8 +42,8 @@ function normalizeOption({
         transformer: { maxRecursions, parserPlugins },
         typeRenderer: { typesPath },
         filter: {
-          includes,
-          excludes,
+          include,
+          exclude,
         },
       },
       normalizeExports(exports)

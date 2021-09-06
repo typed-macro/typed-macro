@@ -16,12 +16,7 @@ import {
   NormalizedExports,
 } from './exports'
 import { DeepPartial, findDuplicatedItem } from '@/common'
-import { createFilter, FilterPattern } from './filter'
-
-export type FilterOptions = {
-  includes?: FilterPattern
-  excludes?: FilterPattern
-}
+import { createFilter, FilterOptions } from './filter'
 
 export type RuntimeOptions = {
   /**
@@ -99,13 +94,7 @@ export class Runtime {
   }
 
   get filter() {
-    return (
-      this._filter ||
-      (this._filter = createFilter(
-        this._options.filter.includes || /\.[jt]sx?$/,
-        this._options.filter.excludes || /node_modules/
-      ))
-    )
+    return this._filter || (this._filter = createFilter(this._options.filter))
   }
 
   get transformer() {
