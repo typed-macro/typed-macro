@@ -62,7 +62,7 @@ function normalizeProvider(raw: MacroProviderOptions): MacroProvider {
   const { id, hooks = {}, exports } = raw
   const options = raw.options?.parserPlugins && {
     transformer: {
-      parserPlugins: raw.options?.parserPlugins,
+      parserPlugins: raw.options.parserPlugins,
     },
   }
 
