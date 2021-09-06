@@ -18,6 +18,8 @@ function normalizeOption({
   typesPath,
   maxRecursions,
   parserPlugins,
+  excludes,
+  includes,
 }: MacroManagerOptions): InternalMacroManagerOptions {
   return {
     name,
@@ -26,6 +28,10 @@ function normalizeOption({
       transformer: {
         maxRecursions,
         parserPlugins,
+      },
+      filter: {
+        excludes,
+        includes,
       },
     }),
   }

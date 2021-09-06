@@ -16,6 +16,12 @@ import {
   NormalizedExports,
 } from './exports'
 import { DeepPartial, findDuplicatedItem } from '@/common'
+import { createFilter, FilterPattern } from './filter'
+
+export type FilterOptions = {
+  includes?: FilterPattern
+  excludes?: FilterPattern
+}
 
 export type RuntimeOptions = {
   /**
@@ -26,6 +32,11 @@ export type RuntimeOptions = {
    * The options for typeRenderer.
    */
   typeRenderer: Pick<TypeRendererOptions, 'typesPath'>
+  /**
+   * The options that control the filtering of which files
+   * require transformations to be applied.
+   */
+  filter: FilterOptions
 }
 
 export type Attachable = {
@@ -81,9 +92,20 @@ export class Runtime {
 
   private _transformer?: Transformer
   private _typeRenderer?: TypeRenderer
+  private _filter?: (id: string) => boolean
 
   get options() {
     return this._options
+  }
+
+  get filter() {
+    return (
+      this._filter ||
+      (this._filter = createFilter(
+        this._options.filter.includes || /\.[jt]sx?$/,
+        this._options.filter.excludes || /node_modules/
+      ))
+    )
   }
 
   get transformer() {
@@ -104,7 +126,7 @@ export class Runtime {
   }
 
   handleTransform(code: string, filepath: string, ssr = false) {
-    if (/\.[jt]sx?$/.test(filepath))
+    if (this.filter(filepath))
       return this.transformer(
         {
           code,

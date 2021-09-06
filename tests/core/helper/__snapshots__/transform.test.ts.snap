@@ -1000,12 +1000,10 @@ NodePath {
                 "ForInStatement": Object {
                   "enter": Array [
                     [Function],
-                    [Function],
                   ],
                 },
                 "ForOfStatement": Object {
                   "enter": Array [
-                    [Function],
                     [Function],
                   ],
                 },
@@ -1300,12 +1298,10 @@ NodePath {
               "ForInStatement": Object {
                 "enter": Array [
                   [Function],
-                  [Function],
                 ],
               },
               "ForOfStatement": Object {
                 "enter": Array [
-                  [Function],
                   [Function],
                 ],
               },
@@ -1867,12 +1863,10 @@ NodePath {
               "ForInStatement": Object {
                 "enter": Array [
                   [Function],
-                  [Function],
                 ],
               },
               "ForOfStatement": Object {
                 "enter": Array [
-                  [Function],
                   [Function],
                 ],
               },
@@ -2167,12 +2161,10 @@ NodePath {
             "ForInStatement": Object {
               "enter": Array [
                 [Function],
-                [Function],
               ],
             },
             "ForOfStatement": Object {
               "enter": Array [
-                [Function],
                 [Function],
               ],
             },
@@ -3944,12 +3936,10 @@ NodePath {
                 "ForInStatement": Object {
                   "enter": Array [
                     [Function],
-                    [Function],
                   ],
                 },
                 "ForOfStatement": Object {
                   "enter": Array [
-                    [Function],
                     [Function],
                   ],
                 },
@@ -4244,12 +4234,10 @@ NodePath {
               "ForInStatement": Object {
                 "enter": Array [
                   [Function],
-                  [Function],
                 ],
               },
               "ForOfStatement": Object {
                 "enter": Array [
-                  [Function],
                   [Function],
                 ],
               },
@@ -4811,12 +4799,10 @@ NodePath {
               "ForInStatement": Object {
                 "enter": Array [
                   [Function],
-                  [Function],
                 ],
               },
               "ForOfStatement": Object {
                 "enter": Array [
-                  [Function],
                   [Function],
                 ],
               },
@@ -5111,12 +5097,10 @@ NodePath {
             "ForInStatement": Object {
               "enter": Array [
                 [Function],
-                [Function],
               ],
             },
             "ForOfStatement": Object {
               "enter": Array [
-                [Function],
                 [Function],
               ],
             },

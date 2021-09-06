@@ -1,5 +1,5 @@
 import { assertNoDuplicatedNamespace, Runtime } from '@/core/runtime'
-import { macroSerializer, mockMacro } from '../testutils'
+import { macroSerializer, mockMacro, mockRuntime } from '../testutils'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -13,12 +13,7 @@ describe('assertNoDuplicatedNamespace()', () => {
 describe('Runtime', () => {
   let runtime: Runtime
   beforeEach(() => {
-    runtime = new Runtime({
-      transformer: {},
-      typeRenderer: {
-        typesPath: '',
-      },
-    })
+    runtime = mockRuntime()
   })
 
   it('should work with setDevMode()', () => {
