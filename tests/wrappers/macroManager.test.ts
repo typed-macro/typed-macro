@@ -10,7 +10,7 @@ import {
   mockRuntime,
   withDevServer,
   withTempPath,
-} from '../testutils'
+} from '#/testutils'
 
 // MacroManager is just a simple wrapper of MacroPlugin
 describe('MacroManager', () => {

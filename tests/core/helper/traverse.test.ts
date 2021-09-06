@@ -15,7 +15,7 @@ import {
   Program,
 } from '@babel/types'
 import { NodePath } from '@babel/traverse'
-import { getAST, getPath, matchCodeSnapshot } from '../../testutils'
+import { getAST, getPath, matchCodeSnapshot } from '#/testutils'
 
 let ast: File
 let program: NodePath<Program>

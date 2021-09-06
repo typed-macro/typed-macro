@@ -1,5 +1,5 @@
 import { File, Program } from '@babel/types'
-import { getAST, matchCodeSnapshot } from '../../testutils'
+import { getAST, matchCodeSnapshot } from '#/testutils'
 import template from '@babel/template'
 import { ImportOption } from '@/core/helper/import'
 import { NodePath } from '@babel/traverse'

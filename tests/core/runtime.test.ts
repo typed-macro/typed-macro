@@ -1,5 +1,5 @@
 import { assertNoDuplicatedNamespace, Runtime } from '@/core/runtime'
-import { macroSerializer, mockMacro, mockRuntime } from '../testutils'
+import { macroSerializer, mockMacro, mockRuntime } from '#/testutils'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -147,5 +147,66 @@ describe('Runtime', () => {
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
     update('type G = number')
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
+  })
+
+  it('should exclude specific files', () => {
+    const runtime = new Runtime(
+      {
+        transformer: { maxRecursions: 1 },
+        typeRenderer: { typesPath: '' },
+        filter: { exclude: [/node_modules/, '**/spec-scope/**/*'] },
+      },
+      {
+        macros: {
+          '@macro': [mockMacro('test', ({ path }) => path.remove())],
+        },
+        modules: {},
+        types: {},
+      }
+    )
+    const code = `
+    import { test } from '@macro'
+    test()`
+    const cases: string[] = [
+      'workspace/node_modules/a.ts',
+      'workspace/a.ts',
+      'workspace/src/a.ts',
+      'workspace/src/some/a.ts',
+      'workspace/src/spec-scope/a.ts',
+      'workspace/src/spec-scope/internal/a.ts',
+    ]
+    cases.forEach((filepath) => {
+      expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
+    })
+  })
+
+  it('should include specific files', () => {
+    const runtime = new Runtime(
+      {
+        transformer: { maxRecursions: 1 },
+        typeRenderer: { typesPath: '' },
+        filter: { include: [/\.js$/, '**/chaos-scope/**/*'] },
+      },
+      {
+        macros: {
+          '@macro': [mockMacro('test', ({ path }) => path.remove())],
+        },
+        modules: {},
+        types: {},
+      }
+    )
+    const code = `
+    import { test } from '@macro'
+    test()`
+    const cases: string[] = [
+      'workspace/a.ts',
+      'workspace/src/a.js',
+      'workspace/src/some/a.ts',
+      'workspace/src/chaos-scope/a.ts',
+      'workspace/src/chaos-scope/internal/a.js',
+    ]
+    cases.forEach((filepath) => {
+      expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
+    })
   })
 })

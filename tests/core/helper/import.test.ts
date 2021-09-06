@@ -1,4 +1,4 @@
-import { getStatement } from '../../testutils'
+import { getStatement } from '#/testutils'
 import {
   ImportOption,
   matchImportStmt,

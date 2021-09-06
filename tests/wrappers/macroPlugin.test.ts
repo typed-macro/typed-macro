@@ -6,7 +6,7 @@ import {
   mockRuntime,
   withDevServer,
   withTempPath,
-} from '../testutils'
+} from '#/testutils'
 
 expect.addSnapshotSerializer(macroSerializer)
 
