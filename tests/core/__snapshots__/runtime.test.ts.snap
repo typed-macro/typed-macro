@@ -54,6 +54,18 @@ Object {
 }
 `;
 
+exports[`Runtime should work with default filter 1`] = `undefined`;
+
+exports[`Runtime should work with default filter 2`] = `""`;
+
+exports[`Runtime should work with default filter 3`] = `""`;
+
+exports[`Runtime should work with default filter 4`] = `""`;
+
+exports[`Runtime should work with default filter 5`] = `""`;
+
+exports[`Runtime should work with default filter 6`] = `undefined`;
+
 exports[`Runtime should work with handleLoad/handleResolveId() 1`] = `"export {}"`;
 
 exports[`Runtime should work with handleLoad/handleResolveId() 2`] = `"export const a = 1"`;

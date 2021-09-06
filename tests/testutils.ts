@@ -90,6 +90,18 @@ export function mockRuntime(
   )
 }
 
+export function mockExports({
+  types = {},
+  macros = {},
+  modules = {},
+}: Partial<NormalizedExports> = {}): NormalizedExports {
+  return {
+    types,
+    macros,
+    modules,
+  }
+}
+
 export const macroSerializer = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

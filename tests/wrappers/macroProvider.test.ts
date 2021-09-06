@@ -1,15 +1,12 @@
 import { isMacroProvider, macroProvider } from '@/wrappers/macroProvider'
+import { mockExports } from '#/testutils'
 
 describe('macroProvider() & isMacroProvider()', () => {
   it('should work', () => {
     expect(
       isMacroProvider(
         macroProvider({
-          exports: {
-            types: {},
-            modules: {},
-            macros: {},
-          },
+          exports: mockExports(),
           hooks: {},
           id: 'test',
         })

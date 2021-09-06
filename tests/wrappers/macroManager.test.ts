@@ -6,6 +6,7 @@ import {
   ViteStartContext,
 } from '@/wrappers/macroProvider'
 import {
+  mockExports,
   mockMacro,
   mockRuntime,
   withDevServer,
@@ -45,13 +46,11 @@ describe('MacroManager', () => {
       hooks: {},
       runtime: mockRuntime(
         {},
-        {
-          modules: {},
+        mockExports({
           macros: {
             '@noop': [mockMacro('noop', ({ path }) => path.remove())],
           },
-          types: {},
-        }
+        })
       ),
     })
     manager = macroManager({
@@ -102,7 +101,7 @@ describe('MacroManager', () => {
               stack.push('onStart')
             },
           },
-          exports: { modules: {}, macros: {}, types: {} },
+          exports: mockExports(),
         })
       )
       const plugin = manager.toPlugin()[0]
@@ -140,7 +139,7 @@ describe('MacroManager', () => {
               viteStartCtx = ctx
             },
           },
-          exports: { modules: {}, macros: {}, types: {} },
+          exports: mockExports(),
         })
       )
       const plugin = manager.toPlugin()[0]
