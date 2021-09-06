@@ -1,28 +1,12 @@
-<h1 align="center">vite-plugin-macro</h1>
+# vite-plugin-macro
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/vite-plugin-macro">
-    <img alt="npm version" src="https://badgen.net/npm/v/vite-plugin-macro"/>
-  </a>
-</p>
+[![npm version](https://badgen.net/npm/v/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
+[![monthly downloads](https://badgen.net/npm/dm/vite-plugin-macro)](https://www.npmjs.com/package/vite-plugin-macro)
+[![code coverage](https://badgen.net/codecov/c/github/viteland/vite-plugin-macro)](https://app.codecov.io/gh/viteland/vite-plugin-macro)
+[![license](https://badgen.net/npm/license/vite-plugin-macro)](https://github.com/viteland/vite-plugin-macro/blob/master/LICENSE)
+![types](https://badgen.net/npm/types/vite-plugin-macro)
 
-<p align="center">
-  <a href="https://github.com/viteland/vite-plugin-macro/actions/workflows/ci.yaml">
-    <img alt="ci" src="https://github.com/viteland/vite-plugin-macro/actions/workflows/ci.yaml/badge.svg?branch=master"/>
-  </a>
-  <a href="https://app.codecov.io/gh/viteland/vite-plugin-macro">
-    <img alt="code coverage" src="https://badgen.net/codecov/c/github/viteland/vite-plugin-macro"/>
-  </a>
-  <a href="https://www.npmjs.com/package/vite-plugin-macro">
-    <img alt="monthly downloads" src="https://badgen.net/npm/dm/vite-plugin-macro"/>
-  </a>
-  <img alt="types" src="https://badgen.net/npm/types/vite-plugin-macro"/>
-  <a href="https://github.com/viteland/vite-plugin-macro/blob/master/LICENSE">
-    <img alt="license" src="https://badgen.net/npm/license/vite-plugin-macro"/>
-  </a>
-</p>
-
-<p align="center">🤠 Brings macro capabilities to <a href="https://github.com/vitejs/vite">Vite</a> based projects.</p>
+🤠 Brings macro capabilities to [Vite](https://github.com/vitejs/vite) based projects.
 
 ## 🚀 Getting Started
 
@@ -32,7 +16,7 @@ $ npm install -D vite-plugin-macro
 $ yarn add -D vite-plugin-macro
 ```
 
-## 📚 Documents
+## 📚 Documentation
 
 - [Basic Concepts](/doc/basic-concepts.md)
 - [For Macro Author](/doc/for-author.md)
