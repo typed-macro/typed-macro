@@ -3,9 +3,10 @@ import { isMacroPlugin, MacroPlugin, macroPlugin } from '@/wrappers/macroPlugin'
 import {
   macroSerializer,
   mockMacro,
+  mockRuntime,
   withDevServer,
   withTempPath,
-} from '../testutils'
+} from '#/testutils'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -19,6 +20,7 @@ describe('macroPlugin() & isMacroPlugin()', () => {
           runtime: new Runtime({
             typeRenderer: { typesPath: '' },
             transformer: {},
+            filter: {},
           }),
         })
       )
@@ -33,11 +35,8 @@ describe('MacroPlugin', () => {
     const plugin = macroPlugin({
       name: 'test',
       hooks: {},
-      runtime: new Runtime(
-        {
-          transformer: {},
-          typeRenderer: { typesPath: '' },
-        },
+      runtime: mockRuntime(
+        {},
         {
           modules: {
             '@helper': `export function hello(msg) {console.log(msg)}`,
@@ -79,11 +78,8 @@ describe('MacroPlugin Hooks', () => {
         configResolved: mockedHook,
         buildStart: mockedHook,
       },
-      runtime: new Runtime(
-        {
-          transformer: {},
-          typeRenderer: { typesPath: '' },
-        },
+      runtime: mockRuntime(
+        {},
         {
           modules: {
             '@helper': `export function hello(msg) {console.log(msg)}`,
@@ -144,10 +140,7 @@ describe('MacroPlugin Hooks', () => {
     await withTempPath('a.d.ts', async (tempPath) => {
       plugin = macroPlugin({
         name: 'test',
-        runtime: new Runtime({
-          transformer: {},
-          typeRenderer: { typesPath: tempPath },
-        }),
+        runtime: mockRuntime({ typeRenderer: { typesPath: tempPath } }),
         hooks: { buildStart: mockedHook },
       })
       await plugin.buildStart!.call(null as any, {} as any)

@@ -5,7 +5,7 @@ import {
 } from '@/core/typeRenderer'
 import { NamespacedTypes } from '@/core/exports'
 import { readFileSync, writeFileSync } from 'fs'
-import { withTempPath } from '../testutils'
+import { withTempPath } from '#/testutils'
 
 describe('renderTypes()', () => {
   it('should work', () => {

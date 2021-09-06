@@ -1,4 +1,4 @@
-import { getAST, macroSerializer, mockMacro } from '../testutils'
+import { getAST, macroSerializer, mockMacro } from '#/testutils'
 import { StringLiteral } from '@babel/types'
 import { applyMacros, createTransformer } from '@/core/transformer'
 import { Macro } from '@/core/macro'

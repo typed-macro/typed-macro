@@ -8,6 +8,8 @@ import { createServer, ViteDevServer } from 'vite'
 import { mkdtemp, rm } from 'fs/promises'
 import { isMacro, macro, MacroHandler, MacroMeta } from '@/core/macro'
 import traverse, { NodePath } from '@babel/traverse'
+import { Runtime, RuntimeOptions } from '@/core/runtime'
+import { NormalizedExports } from '@/core/exports'
 
 export function getAST(code: string) {
   return parse(code, {
@@ -70,6 +72,34 @@ export function mockMacro(
   }
 ) {
   return macro(name, meta, fn)
+}
+
+export function mockRuntime(
+  options?: Partial<RuntimeOptions>,
+  defaultExports?: NormalizedExports
+) {
+  return new Runtime(
+    {
+      typeRenderer: options?.typeRenderer || {
+        typesPath: '',
+      },
+      transformer: options?.transformer || {},
+      filter: options?.filter || {},
+    },
+    defaultExports
+  )
+}
+
+export function mockExports({
+  types = {},
+  macros = {},
+  modules = {},
+}: Partial<NormalizedExports> = {}): NormalizedExports {
+  return {
+    types,
+    macros,
+    modules,
+  }
 }
 
 export const macroSerializer = {

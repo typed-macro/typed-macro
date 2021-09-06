@@ -1,5 +1,10 @@
 import { assertNoDuplicatedNamespace, Runtime } from '@/core/runtime'
-import { macroSerializer, mockMacro } from '../testutils'
+import {
+  macroSerializer,
+  mockExports,
+  mockMacro,
+  mockRuntime,
+} from '#/testutils'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -13,12 +18,7 @@ describe('assertNoDuplicatedNamespace()', () => {
 describe('Runtime', () => {
   let runtime: Runtime
   beforeEach(() => {
-    runtime = new Runtime({
-      transformer: {},
-      typeRenderer: {
-        typesPath: '',
-      },
-    })
+    runtime = mockRuntime()
   })
 
   it('should work with setDevMode()', () => {
@@ -27,33 +27,27 @@ describe('Runtime', () => {
   })
 
   it('should work with addExports() and .exports', () => {
-    runtime.addExports({
-      macros: { '@m1': [mockMacro('m')] },
-      modules: { '@u1': 'export const a = 1' },
-      types: {},
-    })
+    runtime.addExports(
+      mockExports({
+        macros: { '@m1': [mockMacro('m')] },
+        modules: { '@u1': 'export const a = 1' },
+      })
+    )
     expect(runtime.exports).toMatchSnapshot()
-    runtime.addExports({
-      macros: { '@m2': [mockMacro('m')] },
-      modules: { '@u2': 'export const a = 1' },
-      types: {},
-    })
+    runtime.addExports(
+      mockExports({
+        macros: { '@m2': [mockMacro('m')] },
+        modules: { '@u2': 'export const a = 1' },
+      })
+    )
     expect(runtime.exports).toMatchSnapshot()
     expect(() => {
-      runtime.addExports({
-        macros: { '@m2': [] },
-        modules: {},
-        types: {},
-      })
+      runtime.addExports(mockExports({ macros: { '@m2': [] } }))
     }).toThrow()
     expect(() => {
-      runtime.addExports({
-        macros: {
-          '@m3': [mockMacro('m'), mockMacro('m')],
-        },
-        modules: {},
-        types: {},
-      })
+      runtime.addExports(
+        mockExports({ macros: { '@m3': [mockMacro('m'), mockMacro('m')] } })
+      )
     }).toThrow()
   })
 
@@ -77,11 +71,12 @@ describe('Runtime', () => {
   })
 
   it('should work with handleLoad/handleResolveId()', () => {
-    runtime.addExports({
-      macros: { '@m': [mockMacro('m')] },
-      modules: { '@u': 'export const a = 1' },
-      types: {},
-    })
+    runtime.addExports(
+      mockExports({
+        macros: { '@m': [mockMacro('m')] },
+        modules: { '@u': 'export const a = 1' },
+      })
+    )
     expect(runtime.handleLoad('@m')).toMatchSnapshot()
     expect(runtime.handleLoad('@u')).toMatchSnapshot()
     expect(runtime.handleLoad('@n')).toBeUndefined()
@@ -92,17 +87,17 @@ describe('Runtime', () => {
   })
 
   it('should work with handleTransform()', () => {
-    runtime.addExports({
-      macros: {
-        '@m': [
-          mockMacro('m', ({ path }) => {
-            path.remove()
-          }),
-        ],
-      },
-      modules: {},
-      types: {},
-    })
+    runtime.addExports(
+      mockExports({
+        macros: {
+          '@m': [
+            mockMacro('m', ({ path }) => {
+              path.remove()
+            }),
+          ],
+        },
+      })
+    )
     // no macro
     expect(
       runtime.handleTransform(`console.log('hello')`, 'test.js')
@@ -121,29 +116,29 @@ describe('Runtime', () => {
   })
 
   it('should work with typeRenderer()', () => {
-    runtime.addExports({
-      macros: {},
-      modules: {},
-      types: {
-        '@t': {
-          moduleScope: ['type A = string'],
-          macroScope: [],
+    runtime.addExports(
+      mockExports({
+        types: {
+          '@t': {
+            moduleScope: ['type A = string'],
+            macroScope: [],
+          },
         },
-      },
-    })
+      })
+    )
 
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
 
-    runtime.addExports({
-      macros: {},
-      modules: {},
-      types: {
-        '@n': {
-          moduleScope: ['type B = string'],
-          macroScope: [`export function a(): void`],
+    runtime.addExports(
+      mockExports({
+        types: {
+          '@n': {
+            moduleScope: ['type B = string'],
+            macroScope: [`export function a(): void`],
+          },
         },
-      },
-    })
+      })
+    )
 
     // update after register new
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
@@ -152,5 +147,83 @@ describe('Runtime', () => {
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
     update('type G = number')
     expect(runtime.typeRenderer.render()).toMatchSnapshot()
+  })
+
+  it('should exclude specific files', () => {
+    const runtime = mockRuntime(
+      {
+        filter: { exclude: [/node_modules/, '**/spec-scope/**/*'] },
+      },
+      mockExports({
+        macros: {
+          '@macro': [mockMacro('test', ({ path }) => path.remove())],
+        },
+      })
+    )
+    const code = `
+    import { test } from '@macro'
+    test()`
+    const cases: string[] = [
+      'workspace/node_modules/a.ts',
+      'workspace/a.ts',
+      'workspace/src/a.ts',
+      'workspace/src/some/a.ts',
+      'workspace/src/spec-scope/a.ts',
+      'workspace/src/spec-scope/internal/a.ts',
+    ]
+    cases.forEach((filepath) => {
+      expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
+    })
+  })
+
+  it('should include specific files', () => {
+    const runtime = mockRuntime(
+      {
+        filter: { include: [/\.js$/, '**/chaos-scope/**/*'] },
+      },
+      mockExports({
+        macros: {
+          '@macro': [mockMacro('test', ({ path }) => path.remove())],
+        },
+      })
+    )
+    const code = `
+    import { test } from '@macro'
+    test()`
+    const cases: string[] = [
+      'workspace/a.ts',
+      'workspace/src/a.js',
+      'workspace/src/some/a.ts',
+      'workspace/src/chaos-scope/a.ts',
+      'workspace/src/chaos-scope/internal/a.js',
+    ]
+    cases.forEach((filepath) => {
+      expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
+    })
+  })
+
+  it('should work with default filter', () => {
+    const runtime = mockRuntime(
+      {},
+      mockExports({
+        macros: {
+          '@macro': [mockMacro('test', ({ path }) => path.remove())],
+        },
+      })
+    )
+    const code = `
+    import { test } from '@macro'
+    test()`
+    const cases: string[] = [
+      'workspace/node_modules/a.ts',
+      'workspace/a.ts',
+      'workspace/a.jsx',
+      'workspace/src/a.js',
+      'workspace/src/some/a.tsx',
+      'workspace/src/some/a.yaml',
+    ]
+    cases.forEach((filepath) => {
+      expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
+    })
   })
 })

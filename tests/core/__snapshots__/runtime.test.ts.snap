@@ -1,5 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Runtime should exclude specific files 1`] = `undefined`;
+
+exports[`Runtime should exclude specific files 2`] = `""`;
+
+exports[`Runtime should exclude specific files 3`] = `""`;
+
+exports[`Runtime should exclude specific files 4`] = `""`;
+
+exports[`Runtime should exclude specific files 5`] = `undefined`;
+
+exports[`Runtime should exclude specific files 6`] = `undefined`;
+
+exports[`Runtime should include specific files 1`] = `undefined`;
+
+exports[`Runtime should include specific files 2`] = `""`;
+
+exports[`Runtime should include specific files 3`] = `undefined`;
+
+exports[`Runtime should include specific files 4`] = `""`;
+
+exports[`Runtime should include specific files 5`] = `""`;
+
 exports[`Runtime should work with addExports() and .exports 1`] = `
 Object {
   "macros": Object {
@@ -31,6 +53,18 @@ Object {
   "types": Object {},
 }
 `;
+
+exports[`Runtime should work with default filter 1`] = `undefined`;
+
+exports[`Runtime should work with default filter 2`] = `""`;
+
+exports[`Runtime should work with default filter 3`] = `""`;
+
+exports[`Runtime should work with default filter 4`] = `""`;
+
+exports[`Runtime should work with default filter 5`] = `""`;
+
+exports[`Runtime should work with default filter 6`] = `undefined`;
 
 exports[`Runtime should work with handleLoad/handleResolveId() 1`] = `"export {}"`;
 

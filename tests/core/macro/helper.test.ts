@@ -1,5 +1,5 @@
 import { createHelper, MacroHelper } from '@/core/macro/helper'
-import { getAST } from '../../testutils'
+import { getAST } from '#/testutils'
 import { findImportedMacros, findProgramPath } from '@/core/helper/traverse'
 import { NodePath } from '@babel/traverse'
 import { CallExpression, ExpressionStatement } from '@babel/types'

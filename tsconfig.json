@@ -11,9 +11,10 @@
     "noUnusedParameters": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "#/*": ["tests/*"]
     }
   },
-  "include": ["./src", "./tests"],
+  "include": ["./src", "./tests", "./fixtures"],
   "exclude": ["node_modules", "examples", "dist"]
 }

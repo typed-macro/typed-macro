@@ -1,5 +1,5 @@
 import { assertNoConflictMacro, normalizeExports } from '@/core/exports'
-import { macroSerializer, mockMacro } from '../testutils'
+import { macroSerializer, mockMacro } from '#/testutils'
 expect.addSnapshotSerializer(macroSerializer)
 
 describe('normalizeExports()', () => {

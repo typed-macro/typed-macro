@@ -26,7 +26,14 @@ export type TransformerOptions = {
   /**
    * Babel plugins to be applied during parsing.
    *
-   * By default 'typescript' and 'jsx' are included and cannot be removed.
+   * 'typescript', 'jsx' and 'importMeta'
+   * are included by default and cannot be removed.
+   *
+   * Some plugins are enabled automatically by the latest babel parser
+   * because they have been regarded as part of the language.
+   *
+   * @see https://babeljs.io/docs/en/babel-parser#plugins
+   * @see https://babeljs.io/docs/en/babel-parser#latest-ecmascript-features
    */
   parserPlugins?: ParserPlugin[]
 }
@@ -48,7 +55,7 @@ export function createTransformer({
   maxRecursions = 0,
 }: TransformerOptions): Transformer {
   maxRecursions = maxRecursions > 0 ? maxRecursions : 5
-  parserPlugins = ['typescript', 'jsx', ...parserPlugins]
+  parserPlugins = ['typescript', 'jsx', 'importMeta', ...parserPlugins]
 
   return ({ code, filepath, ssr = false, dev }, macros) => {
     const ast = parse(code, {

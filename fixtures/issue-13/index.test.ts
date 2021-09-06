@@ -1,5 +1,5 @@
 import { createTestTransformer, TestTransformer } from '@/tester'
-import { mockMacro } from '../../tests/testutils'
+import { mockMacro } from '#/testutils'
 
 describe('transform', () => {
   let transform: TestTransformer

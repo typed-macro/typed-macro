@@ -5,8 +5,13 @@ import {
   MacroProvider,
   ViteStartContext,
 } from '@/wrappers/macroProvider'
-import { mockMacro, withDevServer, withTempPath } from '../testutils'
-import { Runtime } from '@/core/runtime'
+import {
+  mockExports,
+  mockMacro,
+  mockRuntime,
+  withDevServer,
+  withTempPath,
+} from '#/testutils'
 
 // MacroManager is just a simple wrapper of MacroPlugin
 describe('MacroManager', () => {
@@ -39,26 +44,18 @@ describe('MacroManager', () => {
     _plugin = macroPlugin({
       name: 'plugin',
       hooks: {},
-      runtime: new Runtime(
-        {
-          typeRenderer: { typesPath: '' },
-          transformer: {},
-        },
-        {
-          modules: {},
+      runtime: mockRuntime(
+        {},
+        mockExports({
           macros: {
             '@noop': [mockMacro('noop', ({ path }) => path.remove())],
           },
-          types: {},
-        }
+        })
       ),
     })
     manager = macroManager({
       name: 'test',
-      runtime: new Runtime({
-        typeRenderer: { typesPath: '' },
-        transformer: {},
-      }),
+      runtime: mockRuntime(),
     })
   })
 
@@ -84,10 +81,7 @@ describe('MacroManager', () => {
     await withTempPath('./a.d.ts', async (tempPath) => {
       const manager = macroManager({
         name: 'test',
-        runtime: new Runtime({
-          transformer: {},
-          typeRenderer: { typesPath: tempPath },
-        }),
+        runtime: mockRuntime({ typeRenderer: { typesPath: tempPath } }),
       })
 
       const stack: string[] = []
@@ -107,7 +101,7 @@ describe('MacroManager', () => {
               stack.push('onStart')
             },
           },
-          exports: { modules: {}, macros: {}, types: {} },
+          exports: mockExports(),
         })
       )
       const plugin = manager.toPlugin()[0]
@@ -133,10 +127,7 @@ describe('MacroManager', () => {
     await withTempPath('./a.d.ts', async (tempPath) => {
       const manager = macroManager({
         name: 'test',
-        runtime: new Runtime({
-          transformer: {},
-          typeRenderer: { typesPath: tempPath },
-        }),
+        runtime: mockRuntime({ typeRenderer: { typesPath: tempPath } }),
       })
 
       let viteStartCtx: ViteStartContext | undefined
@@ -148,7 +139,7 @@ describe('MacroManager', () => {
               viteStartCtx = ctx
             },
           },
-          exports: { modules: {}, macros: {}, types: {} },
+          exports: mockExports(),
         })
       )
       const plugin = manager.toPlugin()[0]

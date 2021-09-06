@@ -1,5 +1,5 @@
 import { isMacro, macro, renderMetaType } from '@/core/macro'
-import { NO_OP, NO_OP_HANDLER } from '../../testutils'
+import { NO_OP, NO_OP_HANDLER } from '#/testutils'
 
 describe('renderMetaType()', () => {
   it('should work', () => {
