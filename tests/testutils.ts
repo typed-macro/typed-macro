@@ -48,13 +48,17 @@ export const NO_OP = () => {}
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export const NO_OP_HANDLER = (_: any) => {}
 
-export async function withTempPath(path: string, fn: (path: string) => any) {
+export async function withTempPath<T>(
+  path: string,
+  fn: (path: string) => T | Promise<T>
+) {
   const tempDir = await mkdtemp(join(tmpdir(), 'macros-'))
-  await fn(join(tempDir, path))
+  const result = await fn(join(tempDir, path))
   await rm(tempDir, {
     force: true,
     recursive: true,
   })
+  return result
 }
 
 export async function withDevServer(fn: (server: ViteDevServer) => any) {
