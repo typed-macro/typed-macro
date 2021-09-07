@@ -1,3 +1,3 @@
-declare module '@echo' {
-  export function echo(msg: string, repeat?: number): void
+declare module '@hello' {
+  export function hello(msg?: string): void
 }

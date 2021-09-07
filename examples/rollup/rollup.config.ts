@@ -3,14 +3,14 @@ import resolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
-import { vitePluginBasic } from './plugin'
+import { macroPluginHello } from './plugin'
 
 export default [
   {
     input: 'src/index.ts',
     external: [
       ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
+      // ...Object.keys(pkg.peerDependencies || {}),
     ],
     output: [
       {
@@ -23,7 +23,7 @@ export default [
       },
     ],
     plugins: [
-      vitePluginBasic(),
+      macroPluginHello(),
       typescript(),
       resolve({ extensions: ['.js', '.jsx', '.ts', '.tsx'] }),
       commonjs(),

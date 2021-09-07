@@ -5,7 +5,7 @@ const run = <T>(block: () => T) => block()
 
 export function vitePluginBasic() {
   const echoMacro = defineMacro('echo')
-    .withSignature('(msg: string, repeat?: number): void')
+    .withSignature('(msg: string): void')
     .withHandler(({ path, args }, { template, types }, { appendImports }) => {
       const msg = run(() => {
         if (args.length === 0) throw new Error('empty arguments is invalid')
@@ -15,24 +15,13 @@ export function vitePluginBasic() {
         return firstArg.value
       })
 
-      const repeat = run(() => {
-        if (args.length < 2) return 5
-        const secondArg = args[1]
-        if (!types.isNumericLiteral(secondArg))
-          throw new Error('please use literal number as repeat')
-        return secondArg.value
-      })
       appendImports({
         moduleName: '@helper',
         exportName: 'log',
         localName: '__log',
       })
-      path.replaceWith(
-        template.statement.ast`__log("${Array.from(
-          { length: repeat },
-          () => msg
-        ).join(' ')}")`
-      )
+
+      path.replaceWith(template.statement.ast(`__log("${msg}")`))
     })
 
   return defineMacroPlugin({
