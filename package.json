@@ -83,7 +83,7 @@
   },
   "eslintIgnore": [
     "dist/*",
-    "fixtures/**/*.js",
+    "fixtures/**/output/*",
     "*.d.ts",
     "jest.config.js"
   ],
