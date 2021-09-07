@@ -67,11 +67,126 @@ $ npm install -D vite-plugin-macro
 $ yarn add -D vite-plugin-macro
 ```
 
+<details>
+<summary><b>For Macro User</b></summary>
+
+```typescript
+// vite.config.ts
+
+import { defineConfig } from 'vite'
+// a package or module that exports macro provider
+import { provideEcho } from 'some-macro-provider'
+// a package or module that exports macro plugin
+import { pluginLoad } from 'some-macro-plugin'
+// vitePluginMacro is a wrapper of macro manager
+import { vitePluginMacro } from 'vite-plugin-macro'
+import { join } from 'path'
+
+const macroPlugin = vitePluginMacro({
+  // the path of the auto-generated `.d.ts` file containing the types of macros
+  typesPath: join(__dirname, './macros.d.ts'),
+})
+  .use(provideEcho()) // use a macro provider
+  .use(pluginLoad()) // use a macro plugin
+  .toPlugin() // into a Vite/Rollup plugin
+
+export default defineConfig({
+  plugins: [macroPlugin], // use it!
+})
+```
+
+For more information, see the [documentation](#-documentation).
+
+</details>
+
+<details>
+<summary><b>For Macro Author</b></summary>
+
+**Define a Macro**
+
+```typescript
+import { defineMacro } from 'vite-plugin-macro'
+
+const run = <T>(block: () => T) => block() // just a helper...
+
+const echoMacro = defineMacro('echo') // macro builder
+  // wow you can give macro a function signature!
+  .withSignature('(msg: string, repeat?: number): void')
+  // give macro a handler
+  .withHandler(({ path, args }, { template, types }) => {
+    const msg = run(() => {
+      if (args.length === 0) throw new Error('empty arguments is invalid')
+      const firstArg = args[0]
+      if (!types.isStringLiteral(firstArg))
+        throw new Error('please use literal string as message')
+      return firstArg.value
+    })
+
+    const repeat = run(() => {
+      if (args.length < 2) return 5
+      const secondArg = args[1]
+      if (!types.isNumericLiteral(secondArg))
+        throw new Error('please use literal number as repeat')
+      return secondArg.value
+    })
+
+    path.replaceWith(
+      template.statement.ast`console.log("${Array.from(
+        { length: repeat },
+        () => msg
+      ).join(' ')}")`
+    )
+  })
+```
+
+**Define a MacroProvider**
+
+```typescript
+// define macro provider
+
+import { defineMacroProvider } from 'vite-plugin-macro'
+
+export function provideEcho() {
+  return defineMacroProvider({
+    id: 'echo',
+    exports: {
+      '@echo': {
+        macros: [echoMacro],
+      },
+    },
+  })
+}
+```
+
+**Or Define a MacroPlugin**
+
+```typescript
+// define macro provider
+
+import { defineMacroPlugin } from 'vite-plugin-macro'
+
+export function echoPlugin() {
+  return defineMacroPlugin({
+    name: 'macro-echo',
+    typesPath: join(__dirname, 'macros.d.ts'),
+    exports: {
+      '@echo': {
+        macros: [echoMacro],
+      },
+    },
+  })
+}
+```
+
+For more information, see the [documentation](#-documentation).
+
+</details>
+
 ## 📄 Documentation
 
-The plugin provides some explanatory text for
-each parameter of each function and each field of each type.
-So you can obtain more detailed descriptions in IDE and the `index.d.ts` of the plugin.
+💡 vite-plugin-macro provides plenty of explanatory comments for
+each function parameter and each type field in its type declaration file.
+So you can obtain more detailed descriptions in your IDE and `vite-plugin-macro/dist/index.d.ts`.
 
 ### 🔧 Define Your First Macro
 
