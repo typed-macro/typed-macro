@@ -36,8 +36,8 @@
 ## 🧐 Why vite-plugin-macro
 
 There are already many solutions that provide macro capabilities
-for Javascript or Typescript projects.
-And some of them are very mature, such as [babel-plugin-macros](https://github.com/kentcdodds/babel-plugin-macros)
+for Javascript and Typescript projects.
+Some of them are very mature, such as [babel-plugin-macros](https://github.com/kentcdodds/babel-plugin-macros)
 (it's awesome, and maybe you will be interested in it).
 
 However, according to my personal experience, they are not suitable for people like me.
@@ -73,8 +73,7 @@ The plugin provides some explanatory text for
 each parameter of each function and each field of each type.
 So you can obtain more detailed descriptions in IDE and the `index.d.ts` of the plugin.
 
-<details>
-<summary>🔧 <b>Define Your First Macro</b></summary>
+### 🔧 Define Your First Macro
 
 It's pretty easy to define a macro!
 
@@ -139,16 +138,10 @@ or `ctx.path.remove()`, otherwise the plugin will process this call expression
 again and again because there is always a macro call remaining in the source
 until it reached the maximum recursion.
 
-</details>
-<details>
-<summary>📦 <b>Organize Your Macros Together</b></summary>
+### 📦 Organize Your Macros Together
 
-Hello World
+TBD
 
-</details>
-<details>
-<summary>🎨 <b>Use Your Macros</b></summary>
+### 🎨 Use Your Macros
 
-Hello World
-
-</details>
+TBD
