@@ -40,12 +40,10 @@ for Javascript and Typescript projects.
 Some of them are very mature, such as [babel-plugin-macros](https://github.com/kentcdodds/babel-plugin-macros)
 (it's awesome, and maybe you will be interested in it).
 
-However, according to my personal experience, they are not suitable for people like me.
-
-All my projects are in Typescript, but their support for
+However, according to my personal experience, they are not suitable for people like me - all my projects are in Typescript, but their support for
 Typescript is usually [not so good](https://github.com/kentcdodds/babel-plugin-macros/issues/94).
 
-In those solutions, macros cannot interact with each other,
+Also, in those solutions, macros cannot interact with each other,
 such as [importing](https://github.com/kentcdodds/babel-plugin-macros/issues/48)
 or [nesting](https://github.com/kentcdodds/babel-plugin-macros/issues/173).
 And users cannot import macros [like normal functions](https://github.com/kentcdodds/babel-plugin-macros/issues/111).
@@ -57,7 +55,7 @@ But the main pain point of being a Babel plugin in the modern dev flow may be th
 Babel is just a transformer, knowing nothing about modules and dependencies, which means
 they [cannot re-expand macros](https://github.com/kentcdodds/babel-plugin-preval/issues/19) when changes occurred in dependent external conditions.
 
-😎 **vite-plugin-macro** is born with **Typescript**, **ES Module**, and **Vite** - **none of the above problems exist**.
+😎 **vite-plugin-macro** stands on the shoulders of **Typescript**, **ES Module**, and **Vite** - **none of the above problems exist anymore**.
 
 ## 🚀 Getting Started
 
@@ -70,6 +68,8 @@ $ yarn add -D vite-plugin-macro
 <details>
 <summary><b>For Macro User</b></summary>
 
+**Register Plugin in Vite Config**
+
 ```typescript
 // vite.config.ts
 
@@ -78,12 +78,12 @@ import { defineConfig } from 'vite'
 import { provideEcho } from 'some-macro-provider'
 // a package or module that exports macro plugin
 import { pluginLoad } from 'some-macro-plugin'
-// vitePluginMacro is a wrapper of macro manager
+// vitePluginMacro is a wrapper of macro manager with some default options
 import { vitePluginMacro } from 'vite-plugin-macro'
 import { join } from 'path'
 
 const macroPlugin = vitePluginMacro({
-  // the path of the auto-generated `.d.ts` file containing the types of macros
+  // the generated `.d.ts` file will include the types of macros
   typesPath: join(__dirname, './macros.d.ts'),
 })
   .use(provideEcho()) // use a macro provider
@@ -93,6 +93,62 @@ const macroPlugin = vitePluginMacro({
 export default defineConfig({
   plugins: [macroPlugin], // use it!
 })
+```
+
+**Add `d.ts` to Your Project**
+
+You can either add the generated `d.ts` file to your `tsconfig.json` like
+
+```json
+{
+  "include": ["path/to/the/d.ts/file"]
+}
+```
+
+or import it in your existed `d.ts` in project like
+
+```typescript
+/// <reference path="path/to/the/d.ts/file" />
+```
+
+**Use Macros!**
+
+```typescript
+// any .ts/.tsx/.js/.jsx file
+
+// import macros like normal functions,
+import { echo } from '@macro'
+// or give an alias?
+import { echo as _echo } from '@macro'
+// or even import namespace?
+import * as macros from '@macro'
+// default import is the same as namespace import!
+import _macros from '@macro'
+
+// use macros like normal functions
+echo()
+_echo()
+macros.echo()
+_macros.echo()
+
+// macros can be shadowed
+{
+  const echo = () => console.log('hello')
+  echo() // it's not a macro call
+}
+
+// The only thing you can't do is changing the imported macros,
+// like assign the imported macro to another variable
+// and use it by the variable
+const localEcho = macros.echo
+localEcho() // please don't do it.
+
+// Suppose the macro has a function type `(): void`
+console.log(echo()) // `Void function return value is used` is reported because we have types!
+
+// or even import types if we have!
+import type { XXX } from '@macros'
+let a: XXX
 ```
 
 For more information, see the [documentation](#-documentation).
@@ -115,6 +171,9 @@ const echoMacro = defineMacro('echo') // macro builder
   // give macro a handler
   .withHandler(({ path, args }, { template, types }) => {
     const msg = run(() => {
+      // you can throw errors directly; the error message with the row number and col number
+      // of the macro call currently being expanded will be in the terminal.
+      // so you don't have to worry about telling users where the wrong code is.
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
       if (!types.isStringLiteral(firstArg))
@@ -147,9 +206,12 @@ const echoMacro = defineMacro('echo') // macro builder
 import { defineMacroProvider } from 'vite-plugin-macro'
 
 export function provideEcho() {
+  // a macro provider provides macros/modules with simple hooks,
+  // which must be used with a macro manager.
   return defineMacroProvider({
     id: 'echo',
     exports: {
+      // so users can import macros from '@echo'
       '@echo': {
         macros: [echoMacro],
       },
@@ -166,6 +228,10 @@ export function provideEcho() {
 import { defineMacroPlugin } from 'vite-plugin-macro'
 
 export function echoPlugin() {
+  // a macro plugin is actually a vite plugin;
+  // you can use any Vite/Rollup hook like a regular vite plugin.
+  // but you must specify more options than defining a provider
+  // because users may use it independently.
   return defineMacroPlugin({
     name: 'macro-echo',
     typesPath: join(__dirname, 'macros.d.ts'),
