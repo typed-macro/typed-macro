@@ -50,7 +50,7 @@ And users cannot import macros [like normal functions](https://github.com/kentcd
 
 Most of them are Babel plugins, so they may read something that
 has been changed by other plugins but not updated yet (like [bindings](https://github.com/kentcdodds/import-all.macro/issues/7)),
-and can't control its position in the transformation chain.
+and can't control [its position](https://jamie.build/babel-plugin-ordering.html) in the transformation chain.
 But the main pain point of being a Babel plugin in the modern dev flow may be that
 Babel is just a transformer, knowing nothing about modules and dependencies, which means
 they [cannot re-expand macros](https://github.com/kentcdodds/babel-plugin-preval/issues/19) when changes occurred in dependent external conditions.
@@ -105,7 +105,7 @@ You can either add the generated `d.ts` file to your `tsconfig.json` like
 }
 ```
 
-or import it in your existed `d.ts` in project like
+or import it in your existed `d.ts` in project using [triple-slash directives](https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html) like
 
 ```typescript
 /// <reference path="path/to/the/d.ts/file" />
@@ -322,6 +322,8 @@ until it reached the maximum recursion.
 ### 📦 Organize Your Macros Together
 
 TBD
+
+### 📦 Test Your Macros
 
 ### 🎨 Use Your Macros
 
