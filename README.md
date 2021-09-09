@@ -565,7 +565,7 @@ expect(render(yourExports)).toMatchSnapshot()
 
 ### 🎨 Use Your Macros
 
-You can treat macros as normal functions that cannot be re-assigned:
+You can treat macros [as normal functions](#-use-macros) that cannot be re-assigned:
 they also have parameter types, return value types, comments, overloading, and can be nested.
 No special syntax, no special characters.
 
@@ -581,7 +581,7 @@ in the previous documentation. You can view them quickly by below links:
 After you add the MacroPlugin or MacroManager in the Vite/Rollup config,
 you can either add the generated type declaration file to your `tsconfig.json`
 or import it in your existed type declaration file,
-just like the [Getting Started](#-getting-started) part shows.
+just like the [Getting Started](#-add-dts-to-your-project) part shows.
 
 However, notice that the type declaration file can only be generated when Vite or Rollup starts;
 if you need build projects in CI environment, please put the type declaration file under version control,
