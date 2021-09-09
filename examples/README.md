@@ -1,4 +1,4 @@
-# 🧪 Examples
+# 🌱 Examples
 
 - [Basic](/examples/basic)
 - [Rollup](/examples/rollup)

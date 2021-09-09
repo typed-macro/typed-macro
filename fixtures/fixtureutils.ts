@@ -1,6 +1,6 @@
 import { build } from 'vite'
 import { join } from 'path'
-import { readFile } from 'fs/promises'
+import { readFile, access, writeFile } from 'fs/promises'
 import { readdirSync, statSync } from 'fs'
 import { withTempPath } from '#/testutils'
 
@@ -26,11 +26,25 @@ export async function viteBuild(rootPath: string) {
   )
 }
 
+export async function isExist(path: string) {
+  try {
+    await access(path)
+    return true
+  } catch {
+    return false
+  }
+}
+
+const needUpdate = process.argv.includes('-u')
+
 export async function expectViteBuild(rootPath: string) {
   const result = await viteBuild(rootPath)
-  const expectation = (
-    await readFile(join(rootPath, './output/index.es.js'))
-  ).toString()
+  const snapPath = join(rootPath, './output/index.js')
+  if (needUpdate || !(await isExist(snapPath))) {
+    await writeFile(snapPath, result)
+    return
+  }
+  const expectation = (await readFile(snapPath)).toString()
   expect(result).toBe(expectation)
 }
 

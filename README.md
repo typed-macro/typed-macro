@@ -66,7 +66,7 @@ $ yarn add -D vite-plugin-macro
 ```
 
 <details>
-<summary><b>For Macro User</b></summary>
+<summary><b>For Macro Users</b></summary>
 
 **Register Plugin in Vite Config**
 
@@ -156,7 +156,7 @@ For more information, see the [documentation](#-documentation).
 </details>
 
 <details>
-<summary><b>For Macro Author</b></summary>
+<summary><b>For Macro Authors</b></summary>
 
 **Define a Macro**
 
@@ -252,13 +252,18 @@ For more information, see the [documentation](#-documentation).
 
 💡 vite-plugin-macro provides plenty of explanatory comments for
 each function parameter and each type field in its type declaration file.
-So you can obtain more detailed descriptions in your IDE and `vite-plugin-macro/dist/index.d.ts`.
+
+So detailed parameters or types won't be repeated here;
+you can obtain these detailed descriptions in `vite-plugin-macro/dist/index.d.ts` and
+the tips provided by your IDE.
+
+Instead, the following will introduce this plugin's basic concepts and internal mechanism.
 
 ### 🔧 Define Your First Macro
 
 It's pretty easy to define a macro!
 
-vite-plugin-macro provides a function called `defineMacro()`, which creates a macro builder for you.
+vite-plugin-macro exports a function called `defineMacro()`, which creates a macro builder for you.
 
 ```typescript
 import { defineMacro } from 'vite-plugin-macro'
@@ -306,24 +311,50 @@ Note that the handler receives three arguments: `ctx`, `babel`, and `helper`.
   [@babel/traverse](https://babeljs.io/docs/en/babel-traverse),
   [@babel/parser](https://babeljs.io/docs/en/babel-parser),
   [@babel/template](https://babeljs.io/docs/en/babel-template).
-- `helper` - some wrapper functions on Babel tools make writing macro handlers easier.
+- `helper` - some functions that wrap Babel tools to make writing macro handlers easier.
 
-vite-plugin-macro regards macros as functions;
-when processing a source file, it will traverse all import statements
+vite-plugin-macro wants macros to be transparent to users;
+that is, users can use macros like normal functions. When processing a source file,
+vite-plugin-macro will traverse all import statements
 to find the imported macros, then traverse all function calls,
-and call macro handlers for those macros.
+and call corresponding handlers for those macros **one by one**.
+
+_One by one: In order for macros to handle nested relationships correctly,
+and reduce the conflict on modifying the AST,
+it is necessary to reject asynchronous macro processing.
+Therefore, sorry, you can't use asynchronous macro handlers._
+
+These three steps, _traversing import statements_, _traversing call expressions_, and _calling corresponding
+handlers for macros during traversing call expressions_, will be repeated many times until all macros are expanded
+or the maximum recursion is reached (it's a value that can be configured by users,
+and you'll see it soon).
+
+The pseudo-code for above process is:
+
+```text
+for each loop
+  for each import_statement
+    if imports macro(s)
+      collect it/them
+  for each call_expression
+    if is a macro call
+      call the handler to expand it
+```
 
 Though sometimes these lexical macros are cumbersome to write,
 please don't forget to remove or replace the call expressions like `ctx.path.replaceWith()`
 or `ctx.path.remove()`, otherwise the plugin will process this call expression
-again and again because there is always a macro call remaining in the source
-until it reached the maximum recursion.
+again and again because there is always a macro call remaining in the source.
 
 ### 📦 Organize Your Macros Together
 
-TBD
+It is not enough to have defined macros only. Macros should be organized,
+at least, into the form of `modules` so that users can import them.
 
-### 📦 Test Your Macros
+Why is the word `modules` quoted? Because it refers to the
+virtual modules powered by the plugin API of Vite/Rollup.
+
+### 🧪 Test Your Macros
 
 ### 🎨 Use Your Macros
 
