@@ -254,7 +254,7 @@ For more information, see the [documentation](#-documentation).
 each function parameter and each type field in its type declaration file.
 
 So detailed parameters or types won't be repeated here;
-you can obtain these descriptions in `vite-plugin-macro/dist/index.d.ts` and tips provided by your IDE.
+you can obtain them in `vite-plugin-macro/dist/index.d.ts` and tips provided by your IDE.
 
 The following will introduce this plugin's basic concepts and internal mechanism.
 
