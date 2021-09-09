@@ -360,7 +360,7 @@ please always keep the following in mind:
 It is not enough to have defined macros only. Macros should be organized,
 at least, into some `modules` so that users can import them.
 
-**Exportable**
+#### Exportable (for macro authors)
 
 In vite-plugin-macro, the most basic organizational unit is `Exportable`.
 
@@ -377,7 +377,7 @@ _Macro authors often prefer to use external helpers in the expanded code
 in order to reduce the final size.
 So `Exportable` is designed to be able to contain Javascript code (external helpers)._
 
-**NamespacedExportable**
+#### NamespacedExportable (for macro authors)
 
 `NamespacedExportable` is a collection of `Exportable`s.
 
@@ -385,7 +385,7 @@ So `Exportable` is designed to be able to contain Javascript code (external help
 type NamespacedExportable = { [namespace: string]: Exportable }
 ```
 
-**Runtime (internal)**
+#### Runtime (internal)
 
 `NamespacedExportable` also need a container to manage itself -
 the container is called `Runtime`, an internal concept,
@@ -414,7 +414,7 @@ declare module '@macros' {
 }
 ```
 
-**MacroPlugin**
+#### MacroPlugin (for macro authors)
 
 MacroPlugin is actually a Vite plugin wrapped Runtime.
 
@@ -451,14 +451,12 @@ repeated many times when using these plugins, and so on.
 
 That's why we have MacroManager.
 
-**MacroManager**
+#### MacroManager (for macro users)
 
 MacroManager is a special MacroPlugin created by `createMacroManager()`.
 
 It has no plugin hooks, no `NamespacedExportable`,
-but can `use` other MacroPlugins or MacroProviders so that all macros can share the same one Runtime.
-
-**It should be used by macro users, not macro authors.**
+but can `use` other MacroPlugins and MacroProviders so that all macros can share the same one Runtime.
 
 ```typescript
 // vite.config.ts
@@ -477,7 +475,7 @@ export default defineConfig({
 
 But wait, what is a MacroProvider?
 
-**MacroProvider**
+#### MacroProvider (for macro authors)
 
 Since we have MacroManager to manage all macros and shared Runtime options,
 it's not necessary to always organize macros as plugins if we don't need to use many Vite plugin hooks.
@@ -500,12 +498,10 @@ defineMacroProvider({
 })
 ```
 
-**vitePluginMacro**
+#### vitePluginMacro (for macro users)
 
 `vitePluginMacro()` is a wrapper of `createMacroManager()`, provides default values for required options
 so that macro users can quickly create a MacroManager.
-
-**It should be used by macro users, not macro authors.**
 
 ### 🧪 Test Your Macros
 
