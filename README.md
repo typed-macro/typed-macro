@@ -51,9 +51,9 @@ And users cannot import macros [like normal functions](https://github.com/kentcd
 Most of them are Babel plugins, so they may read something that
 has been changed by other plugins but not updated yet (like [bindings](https://github.com/kentcdodds/import-all.macro/issues/7)),
 and can't control [its position](https://jamie.build/babel-plugin-ordering.html) in the transformation chain.
-But in the modern dev flow the main pain point of being a Babel plugin may be that
+But in the modern dev flow, the main pain point of being a Babel plugin may be that
 Babel is just a transformer, knowing nothing about modules and dependency graph, which means
-they [cannot re-expand macros](https://github.com/kentcdodds/babel-plugin-preval/issues/19) when changes occurred in dependent external conditions.
+they [cannot re-expand macros](https://github.com/kentcdodds/babel-plugin-preval/issues/19) when changes occurs in dependent external conditions.
 
 😎 **vite-plugin-macro** stands on the shoulders of **Typescript**, **ES Module**, and **Vite** - **none of the above problems exist anymore**.
 
@@ -291,7 +291,7 @@ const helloMacro = defineMacro(`hello`)
 
 _The above example is **JUST** to show how to define multiple signatures.
 The above scenario is more suitable for using optional parameters
-rather than overloading. see [Do's and Don'ts](https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#use-optional-parameters)._
+rather than overloading. See [Do's and Don'ts](https://www.typescriptlang.org/docs/handbook/declaration-files/do-s-and-don-ts.html#use-optional-parameters)._
 
 As the above example shows, you should give a name, at least one signature,
 maybe with a comment, and a handler function to a macro.
@@ -303,7 +303,7 @@ into a type declaration file, aka a `.d.ts` file.
 
 vite-plugin-macro wants macros to be transparent to users;
 that is, users can use macros like normal functions.
-So it's essential to write types/comments correctly to provide a friendly develop experience.
+So it's essential to write types/comments correctly to provide a friendly development experience.
 
 Note that the handler receives three arguments: `ctx`, `babel`, and `helper`.
 
@@ -321,17 +321,17 @@ vite-plugin-macro will traverse all import statements
 to find the imported macros, then traverse all function calls,
 and call corresponding handlers for those macros **one by one**.
 
-_One by one: In order for macros to handle nested relationships correctly,
+_One by one: in order for macros to handle nested relationships correctly,
 and reduce the conflict on modifying the AST,
 it is necessary to reject asynchronous macro processing.
 Therefore, sorry, you can't use asynchronous macro handlers._
 
 These three steps, _traversing import statements_, _traversing call expressions_, and _calling corresponding
-handlers for macros during traversing call expressions_, will be repeated many times until all macros are expanded
+handlers for macros during traversing call expressions_, will be repeated many times until all macros are expanded,
 or the maximum recursion is reached (it's a value that can be configured by users,
 and you'll see it soon).
 
-The pseudo-code for above process is:
+The pseudo-code for the above process is:
 
 ```text
 for each loop
@@ -388,12 +388,12 @@ type NamespacedExportable = { [namespace: string]: Exportable }
 
 #### ➤ Runtime (internal)
 
-`NamespacedExportable` also need a container to manage itself -
+`NamespacedExportable` also needs a container to manage itself -
 the container is called `Runtime`, an internal concept,
 but vite-plugin-macro exports some public types/functions derived from it.
 
 The Runtime manages the rendering of types,
-the loading of virtual modules, the transformation of source files, and so on.
+the loading of virtual modules, the transformation of source files, etc.
 
 In general, a Runtime can be seen as a combination of code transformer and type renderer.
 
@@ -416,7 +416,7 @@ declare module '@macros' {
 ```
 
 Runtime options are roughly composed of the transformer's, the filter's, and the type renderer's,
-and **these options are available in functions/types that wrap the Runtime**(i.e. MacroPlugin, MacroManager).
+and **these options are available in functions/types that wrap the Runtime**(i.e., MacroPlugin, MacroManager).
 For example, there is a `parserPlugins` that can configure the Babel parser plugins used
 in parsing source files, and `maxRecursion` sets the maximum number of traversals;
 `typesPath` can specify the file path to which the Runtime writes the generated types;
@@ -452,7 +452,7 @@ defineMacroPlugin({
 })
 ```
 
-The MacroPlugin is very convenient to use because it's an independent Vite plugin, however,
+The MacroPlugin is very convenient to use because it's an independent Vite plugin; however,
 once multiple MacroPlugins are used, there will be some problems like that
 macros in one MacroPlugin cannot interact with those in another MacroPlugins,
 the generated small type declaration files are everywhere, same options may be
@@ -465,7 +465,7 @@ That's why we have MacroManager.
 MacroManager is a special MacroPlugin created by `createMacroManager()`.
 
 It has no plugin hooks, no `NamespacedExportable`,
-but can `use` other MacroPlugins and MacroProviders so that all macros can share the same one Runtime.
+but can `use` other MacroPlugins and MacroProviders so that all macros can share one Runtime.
 
 ```typescript
 // vite.config.ts
@@ -487,7 +487,7 @@ But wait, what is a MacroProvider?
 #### ➤ MacroProvider (for macro authors)
 
 Since we have MacroManager to manage all macros and shared Runtime options,
-it's not necessary to always organize macros as plugins if we don't need to use many Vite plugin hooks.
+it's unnecessary to always organize macros as plugins if we don't need to use many Vite plugin hooks.
 
 MacroProvider is a lighter choice, only can be used in MacroManager.
 
@@ -575,8 +575,8 @@ expect(render(yourExports)).toMatchSnapshot()
 ### 🎨 Use Your Macros
 
 You can treat macros [as normal functions](#-use-macros) that cannot be re-assigned:
-they also have parameter types, return value types, comments, overloading, and can be nested.
-No special syntax, no special characters.
+they also have parameter types, return value types, comments, overloading, and can be nested;
+no special syntax, no special characters.
 
 What you need to care about is how to put macros into your project.
 
@@ -593,7 +593,7 @@ or import it in your existed type declaration file,
 just like the [Getting Started](#-add-dts-to-your-project) part shows.
 
 However, notice that the type declaration file can only be generated when Vite or Rollup starts;
-if you need build projects in CI environment, please put the type declaration file under version control,
+if you need to build projects in CI environment, please put the type declaration file under version control,
 _or remove the type-check commands before Vite/Rollup starts in your build script_.
 
-May useful: [examples](/examples).
+Maybe helpful: [examples](/examples).
