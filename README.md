@@ -261,7 +261,8 @@ Instead, the following will introduce this plugin's basic concepts and internal 
 
 ### 🔧 Define Your First Macro
 
-It's pretty easy to define a macro!
+It's pretty easy to define a macro! As long as you know the
+[basic principles of AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and [basic operation APIs of Babel](https://github.com/jamiebuilds/babel-handbook).
 
 vite-plugin-macro exports a function called `defineMacro()`, which creates a macro builder for you.
 
@@ -300,7 +301,10 @@ The custom type is optional.
 Once the plugin starts (in Vite/Rollup),
 the name, signatures, comments, and custom types will be combined and rendered
 into a type declaration file, aka a `.d.ts` file.
-So it's essential to write them correctly to provide a friendly develop experience in Typescript.
+
+vite-plugin-macro wants macros to be transparent to users;
+that is, users can use macros like normal functions.
+So it's essential to write types/comments correctly to provide a friendly develop experience.
 
 Note that the handler receives three arguments: `ctx`, `babel`, and `helper`.
 
@@ -313,8 +317,7 @@ Note that the handler receives three arguments: `ctx`, `babel`, and `helper`.
   [@babel/template](https://babeljs.io/docs/en/babel-template).
 - `helper` - some functions that wrap Babel tools to make writing macro handlers easier.
 
-vite-plugin-macro wants macros to be transparent to users;
-that is, users can use macros like normal functions. When processing a source file,
+When processing a source file,
 vite-plugin-macro will traverse all import statements
 to find the imported macros, then traverse all function calls,
 and call corresponding handlers for those macros **one by one**.
@@ -341,18 +344,137 @@ for each loop
       call the handler to expand it
 ```
 
-Though sometimes these lexical macros are cumbersome to write,
-please don't forget to remove or replace the call expressions like `ctx.path.replaceWith()`
-or `ctx.path.remove()`, otherwise the plugin will process this call expression
-again and again because there is always a macro call remaining in the source.
+Though sometimes writing these lexical macros themselves is cumbersome enough,
+please always keep the following in mind:
+
+- don't forget to remove or replace the macro call expressions,
+  otherwise the plugin will process this call expression
+  again and again because there is always a macro call remaining in the source.
+- If you replace the current call expression with another call expression,
+  the next traversed node will be this new call expression.
+  Therefore, if you replace current macro call expression with another macro call,
+  please make sure this replacement is not recursive.
 
 ### 📦 Organize Your Macros Together
 
 It is not enough to have defined macros only. Macros should be organized,
-at least, into the form of `modules` so that users can import them.
+at least, into some `modules` so that users can import them.
 
-Why is the word `modules` quoted? Because it refers to the
-virtual modules powered by the plugin API of Vite/Rollup.
+**Exportable**
+
+In vite-plugin-macro, the most basic organizational unit is `Exportable`.
+
+An `Exportable` contains either **Javascript code** and corresponding types,
+or macros and additional types.
+
+```typescript
+type Exportable =
+  | { macros: Macro[]; customTypes?: string }
+  | { code: string; customTypes?: string }
+```
+
+_Macro authors often prefer to use external helpers in the expanded code
+in order to reduce the final size.
+So `Exportable` is designed to be able to contain Javascript code (external helpers)._
+
+**NamespacedExportable**
+
+`NamespacedExportable` is a collection of `Exportable`s.
+
+```typescript
+type NamespacedExportable = { [namespace: string]: Exportable }
+```
+
+**Runtime (internal)**
+
+`NamespacedExportable` also need a container to manage it -
+it is called `Runtime` and is an internal concept,
+but vite-plugin-macro exports some public concepts derived from it.
+
+The Runtime manages the rendering of types,
+the loading of virtual modules, the transformation of source files, and so on.
+
+In general, a Runtime can be seen as a combination of code transformer and type renderer.
+
+The code transformer can parse source files into ASTs, handle lots of processes,
+and call macro handlers.
+
+The type renderer can render a NamespacedExportable into `d.ts` file.
+
+For example, `{ '@macros': { macros: [helloMacro], customTypes: 'export type X = number' } }`
+can be rendered into
+
+```typescript
+declare module '@macros' {
+  export type X = number
+  export type Message = string
+  export function hello(): void
+  /* output hello message */
+  export function hello(msg: Message): void
+}
+```
+
+**MacroPlugin**
+
+MacroPlugin is actually a Vite plugin wrapped Runtime.
+
+You can use `defineMacroPlugin()` to define a MacroPlugin. It requires a plugin name,
+a `NamespacedExportable` and some options for Runtime. Hooks of Vite plugins are also supported!
+
+```typescript
+import { defineMacroPlugin } from 'vite-plugin-macro'
+defineMacroPlugin({
+  name: 'macro-plugin-echo',
+  // namespaced exportable
+  exports: {
+    '@echo': {
+      macros: [echoMacro],
+    },
+  },
+  // define Vite hooks here!
+  hooks: {
+    load() {
+      console.log('hello from a macro plugin')
+    },
+  },
+  // below are some options for Runtime
+  typesPath: join(__dirname, 'macros.d.ts'),
+  maxRecursion: 10,
+})
+```
+
+The MacroPlugin is very convenient to use because it's an independent Vite plugin, however,
+once multiple MacroPlugins are used, there will be some problems like that
+macros in one MacroPlugin cannot interact with those in another MacroPlugins,
+the generated small type declaration files are everywhere, and same options may be
+repeated many times when using these plugins.
+
+That's why we have MacroManager.
+
+**MacroManager**
+
+Macro Manager is a special MacroPlugin created by `createMacroManager()`.
+
+It has no plugin hooks, no NamespacedExportable,
+but can `use` other MacroPlugins or MacroProviders so that all macros can share the same one Runtime.
+
+```typescript
+// vite.config.ts
+import { createMacroManager } from 'vite-plugin-macro'
+
+const manager = createMacroManager({
+  name: 'macro-manager',
+  typesPath: join(__dirname, './macros.d.ts'),
+})
+
+export default defineConfig({
+  plugins: [manager.use(someMacroPlugin).use(someMacroProvider).toPlugin()], // use it!
+})
+```
+
+But wait, what is a MacroProvider?
+
+**MacroProvider**
 
 ### 🧪 Test Your Macros
 
