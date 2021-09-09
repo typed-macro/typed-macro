@@ -387,9 +387,9 @@ type NamespacedExportable = { [namespace: string]: Exportable }
 
 **Runtime (internal)**
 
-`NamespacedExportable` also need a container to manage it -
-it is called `Runtime` and is an internal concept,
-but vite-plugin-macro exports some public concepts derived from it.
+`NamespacedExportable` also need a container to manage itself -
+the container is called `Runtime`, an internal concept,
+but vite-plugin-macro exports some public types/functions derived from it.
 
 The Runtime manages the rendering of types,
 the loading of virtual modules, the transformation of source files, and so on.
@@ -399,7 +399,7 @@ In general, a Runtime can be seen as a combination of code transformer and type 
 The code transformer can parse source files into ASTs, handle lots of processes,
 and call macro handlers.
 
-The type renderer can render a NamespacedExportable into `d.ts` file.
+The type renderer can render a `NamespacedExportable` into `d.ts` file.
 
 For example, `{ '@macros': { macros: [helloMacro], customTypes: 'export type X = number' } }`
 can be rendered into
@@ -419,16 +419,16 @@ declare module '@macros' {
 MacroPlugin is actually a Vite plugin wrapped Runtime.
 
 You can use `defineMacroPlugin()` to define a MacroPlugin. It requires a plugin name,
-a `NamespacedExportable` and some options for Runtime. Hooks of Vite plugins are also supported!
+a `NamespacedExportable` and some options for Runtime. Vite plugin hooks are also supported!
 
 ```typescript
 import { defineMacroPlugin } from 'vite-plugin-macro'
 defineMacroPlugin({
-  name: 'macro-plugin-echo',
+  name: 'macro-plugin-hello',
   // namespaced exportable
   exports: {
-    '@echo': {
-      macros: [echoMacro],
+    '@macros': {
+      macros: [helloMacro],
     },
   },
   // define Vite hooks here!
@@ -446,17 +446,19 @@ defineMacroPlugin({
 The MacroPlugin is very convenient to use because it's an independent Vite plugin, however,
 once multiple MacroPlugins are used, there will be some problems like that
 macros in one MacroPlugin cannot interact with those in another MacroPlugins,
-the generated small type declaration files are everywhere, and same options may be
-repeated many times when using these plugins.
+the generated small type declaration files are everywhere, same options may be
+repeated many times when using these plugins, and so on.
 
 That's why we have MacroManager.
 
 **MacroManager**
 
-Macro Manager is a special MacroPlugin created by `createMacroManager()`.
+MacroManager is a special MacroPlugin created by `createMacroManager()`.
 
-It has no plugin hooks, no NamespacedExportable,
+It has no plugin hooks, no `NamespacedExportable`,
 but can `use` other MacroPlugins or MacroProviders so that all macros can share the same one Runtime.
+
+**It should be used by macro users, not macro authors.**
 
 ```typescript
 // vite.config.ts
@@ -464,6 +466,7 @@ import { createMacroManager } from 'vite-plugin-macro'
 
 const manager = createMacroManager({
   name: 'macro-manager',
+  // all types from all macro plugins/providers will be rendered into this file
   typesPath: join(__dirname, './macros.d.ts'),
 })
 
@@ -476,7 +479,37 @@ But wait, what is a MacroProvider?
 
 **MacroProvider**
 
+Since we have MacroManager to manage all macros and shared Runtime options,
+it's not necessary to always organize macros as plugins if we don't need to use many Vite plugin hooks.
+
+MacroProvider is a lighter choice, only can be used in MacroManager.
+
+It can be roughly regarded as a plain object having `NamespacedExportable` and some Runtime options,
+with simple hooks like `onViteStart()` and `onRollupStart()`; these hooks can cover most usage scenarios.
+
+```typescript
+import { defineMacroProvider } from 'vite-plugin-macro'
+
+defineMacroProvider({
+  id: 'echo',
+  exports: {
+    '@macros': {
+      macros: [helloMacro],
+    },
+  },
+})
+```
+
+**vitePluginMacro**
+
+`vitePluginMacro()` is a wrapper of `createMacroManager()`, provides default values for required options
+so that macro users can quickly create a MacroManager.
+
+**It should be used by macro users, not macro authors.**
+
 ### 🧪 Test Your Macros
+
+TBD
 
 ### 🎨 Use Your Macros
 
