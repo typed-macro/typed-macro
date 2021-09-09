@@ -65,22 +65,25 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     async buildStart(opt) {
       await Promise.all([
         runtime?.typeRenderer.write(),
-        buildStart?.bind(this)(opt),
+        buildStart?.call(this, opt),
       ])
     },
     resolveId(id, importer, options, ssr) {
       const result = runtime?.handleResolveId(id)
       if (result) return result
-      return resolveId?.bind(this)(id, importer, options, ssr)
+      return resolveId?.call(this, id, importer, options, ssr)
     },
     load(id, ssr) {
       const result = runtime?.handleLoad(id)
       if (result) return result
-      return load?.bind(this)(id, ssr)
+      return load?.call(this, id, ssr)
     },
     transform(code, id, ssr) {
       const transformed = runtime?.handleTransform(code, id, ssr)
-      return transform?.bind(this)(transformed ?? code, id, ssr) ?? transformed
+      return (
+        transform?.call(this, transformed ?? code, id, ssr) ??
+        (transformed && { code: transformed, map: null })
+      )
     },
     ...otherHooks,
   } as InternalMacroPlugin

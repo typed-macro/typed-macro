@@ -5,16 +5,26 @@ import { join } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    sourcemap: 'inline',
+    rollupOptions: {
+      output: {
+        sourcemapPathTransform: () => 'index.ts',
+      },
+    },
+  },
   plugins: [
     defineMacroPlugin({
       name: 'test',
       typesPath: join(__dirname, 'macros.d.ts'),
       exports: {
-        '@issue-13': {
+        '@issue-14': {
           macros: [
             defineMacro('test')
-              .withSignature(`(): void`)
-              .withHandler(({ path }) => path.remove()),
+              .withSignature(`(): string`)
+              .withHandler(({ path }, { template }) =>
+                path.replaceWith(template.expression.ast(`'Hello World'`))
+              ),
           ],
         },
       },

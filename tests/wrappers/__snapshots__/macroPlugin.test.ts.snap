@@ -4,7 +4,12 @@ exports[`MacroPlugin Hooks should handle load properly 1`] = `"export function h
 
 exports[`MacroPlugin Hooks should handle load properly 2`] = `"export {}"`;
 
-exports[`MacroPlugin Hooks should handle transform with macro 1`] = `"import { hello } from '@helper';hello('world');"`;
+exports[`MacroPlugin Hooks should handle transform with macro 1`] = `
+Object {
+  "code": "import { hello } from '@helper';hello('world');",
+  "map": null,
+}
+`;
 
 exports[`MacroPlugin should support to be consumed 1`] = `
 Object {

@@ -420,8 +420,8 @@ and **these options are available in functions/types that wrap the Runtime**(i.e
 For example, there is a `parserPlugins` that can configure the Babel parser plugins used
 in parsing source files, and `maxRecursion` sets the maximum number of traversals;
 `typesPath` can specify the file path to which the Runtime writes the generated types;
-`exclude` and `include` determines which files can be expanded by the macro
-and which files will always be skipped.
+`exclude` and `include` determine which files can be expanded by the macro
+and which files are always skipped.
 
 #### ➤ MacroPlugin (for macro authors)
 
