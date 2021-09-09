@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import { defineMacroPlugin } from '@/defineMacroPlugin'
 import { defineMacro } from '@/defineMacro'
-import { join, relative } from 'path'
+import { join } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,7 +9,7 @@ export default defineConfig({
     sourcemap: 'inline',
     rollupOptions: {
       output: {
-        sourcemapPathTransform: (source) => relative(__dirname, source),
+        sourcemapPathTransform: () => 'index.ts',
       },
     },
   },
