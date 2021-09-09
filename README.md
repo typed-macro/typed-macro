@@ -360,7 +360,7 @@ please always keep the following in mind:
 It is not enough to have defined macros only. Macros should be organized,
 at least, into some `modules` so that users can import them.
 
-#### Exportable (for macro authors)
+#### ➤ Exportable (for macro authors)
 
 In vite-plugin-macro, the most basic organizational unit is `Exportable`.
 
@@ -377,7 +377,7 @@ _Macro authors often prefer to use external helpers in the expanded code
 in order to reduce the final size.
 So `Exportable` is designed to be able to contain Javascript code (external helpers)._
 
-#### NamespacedExportable (for macro authors)
+#### ➤ NamespacedExportable (for macro authors)
 
 `NamespacedExportable` is a collection of `Exportable`s.
 
@@ -385,7 +385,7 @@ So `Exportable` is designed to be able to contain Javascript code (external help
 type NamespacedExportable = { [namespace: string]: Exportable }
 ```
 
-#### Runtime (internal)
+#### ➤ Runtime (internal)
 
 `NamespacedExportable` also need a container to manage itself -
 the container is called `Runtime`, an internal concept,
@@ -414,7 +414,7 @@ declare module '@macros' {
 }
 ```
 
-#### MacroPlugin (for macro authors)
+#### ➤ MacroPlugin (for macro authors)
 
 MacroPlugin is actually a Vite plugin wrapped Runtime.
 
@@ -451,7 +451,7 @@ repeated many times when using these plugins, and so on.
 
 That's why we have MacroManager.
 
-#### MacroManager (for macro users)
+#### ➤ MacroManager (for macro users)
 
 MacroManager is a special MacroPlugin created by `createMacroManager()`.
 
@@ -475,7 +475,7 @@ export default defineConfig({
 
 But wait, what is a MacroProvider?
 
-#### MacroProvider (for macro authors)
+#### ➤ MacroProvider (for macro authors)
 
 Since we have MacroManager to manage all macros and shared Runtime options,
 it's not necessary to always organize macros as plugins if we don't need to use many Vite plugin hooks.
@@ -498,7 +498,7 @@ defineMacroProvider({
 })
 ```
 
-#### vitePluginMacro (for macro users)
+#### ➤ vitePluginMacro (for macro users)
 
 `vitePluginMacro()` provides default values for required options of `createMacroManager()`
 so that macro users can quickly create a MacroManager.
@@ -516,7 +516,7 @@ export default defineConfig({
 
 vite-plugin-macro exports some test utils for macro authors.
 
-#### TestTransformer
+#### ➤ TestTransformer
 
 TestTransformer is similar with the real Transformer inside the Runtime, but has a
 more friendly API.
@@ -538,9 +538,10 @@ Here is an example about using TestTransformer with Jest:
 const transform = createTestTransformer()
 const macros = { '@load': [macroLoad] }
 expect(transform(`...some code`, macros)).toMatchSnapshot()
+expect(transform({ code: `...some code`, ssr: true }, macros)).toMatchSnapshot()
 ```
 
-#### TestTypeRenderer
+#### ➤ TestTypeRenderer
 
 TestTypeRenderer has the same rendering behavior with the real one in Runtime,
 but returns the result as a string rather than writing to a file.
