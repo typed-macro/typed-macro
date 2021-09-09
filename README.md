@@ -68,7 +68,7 @@ $ yarn add -D vite-plugin-macro
 <details>
 <summary><b>For Macro Users</b></summary>
 
-**Register Plugin in Vite Config**
+#### ➤ Register Plugin in Vite Config
 
 ```typescript
 // vite.config.ts
@@ -95,7 +95,7 @@ export default defineConfig({
 })
 ```
 
-**Add `d.ts` to Your Project**
+#### ➤ Add `d.ts` to Your Project
 
 You can either add the generated `d.ts` file to your `tsconfig.json` like
 
@@ -111,7 +111,7 @@ or import it in your existed `d.ts` in project using [triple-slash directives](h
 /// <reference path="path/to/the/d.ts/file" />
 ```
 
-**Use Macros!**
+#### ➤ Use Macros!
 
 ```typescript
 // any .ts/.tsx/.js/.jsx file
@@ -158,7 +158,7 @@ For more information, see the [documentation](#-documentation).
 <details>
 <summary><b>For Macro Authors</b></summary>
 
-**Define a Macro**
+#### ➤ Define a Macro
 
 ```typescript
 import { defineMacro } from 'vite-plugin-macro'
@@ -198,7 +198,7 @@ const echoMacro = defineMacro('echo') // macro builder
   })
 ```
 
-**Define a MacroProvider**
+#### ➤ Define a MacroProvider
 
 ```typescript
 // define macro provider
@@ -220,7 +220,7 @@ export function provideEcho() {
 }
 ```
 
-**Or Define a MacroPlugin**
+#### ➤ Or Define a MacroPlugin
 
 ```typescript
 // define macro provider
