@@ -66,7 +66,7 @@ $ yarn add -D vite-plugin-macro
 ```
 
 <details>
-<summary><b>For Macro Users</b></summary>
+<summary><b>☕ For Macro Users</b></summary>
 
 #### ➤ Register Plugin in Vite Config
 
@@ -156,7 +156,7 @@ For more information, see the [documentation](#-documentation).
 </details>
 
 <details>
-<summary><b>For Macro Authors</b></summary>
+<summary><b>⌨️ For Macro Authors</b></summary>
 
 #### ➤ Define a Macro
 
