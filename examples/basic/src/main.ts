@@ -1,6 +1,10 @@
 import { echo } from '@echo'
-import { load } from '@load'
+import { tryLoad, load } from '@load'
 
 echo('yeah', 3)
 
-load('./**/*.ts')
+tryLoad('./**/*.css')
+load('./**/*.css')
+
+tryLoad('./scripts/*.ts')
+load('./scripts/*.ts')

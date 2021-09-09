@@ -2,7 +2,6 @@ import { defineMacro, defineMacroPlugin } from 'vite-plugin-macro'
 import { join } from 'path'
 import type { NodePath } from '@babel/traverse'
 import type {
-  CallExpression,
   MemberExpression,
   VariableDeclaration,
   VariableDeclarator,
@@ -11,7 +10,7 @@ import type {
 const refMacro = defineMacro('$ref')
   .withSignature(`<T>(v: T): T`)
   .withHandler(({ path }, { types }, { appendImports }) => {
-    const refExpr = path as NodePath<CallExpression>
+    const refExpr = path
 
     if (
       !refExpr.findParent(
@@ -24,18 +23,16 @@ const refMacro = defineMacro('$ref')
       // case:
       // call $ref() outside defineComponent()
       //   then throw out Error
-      throw new Error(
-        `$ref() macro can only be used within defineComponent(), around line ${
-          refExpr.node.loc?.start.line ?? 'unknown'
-        }.`
-      )
+      throw new Error(`$ref() macro can only be used within defineComponent().`)
     }
+
+    const refID = path.scope.getProgramParent().generateUid('ref')
 
     // add helper
     appendImports({
       moduleName: 'vue',
       exportName: 'ref',
-      localName: '__ref',
+      localName: refID,
     })
 
     const letStmt = path.findParent((p) =>
@@ -45,27 +42,21 @@ const refMacro = defineMacro('$ref')
       // case:
       // $ref(0)
       //   then just replace with ref()
-      refExpr.node.callee = types.identifier('__ref')
+      refExpr.node.callee = types.identifier(refID)
       return
     }
     if (letStmt.node.kind !== 'let') {
       // case:
       // const a = $ref(0)
       //   then throw out Error
-      throw new Error(
-        `Should use 'let' with $ref() macro, around line ${
-          refExpr.node.loc?.start.line ?? 'unknown'
-        }.`
-      )
+      throw new Error(`Should use 'let' with $ref() macro.`)
     }
     if (letStmt.node.declarations.length > 1) {
       // case:
       //   let a = $ref(0), b = $ref(1)
       //   then throw out Error
       throw new Error(
-        `Please declare one variable in one let statement with $ref() macro, around line ${
-          refExpr.node.loc?.start.line ?? 'unknown'
-        }.`
+        `Please declare one variable in one let statement with $ref() macro.`
       )
     }
 
@@ -77,16 +68,12 @@ const refMacro = defineMacro('$ref')
       // case:
       //   let {} = $ref(0)
       //   then throw out Error
-      throw new Error(
-        `Only identifier is allowed with $ref() macro, around line ${
-          refExpr.node.loc?.start.line ?? 'unknown'
-        }.`
-      )
+      throw new Error(`Only identifier is allowed with $ref() macro.`)
     }
     // case:
     //   let a = $ref(0)
     //   then replace let with const, and replace all references in scope with a.value
-    refExpr.node.callee = types.identifier('__ref')
+    refExpr.node.callee = types.identifier(refID)
     letStmt.node.kind = 'const'
     const id = declExpr.node.id.name
     declExpr.scope.getBinding(id)?.referencePaths.forEach((p) => {

@@ -18,8 +18,8 @@
     "@rollup/plugin-typescript": "^8.2.5",
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^4.3.5",
-    "vite-plugin-macro": "^0.0.5"
+    "typescript": "^4.4.2",
+    "vite-plugin-macro": "^0"
   },
   "dependencies": {}
 }

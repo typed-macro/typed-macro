@@ -1,3 +1,4 @@
-import { echo } from '@echo'
+import { hello } from '@hello'
 
-echo('yeah', 6)
+hello()
+hello('world')
