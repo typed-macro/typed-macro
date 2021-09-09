@@ -51,8 +51,8 @@ And users cannot import macros [like normal functions](https://github.com/kentcd
 Most of them are Babel plugins, so they may read something that
 has been changed by other plugins but not updated yet (like [bindings](https://github.com/kentcdodds/import-all.macro/issues/7)),
 and can't control [its position](https://jamie.build/babel-plugin-ordering.html) in the transformation chain.
-But the main pain point of being a Babel plugin in the modern dev flow may be that
-Babel is just a transformer, knowing nothing about modules and dependencies, which means
+But in the modern dev flow the main pain point of being a Babel plugin may be that
+Babel is just a transformer, knowing nothing about modules and dependency graph, which means
 they [cannot re-expand macros](https://github.com/kentcdodds/babel-plugin-preval/issues/19) when changes occurred in dependent external conditions.
 
 😎 **vite-plugin-macro** stands on the shoulders of **Typescript**, **ES Module**, and **Vite** - **none of the above problems exist anymore**.
@@ -254,10 +254,9 @@ For more information, see the [documentation](#-documentation).
 each function parameter and each type field in its type declaration file.
 
 So detailed parameters or types won't be repeated here;
-you can obtain these detailed descriptions in `vite-plugin-macro/dist/index.d.ts` and
-the tips provided by your IDE.
+you can obtain these descriptions in `vite-plugin-macro/dist/index.d.ts` and tips provided by your IDE.
 
-Instead, the following will introduce this plugin's basic concepts and internal mechanism.
+The following will introduce this plugin's basic concepts and internal mechanism.
 
 ### 🔧 Define Your First Macro
 
@@ -299,7 +298,7 @@ maybe with a comment, and a handler function to a macro.
 The custom type is optional.
 
 Once the plugin starts (in Vite/Rollup),
-the name, signatures, comments, and custom types will be combined and rendered
+the names, signatures, comments, and custom types of macros will be rendered and written
 into a type declaration file, aka a `.d.ts` file.
 
 vite-plugin-macro wants macros to be transparent to users;
@@ -342,6 +341,8 @@ for each loop
   for each call_expression
     if is a macro call
       call the handler to expand it
+  if no macro found in this loop
+    break
 ```
 
 Though sometimes writing these lexical macros themselves is cumbersome enough,
@@ -355,7 +356,7 @@ please always keep the following in mind:
   Therefore, if you replace current macro call expression with another macro call,
   please make sure this replacement is not recursive.
 
-### 📦 Organize Your Macros Together
+### 📦 Organize Your Macros
 
 It is not enough to have defined macros only. Macros should be organized,
 at least, into some `modules` so that users can import them.
@@ -396,7 +397,7 @@ the loading of virtual modules, the transformation of source files, and so on.
 
 In general, a Runtime can be seen as a combination of code transformer and type renderer.
 
-The code transformer can parse source files into ASTs, handle lots of processes,
+The code transformer can parse source files into ASTs, handle some traversal processes,
 and call macro handlers.
 
 The type renderer can render a `NamespacedExportable` into `d.ts` file.
@@ -414,9 +415,17 @@ declare module '@macros' {
 }
 ```
 
+Runtime options are roughly composed of the transformer's, the filter's, and the type renderer's,
+and **these options are available in functions/types that wrap the Runtime**(i.e. MacroPlugin, MacroManager).
+For example, there is a `parserPlugins` that can configure the Babel parser plugins used
+in parsing source files, and `maxRecursion` sets the maximum number of traversals;
+`typesPath` can specify the file path to which the Runtime writes the generated types;
+`exclude` and `include` determines which files can be expanded by the macro
+and which files will always be skipped.
+
 #### ➤ MacroPlugin (for macro authors)
 
-MacroPlugin is actually a Vite plugin wrapped Runtime.
+A MacroPlugin is actually a Vite plugin that wraps Runtime.
 
 You can use `defineMacroPlugin()` to define a MacroPlugin. It requires a plugin name,
 a `NamespacedExportable` and some options for Runtime. Vite plugin hooks are also supported!
