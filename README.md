@@ -469,7 +469,7 @@ const manager = createMacroManager({
 })
 
 export default defineConfig({
-  plugins: [manager.use(someMacroPlugin).use(someMacroProvider).toPlugin()], // use it!
+  plugins: [manager.use(someMacroPlugin).use(someMacroProvider).toPlugin()],
 })
 ```
 
@@ -500,12 +500,67 @@ defineMacroProvider({
 
 #### vitePluginMacro (for macro users)
 
-`vitePluginMacro()` is a wrapper of `createMacroManager()`, provides default values for required options
+`vitePluginMacro()` provides default values for required options of `createMacroManager()`
 so that macro users can quickly create a MacroManager.
+
+```typescript
+// vite.config.ts
+import { vitePluginMacro } from 'vite-plugin-macro'
+
+export default defineConfig({
+  plugins: [vitePluginMacro().use(someProvider).use(somePlugin).toPlugin()],
+})
+```
 
 ### 🧪 Test Your Macros
 
-TBD
+vite-plugin-macro exports some test utils for macro authors.
+
+#### TestTransformer
+
+TestTransformer is similar with the real Transformer inside the Runtime, but has a
+more friendly API.
+
+```typescript
+type NamespacedMacros = {
+  [namespace: string]: Macro[]
+}
+type TestTransformer = {
+  (ctx: TestTransformerContext, macros: NamespacedMacros): string
+  (code: string, macros: NamespacedMacros): string
+}
+```
+
+Here is an example about using TestTransformer with Jest:
+
+```typescript
+// Suppose you have defined a macro called `macroLoad`
+const transform = createTestTransformer()
+const macros = { '@load': [macroLoad] }
+expect(transform(`...some code`, macros)).toMatchSnapshot()
+```
+
+#### TestTypeRenderer
+
+TestTypeRenderer has the same rendering behavior with the real one in Runtime,
+but returns the result as a string rather than writing to a file.
+
+Here is an example about using TestTypeRenderer with Jest:
+
+```typescript
+// Suppose you have defined a macro called `macroLoad`
+const yourExports = {
+  '@load': {
+    macros: [macroLoad],
+  },
+  '@helper': {
+    code: `export const a = 1`,
+    customTypes: `export const a: number`,
+  },
+}
+const render = createTestTypeRenderer()
+expect(render(yourExports)).toMatchSnapshot()
+```
 
 ### 🎨 Use Your Macros
 
