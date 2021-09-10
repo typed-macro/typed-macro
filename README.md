@@ -418,7 +418,7 @@ declare module '@macros' {
 Runtime options are roughly composed of the transformer's, the filter's, and the type renderer's,
 and **these options are available in functions/types that wrap the Runtime**(i.e., MacroPlugin, MacroManager).
 For example, there is a `parserPlugins` that can configure the Babel parser plugins used
-in parsing source files, and `maxRecursion` sets the maximum number of traversals;
+in parsing source files, and `maxRecursions` sets the maximum number of traversals;
 `typesPath` can specify the file path to which the Runtime writes the generated types;
 `exclude` and `include` determine which files can be expanded by the macro
 and which files are always skipped.
@@ -448,7 +448,7 @@ defineMacroPlugin({
   },
   // below are some options for Runtime
   typesPath: join(__dirname, 'macros.d.ts'),
-  maxRecursion: 10,
+  maxRecursions: 10,
 })
 ```
 
