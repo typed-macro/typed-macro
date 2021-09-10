@@ -12,7 +12,7 @@ import {
   getCalledMacro,
 } from '@/core/helper/traverse'
 import { createState, State } from './helper/state'
-import { isNativeError, isPromise } from 'util/types'
+import { isError, isPromise } from '@/common'
 
 export type TransformerOptions = {
   /**
@@ -160,7 +160,7 @@ export function applyMacros({
         )
       )
     } catch (e: unknown) {
-      if (isNativeError(e)) {
+      if (isError(e)) {
         // throw errors
         throw new Error(
           `Error when apply macro '${

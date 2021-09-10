@@ -28,3 +28,14 @@ export type DeepPartial<T, RT = Required<T>> = {
 }
 
 export const promise = Promise.resolve()
+
+// CI throws error `Cannot find module 'util/types' from 'src/*.ts'`,
+// so implement some functions in 'util/types' here
+
+export function isPromise(v: unknown): v is Promise<unknown> {
+  return Promise.resolve(v) === v
+}
+
+export function isError(v: unknown): v is Error {
+  return v instanceof Error
+}
