@@ -26,3 +26,5 @@ export type FlatOptions<T extends object> = UnionToIntersection<T[keyof T]>
 export type DeepPartial<T, RT = Required<T>> = {
   [P in keyof RT]?: RT[P] extends Array<infer I> ? Array<I> : DeepPartial<RT[P]>
 }
+
+export const promise = Promise.resolve()

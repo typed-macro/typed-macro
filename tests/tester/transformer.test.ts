@@ -2,8 +2,9 @@ import { createTestTransformer } from '@/tester/transformer'
 import { defineMacro } from '@/defineMacro'
 
 describe('createTestTransformer()', () => {
+  const transform = createTestTransformer()
+
   it('should return original code if no transformation', () => {
-    const transform = createTestTransformer()
     // pass code string
     expect(transform(`console.log('a')`, {})).toBe(`console.log('a')`)
     // pass ctx
@@ -11,8 +12,6 @@ describe('createTestTransformer()', () => {
   })
 
   it('should work', () => {
-    const transform = createTestTransformer()
-
     const echoMacro = defineMacro('echo')
       .withSignature('')
       .withHandler(({ path }, { template }) => {
