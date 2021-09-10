@@ -1,5 +1,5 @@
-import { File } from '@babel/types'
-import traverse from '@babel/traverse'
+import { CallExpression, File } from '@babel/types'
+import traverse, { NodePath } from '@babel/traverse'
 import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
@@ -12,6 +12,7 @@ import {
   getCalledMacro,
 } from '@/core/helper/traverse'
 import { createState, State } from './helper/state'
+import { isError, isPromise } from '@/common'
 
 export type TransformerOptions = {
   /**
@@ -134,41 +135,55 @@ export function applyMacros({
   const program = findProgramPath(ast)
   const traversalState = createState()
 
-  traverse(ast, {
-    CallExpression(path) {
-      const macroToApply = getCalledMacro(path.get('callee'), importedMacros)
-      if (!macroToApply) return
-      if (typeof macroToApply === 'string')
-        throw new Error(
-          `Macro '${macroToApply}' is not existed but is called in '${filepath}'`
+  const process = (path: NodePath<CallExpression>) => {
+    const macroToApply = getCalledMacro(path.get('callee'), importedMacros)
+    if (!macroToApply) return
+    if (typeof macroToApply === 'string')
+      throw new Error(
+        `Macro '${macroToApply}' is not existed but is called in '${filepath}'`
+      )
+    try {
+      macroToApply(
+        versioned(
+          {
+            code,
+            filepath,
+            path,
+            ssr,
+            ast,
+            transformState,
+            traversalState,
+            importedMacros,
+            program,
+          },
+          CURRENT_MACRO_CALL_VERSION
         )
-
-      try {
-        macroToApply(
-          versioned(
-            {
-              code,
-              filepath,
-              path,
-              ssr,
-              ast,
-              transformState,
-              traversalState,
-              importedMacros,
-              program,
-            },
-            CURRENT_MACRO_CALL_VERSION
-          )
-        )
-      } catch (e) {
+      )
+    } catch (e: unknown) {
+      if (isError(e)) {
+        // throw errors
         throw new Error(
           `Error when apply macro '${
             macroToApply.name
           }' in '${filepath}' near ${nodeLoc(path.node)}:\n ${e}`
         )
-      } finally {
-        applied = true
+      } else if (isPromise(e)) {
+        // expand nested macros first
+        path.traverse({
+          CallExpression(p) {
+            process(p)
+          },
+        })
+        process(path)
       }
+    } finally {
+      applied = true
+    }
+  }
+
+  traverse(ast, {
+    CallExpression(path) {
+      process(path)
     },
   })
 

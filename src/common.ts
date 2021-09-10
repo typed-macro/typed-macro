@@ -26,3 +26,16 @@ export type FlatOptions<T extends object> = UnionToIntersection<T[keyof T]>
 export type DeepPartial<T, RT = Required<T>> = {
   [P in keyof RT]?: RT[P] extends Array<infer I> ? Array<I> : DeepPartial<RT[P]>
 }
+
+export const promise = Promise.resolve()
+
+// CI throws error `Cannot find module 'util/types' from 'src/*.ts'`,
+// so implement some functions in 'util/types' here
+
+export function isPromise(v: unknown): v is Promise<unknown> {
+  return Promise.resolve(v) === v
+}
+
+export function isError(v: unknown): v is Error {
+  return v instanceof Error
+}

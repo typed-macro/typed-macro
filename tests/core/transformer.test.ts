@@ -266,4 +266,76 @@ describe('transformer', () => {
       )
     ).toMatchSnapshot()
   })
+
+  it('should support nested macros', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+
+    const stack: string[] = []
+    const outMacro = mockMacro(
+      'outer',
+      ({ path }, { template }, { yieldToNestedMacros }) => {
+        stack.push('enter out')
+        yieldToNestedMacros()
+        path.replaceWith(template.expression.ast(`"out"`))
+        stack.push('leave out')
+      }
+    )
+
+    const inMacro = mockMacro('inner', ({ path }, { template }) => {
+      stack.push('enter in')
+      path.replaceWith(template.expression.ast(`"in"`))
+      stack.push('leave in')
+    })
+
+    const macros = {
+      '@macro': [inMacro, outMacro],
+    }
+    {
+      transform(
+        {
+          code: `import { outer, inner } from '@macro'; outer(inner(), inner())`,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+
+      expect(stack).toEqual([
+        'enter out',
+        'enter in',
+        'leave in',
+        'enter in',
+        'leave in',
+        'enter out',
+        'leave out',
+      ])
+    }
+    stack.length = 0
+    {
+      transform(
+        {
+          code: `import { outer, inner } from '@macro'; outer(inner(), outer(inner()))`,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+
+      expect(stack).toEqual([
+        'enter out',
+        'enter in',
+        'leave in',
+        'enter out',
+        'enter in',
+        'leave in',
+        'enter out',
+        'leave out',
+        'enter out',
+        'leave out',
+      ])
+    }
+  })
 })

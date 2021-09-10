@@ -17,6 +17,7 @@ import {
   prependImports,
   prependToBody,
 } from '@/core/helper/transform'
+import { promise } from '@/common'
 
 export type MacroHelper = {
   /**
@@ -127,11 +128,34 @@ export type MacroHelper = {
   projectDir: (which: 'root' | 'leaf') => string
 
   /**
-   * Check whether there are unexpanded macros in the path(s).
+   * Check whether there are unexpanded macros under the path(s).
    * @param path the node path(s) to be checked, use the arguments of the current
-   * call-expression by default
+   * call expression by default
    */
   containsMacros: (...paths: NodePath[]) => boolean[]
+
+  /**
+   * Yield current transformer to nested macros inside current
+   * call expression and then call the current macro handler again
+   * if the nested macros exist.
+   * In another words, expand nested macros in arguments first.
+   *
+   * It is recommended to call this function at the beginning of the handler
+   * that needs to ensure that the arguments don't contain nested macros,
+   * to reduce unnecessary repeated calculations.
+   *
+   * In v0.2.x, this function throws a Promise internally,
+   * so DO NOT call it in a try block.
+   *
+   * e.g.
+   * ```typescript
+   * ({ path }, _, { yieldToNestedMacros }) => {
+   *   yieldToNestedMacros()
+   *   // ...your code
+   * }
+   * ```
+   */
+  yieldToNestedMacros: () => never | void
 }
 
 export function createHelper(
@@ -180,6 +204,13 @@ export function createHelper(
         paths.length ? paths : thisPath.get('arguments'),
         importedMacros
       )
+    },
+
+    yieldToNestedMacros: () => {
+      if (
+        containsMacros(thisPath.get('arguments'), importedMacros).includes(true)
+      )
+        throw promise
     },
   }
 
