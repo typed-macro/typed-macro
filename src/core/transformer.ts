@@ -12,7 +12,7 @@ import {
   getCalledMacro,
 } from '@/core/helper/traverse'
 import { createState, State } from './helper/state'
-import { isNativeError, isPromise } from 'node:util/types'
+import { isNativeError, isPromise } from 'util/types'
 
 export type TransformerOptions = {
   /**
