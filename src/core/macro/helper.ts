@@ -144,6 +144,9 @@ export type MacroHelper = {
    * that needs to ensure that the arguments don't contain nested macros,
    * to reduce unnecessary repeated calculations.
    *
+   * In v0.2.x, this function throws a Promise internally,
+   * so DO NOT call it in a try block.
+   *
    * e.g.
    * ```typescript
    * ({ path }, _, { yieldToNestedMacros }) => {
@@ -151,8 +154,6 @@ export type MacroHelper = {
    *   // ...your code
    * }
    * ```
-   *
-   * Internally, in v0.2.x, it throws a Promise, so DO NOT call it in a try block.
    */
   yieldToNestedMacros: () => never | void
 }
