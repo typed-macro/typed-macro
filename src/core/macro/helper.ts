@@ -135,8 +135,9 @@ export type MacroHelper = {
   containsMacros: (...paths: NodePath[]) => boolean[]
 
   /**
-   * Yield current transformer to macros inside current
-   * call expression if exist, then call the current macro handler again.
+   * Yield current transformer to nested macros inside current
+   * call expression and then call the current macro handler again
+   * if the nested macros exist.
    * In another words, expand nested macros in arguments first.
    *
    * It is recommended to call this function at the beginning of the handler
