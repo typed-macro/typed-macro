@@ -9,11 +9,11 @@ import {
   TransformerOptions,
 } from '@/core/transformer'
 import {
-  assertNoConflictMacro,
   NamespacedMacros,
   NamespacedModules,
   NamespacedTypes,
   NormalizedExports,
+  validateMacros,
 } from './exports'
 import { DeepPartial, findDuplicatedItem } from '@/common'
 import { createFilter, FilterOptions } from './filter'
@@ -64,7 +64,7 @@ export class Runtime {
     assertNoDuplicatedNamespace(Object.keys(this.types), Object.keys(types))
     assertNoDuplicatedNamespace(this.macrosNamespaces, Object.keys(macros))
     assertNoDuplicatedNamespace(this.modulesNamespaces, Object.keys(modules))
-    assertNoConflictMacro(macros)
+    validateMacros(macros)
     Object.assign(this.macros, macros)
     this.macrosNamespaces = Object.keys(this.macros)
     Object.assign(this.modules, modules)

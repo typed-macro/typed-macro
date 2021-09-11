@@ -1,4 +1,5 @@
 import { isMacro, Macro } from '@/core/macro'
+import { isMacroCompatible } from '@/core/compat'
 
 export type NamespacedMacros = { [namespace: string]: Macro[] }
 
@@ -73,7 +74,7 @@ export function normalizeExports(
     }
   })
 
-  assertNoConflictMacro(macros)
+  validateMacros(macros)
 
   return {
     macros,
@@ -82,15 +83,17 @@ export function normalizeExports(
   }
 }
 
-export function assertNoConflictMacro(macros: NamespacedMacros) {
+// ensure compatible and no name conflict
+export function validateMacros(macros: NamespacedMacros) {
   Object.keys(macros).forEach((ns) => {
     const mem = Object.create(null)
     macros[ns].forEach((m) => {
-      if (mem[m.name]) {
-        throw new Error(
-          `a macro with name '${m.name}' in '${ns}' already existed`
-        )
-      }
+      if (!isMacroCompatible(m))
+        throw new Error(`macro '${m.name}' in '${ns}' is incompatible`)
+
+      if (mem[m.name])
+        throw new Error(`macro '${m.name}' in '${ns}' is duplicated`)
+
       mem[m.name] = 1
     })
   })

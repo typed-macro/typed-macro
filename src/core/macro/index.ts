@@ -1,11 +1,11 @@
 import { CallExpression, File, Program } from '@babel/types'
 import { NodePath } from '@babel/traverse'
 
-import { CURRENT_MACRO_CALL_VERSION, Versioned } from '@/core/version'
-import { State } from '../helper/state'
+import { State } from '@/core/helper/state'
 import { createHelper, MacroHelper } from './helper'
 import { Babel, BABEL_TOOLS } from './babel'
 import { ImportedMacro } from '@/core/helper/traverse'
+import { versionedMacro } from '@/core/compat'
 
 export type MacroContext = {
   /**
@@ -67,7 +67,7 @@ export type MacroHandler = (
   helper: Readonly<MacroHelper>
 ) => void
 
-type RawMacroCall = Versioned<{
+type RawMacroCall = {
   filepath: string
   code: string
   path: NodePath<CallExpression>
@@ -77,7 +77,7 @@ type RawMacroCall = Versioned<{
   traversalState: State
   transformState: State
   importedMacros: ImportedMacro[]
-}>
+}
 
 export type Macro = (call: RawMacroCall) => void
 
@@ -106,7 +106,7 @@ export function macro(
     },
   }[name]
   ;(m as InternalMacro).__types = renderMetaType(name, meta)
-  return m
+  return versionedMacro(m)
 }
 
 type MacroCallNormalizer = (raw: RawMacroCall) => {
@@ -115,14 +115,8 @@ type MacroCallNormalizer = (raw: RawMacroCall) => {
   helper?: Readonly<MacroHelper>
 }
 
-function ensureCompatible(raw: RawMacroCall) {
-  if (raw.__version !== CURRENT_MACRO_CALL_VERSION)
-    throw new Error('the macro is incompatible with the runtime')
-}
-
 function normalizeContext(raw: RawMacroCall): MacroContext {
-  const { filepath, ssr, ast, code, path, transformState, traversalState } =
-    raw.value
+  const { filepath, ssr, ast, code, path, transformState, traversalState } = raw
   return {
     filepath,
     code,
@@ -142,26 +136,19 @@ export function getNormalizer(handler: MacroHandler): MacroCallNormalizer {
     case 0:
       throw new Error('not a valid macro handler')
     case 1:
-      return (raw: RawMacroCall) => {
-        ensureCompatible(raw)
-        return {
-          ctx: normalizeContext(raw),
-        }
-      }
+      return (raw: RawMacroCall) => ({
+        ctx: normalizeContext(raw),
+      })
 
     case 2:
-      return (raw: RawMacroCall) => {
-        ensureCompatible(raw)
-        return {
-          ctx: normalizeContext(raw),
-          babel: BABEL_TOOLS,
-        }
-      }
+      return (raw: RawMacroCall) => ({
+        ctx: normalizeContext(raw),
+        babel: BABEL_TOOLS,
+      })
 
     default:
       return (raw: RawMacroCall) => {
-        ensureCompatible(raw)
-        const { path, filepath, program, importedMacros } = raw.value
+        const { path, filepath, program, importedMacros } = raw
         const ctx = normalizeContext(raw)
         return {
           ctx,

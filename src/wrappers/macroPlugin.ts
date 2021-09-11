@@ -1,6 +1,7 @@
 import type { Plugin, ViteDevServer } from 'vite'
 import { DevServerHelper, getDevServerHelper } from '@/wrappers/helper/server'
 import { Attachable, Runtime } from '@/core/runtime'
+import { versionedPlugin } from '@/wrappers/compat'
 
 export type MacroPluginHooks = Omit<
   Plugin,
@@ -42,7 +43,7 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
 
   let runtime: Runtime | undefined = options.runtime
 
-  return {
+  const plugin = {
     __internal_macro_plugin: true,
     __consume() {
       if (!runtime) throw new Error(`plugin '${name}' is used more than once.`)
@@ -87,6 +88,7 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     },
     ...otherHooks,
   } as InternalMacroPlugin
+  return versionedPlugin(plugin)
 }
 
 export function isMacroPlugin(o: unknown): o is MacroPlugin {

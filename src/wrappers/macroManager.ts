@@ -8,6 +8,7 @@ import {
 import { isMacroPlugin, macroPlugin, MacroPlugin } from '@/wrappers/macroPlugin'
 import { getDevServerHelper } from '@/wrappers/helper/server'
 import { Runtime } from '@/core/runtime'
+import { isPluginCompatible, isProviderCompatible } from '@/wrappers/compat'
 
 /**
  * A manager/container of macros.
@@ -81,8 +82,9 @@ class MacroManagerImpl {
     return !!this.devServer
   }
 
-  use(...sources: (MacroProvider | Plugin)[]) {
-    sources.forEach((s) => this.add(s))
+  use(sources: MacroProvider | Plugin | (MacroProvider | Plugin)[]) {
+    if (Array.isArray(sources)) sources.forEach((s) => this.add(s))
+    else this.add(sources)
     return this
   }
 
@@ -98,12 +100,16 @@ class MacroManagerImpl {
   }
 
   private addProvider(provider: MacroProvider) {
+    if (!isProviderCompatible(provider))
+      throw new Error(`macro provider '${provider.id}' is incompatible`)
     const { exports, options } = provider
     this.runtime.attach({ exports, options })
     this.hooks.push(provider.hooks)
   }
 
   private addPlugin(plugin: MacroPlugin) {
+    if (!isPluginCompatible(plugin))
+      throw new Error(`macro plugin '${plugin.name}' is incompatible`)
     const { exports, options } = plugin.__consume()
     this.runtime.attach({ exports, options })
     this.plugins.push(plugin)

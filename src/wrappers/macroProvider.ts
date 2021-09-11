@@ -2,6 +2,7 @@ import { NormalizedExports } from '@/core/exports'
 import { ResolvedConfig, ViteDevServer } from 'vite'
 import { DevServerHelper } from '@/wrappers/helper/server'
 import { RuntimeOptions } from '@/core/runtime'
+import { versionedProvider } from '@/wrappers/compat'
 
 export type ViteStartContext = (
   | {
@@ -63,5 +64,5 @@ export function isMacroProvider(o: unknown): o is MacroProvider {
 
 export function macroProvider(provider: MacroProvider): MacroProvider {
   ;(provider as InternalMacroProvider).__internal_macro_provider = true
-  return provider
+  return versionedProvider(provider)
 }
