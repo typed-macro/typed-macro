@@ -59,18 +59,10 @@ describe('validateMacros()', () => {
     ).toThrow()
   })
 
-  it('should check compatibility', () => {
+  it('should check the compatibility of macros', () => {
     const m = mockMacro('macro')
-    expect(() =>
-      validateMacros({
-        '@macros': [m],
-      })
-    ).not.toThrow()
+    expect(() => validateMacros({ '@macros': [m] })).not.toThrow()
     ;(m as VersionedMacro).$__macro_version = -1
-    expect(() =>
-      validateMacros({
-        '@macros': [m],
-      })
-    ).toThrow()
+    expect(() => validateMacros({ '@macros': [m] })).toThrow()
   })
 })

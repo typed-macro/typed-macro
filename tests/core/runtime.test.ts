@@ -232,21 +232,10 @@ describe('Runtime', () => {
 
   it('should check the compatibility of macros (in Attachable)', () => {
     const runtime = mockRuntime()
-    const m = mockMacro('test', ({ path }) => path.remove())
-    expect(() =>
-      runtime.attach({
-        exports: mockExports({
-          macros: { '@macros': [m] },
-        }),
-      })
-    ).not.toThrow()
+    const m = mockMacro('test')
+    const exports = mockExports({ macros: { '@macros': [m] } })
+    expect(() => runtime.attach({ exports })).not.toThrow()
     ;(m as VersionedMacro).$__macro_version = -1
-    expect(() =>
-      runtime.attach({
-        exports: mockExports({
-          macros: { '@macros': [m] },
-        }),
-      })
-    ).toThrow()
+    expect(() => runtime.attach({ exports })).toThrow()
   })
 })

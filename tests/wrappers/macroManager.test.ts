@@ -158,37 +158,25 @@ describe('MacroManager', () => {
     })
   })
 
-  it('should check the compatibility of plugins/providers ', async () => {
-    const newManager = () =>
-      macroManager({
-        name: 'test',
-        runtime: mockRuntime(),
-      })
+  it('should check the compatibility of plugins/providers ', () => {
+    const manager = macroManager({ name: 'test', runtime: mockRuntime() })
+
     // provider
     const provider = macroProvider({
       id: '',
       exports: mockExports(),
       hooks: {},
     })
-    expect(() => newManager().use(provider)).not.toThrow()
+    expect(() => manager.use(provider)).not.toThrow()
     ;(provider as VersionedProvider).$__provider_version = -1
-    expect(() => newManager().use(provider)).toThrow()
+    expect(() => manager.use(provider)).toThrow()
+
     // plugin
     expect(() =>
-      newManager().use(
-        macroPlugin({
-          name: '',
-          runtime: mockRuntime(),
-          hooks: {},
-        })
-      )
+      manager.use(macroPlugin({ name: '', runtime: mockRuntime(), hooks: {} }))
     ).not.toThrow()
-    const plugin = macroPlugin({
-      name: '',
-      runtime: mockRuntime(),
-      hooks: {},
-    })
+    const plugin = macroPlugin({ name: '', runtime: mockRuntime(), hooks: {} })
     ;(plugin as VersionedPlugin).$__plugin_version = -1
-    expect(() => newManager().use(plugin)).toThrow()
+    expect(() => manager.use(plugin)).toThrow()
   })
 })
