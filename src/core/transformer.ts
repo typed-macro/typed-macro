@@ -5,7 +5,6 @@ import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
 import { NamespacedMacros } from './exports'
 import { Macro } from './macro'
-import { CURRENT_MACRO_CALL_VERSION, versioned } from '@/core/version'
 import {
   findImportedMacros,
   findProgramPath,
@@ -143,22 +142,17 @@ export function applyMacros({
         `Macro '${macroToApply}' is not existed but is called in '${filepath}'`
       )
     try {
-      macroToApply(
-        versioned(
-          {
-            code,
-            filepath,
-            path,
-            ssr,
-            ast,
-            transformState,
-            traversalState,
-            importedMacros,
-            program,
-          },
-          CURRENT_MACRO_CALL_VERSION
-        )
-      )
+      macroToApply({
+        code,
+        filepath,
+        path,
+        ssr,
+        ast,
+        transformState,
+        traversalState,
+        importedMacros,
+        program,
+      })
     } catch (e: unknown) {
       if (isError(e)) {
         // throw errors

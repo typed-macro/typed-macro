@@ -59,22 +59,3 @@ describe('macro() & isMacro()', () => {
     expect(isMacro(false)).toBe(false)
   })
 })
-
-describe('Macro', () => {
-  it('should throw error when incompatible with the runtime', () => {
-    expect(() =>
-      macro(
-        'test',
-        {
-          signatures: [
-            {
-              signature: '_',
-            },
-          ],
-          types: [],
-        },
-        NO_OP_HANDLER
-      )({ __version: -1, value: {} as any })
-    ).toThrow()
-  })
-})

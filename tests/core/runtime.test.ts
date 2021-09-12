@@ -5,6 +5,7 @@ import {
   mockMacro,
   mockRuntime,
 } from '#/testutils'
+import { VersionedMacro } from '@/core/compat'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -26,21 +27,21 @@ describe('Runtime', () => {
     expect((runtime as any).devMode).toBe(true)
   })
 
-  it('should work with addExports() and .exports', () => {
+  it('should work with addExports()', () => {
     runtime.addExports(
       mockExports({
         macros: { '@m1': [mockMacro('m')] },
         modules: { '@u1': 'export const a = 1' },
       })
     )
-    expect(runtime.exports).toMatchSnapshot()
+    expect(runtime.attachable.exports).toMatchSnapshot()
     runtime.addExports(
       mockExports({
         macros: { '@m2': [mockMacro('m')] },
         modules: { '@u2': 'export const a = 1' },
       })
     )
-    expect(runtime.exports).toMatchSnapshot()
+    expect(runtime.attachable.exports).toMatchSnapshot()
     expect(() => {
       runtime.addExports(mockExports({ macros: { '@m2': [] } }))
     }).toThrow()
@@ -51,23 +52,25 @@ describe('Runtime', () => {
     }).toThrow()
   })
 
-  it('should work with mergeOptions() and .options', () => {
-    expect(runtime.options.transformer).toEqual({})
+  it('should work with mergeOptions()', () => {
+    expect(runtime.attachable.options.transformer).toEqual({})
     runtime.mergeOptions({})
-    expect(runtime.options.transformer).toEqual({})
+    expect(runtime.attachable.options.transformer).toEqual({})
     runtime.mergeOptions({ transformer: { parserPlugins: ['topLevelAwait'] } })
-    expect(runtime.options.transformer.parserPlugins).toEqual(['topLevelAwait'])
+    expect(runtime.attachable.options.transformer.parserPlugins).toEqual([
+      'topLevelAwait',
+    ])
     runtime.mergeOptions({
       transformer: { parserPlugins: ['topLevelAwait', 'decorators'] },
     })
-    expect(runtime.options.transformer.parserPlugins).toEqual([
+    expect(runtime.attachable.options.transformer.parserPlugins).toEqual([
       'topLevelAwait',
       'decorators',
     ])
     runtime.mergeOptions({
       transformer: { maxRecursions: 5 },
     })
-    expect(runtime.options.transformer.maxRecursions).toBeUndefined()
+    expect(runtime.attachable.options.transformer.maxRecursions).toBeUndefined()
   })
 
   it('should work with handleLoad/handleResolveId()', () => {
@@ -225,5 +228,14 @@ describe('Runtime', () => {
     cases.forEach((filepath) => {
       expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
     })
+  })
+
+  it('should check the compatibility of macros (in Attachable)', () => {
+    const runtime = mockRuntime()
+    const m = mockMacro('test')
+    const exports = mockExports({ macros: { '@macros': [m] } })
+    expect(() => runtime.attach({ exports })).not.toThrow()
+    ;(m as VersionedMacro).$__macro_version = -1
+    expect(() => runtime.attach({ exports })).toThrow()
   })
 })

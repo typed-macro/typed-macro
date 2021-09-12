@@ -12,6 +12,7 @@ import {
   withDevServer,
   withTempPath,
 } from '#/testutils'
+import { VersionedPlugin, VersionedProvider } from '@/wrappers/compat'
 
 // MacroManager is just a simple wrapper of MacroPlugin
 describe('MacroManager', () => {
@@ -62,6 +63,10 @@ describe('MacroManager', () => {
   it('should support consume providers/plugins', () => {
     expect(() => manager.use(_plugin)).not.toThrow()
     expect(() => manager.use(_provider)).not.toThrow()
+  })
+
+  it('should support consume providers/plugins arrays', () => {
+    expect(() => manager.use([_plugin, _provider])).not.toThrow()
   })
 
   it('should return shallow copy for toPlugin()', () => {
@@ -151,5 +156,27 @@ describe('MacroManager', () => {
       expect((viteStartCtx as any).helper).toBeUndefined()
       expect((viteStartCtx as any).config).not.toBeUndefined()
     })
+  })
+
+  it('should check the compatibility of plugins/providers ', () => {
+    const manager = macroManager({ name: 'test', runtime: mockRuntime() })
+
+    // provider
+    const provider = macroProvider({
+      id: '',
+      exports: mockExports(),
+      hooks: {},
+    })
+    expect(() => manager.use(provider)).not.toThrow()
+    ;(provider as VersionedProvider).$__provider_version = -1
+    expect(() => manager.use(provider)).toThrow()
+
+    // plugin
+    expect(() =>
+      manager.use(macroPlugin({ name: '', runtime: mockRuntime(), hooks: {} }))
+    ).not.toThrow()
+    const plugin = macroPlugin({ name: '', runtime: mockRuntime(), hooks: {} })
+    ;(plugin as VersionedPlugin).$__plugin_version = -1
+    expect(() => manager.use(plugin)).toThrow()
   })
 })

@@ -1,5 +1,6 @@
-import { assertNoConflictMacro, normalizeExports } from '@/core/exports'
+import { validateMacros, normalizeExports } from '@/core/exports'
 import { macroSerializer, mockMacro } from '#/testutils'
+import { VersionedMacro } from '@/core/compat'
 expect.addSnapshotSerializer(macroSerializer)
 
 describe('normalizeExports()', () => {
@@ -43,18 +44,25 @@ describe('normalizeExports()', () => {
   })
 })
 
-describe('assertNoConflictMacro()', () => {
-  it('should work', () => {
+describe('validateMacros()', () => {
+  it('should check name conflicts', () => {
     expect(() =>
-      assertNoConflictMacro({
+      validateMacros({
         '@macros': [mockMacro('macro')],
         '@another': [mockMacro('macro')],
       })
     ).not.toThrow()
     expect(() =>
-      assertNoConflictMacro({
+      validateMacros({
         '@macros': [mockMacro('macro'), mockMacro('macro')],
       })
     ).toThrow()
+  })
+
+  it('should check the compatibility of macros', () => {
+    const m = mockMacro('macro')
+    expect(() => validateMacros({ '@macros': [m] })).not.toThrow()
+    ;(m as VersionedMacro).$__macro_version = -1
+    expect(() => validateMacros({ '@macros': [m] })).toThrow()
   })
 })
