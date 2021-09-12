@@ -29,10 +29,6 @@ export type DeepPartial<T, RT = Required<T>> = {
 
 export const promise = Promise.resolve()
 
-export type WithVersion<T> = T & {
-  $__version: number
-}
-
 // CI throws error `Cannot find module 'util/types' from 'src/*.ts'`,
 // so implement some functions in 'util/types' here
 

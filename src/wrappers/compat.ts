@@ -1,9 +1,10 @@
+/* istanbul ignore file */
+
 /*
  * This is a compatibility control mechanism based on version number,
  * to ensure the compatibility among provider, plugin and manager.
  */
 
-import { WithVersion } from '@/common'
 import { MacroProvider } from '@/wrappers/macroProvider'
 import { MacroPlugin } from '@/wrappers/macroPlugin'
 
@@ -18,13 +19,17 @@ import { MacroPlugin } from '@/wrappers/macroPlugin'
  */
 const PROVIDER_VERSION = 0
 
+export type VersionedProvider = MacroProvider & {
+  $__provider_version: number
+}
+
 export function versionedProvider(v: MacroProvider): MacroProvider {
-  ;(v as WithVersion<MacroProvider>).$__version = PROVIDER_VERSION
+  ;(v as VersionedProvider).$__provider_version = PROVIDER_VERSION
   return v
 }
 
 export function isProviderCompatible(v: MacroProvider) {
-  return (v as WithVersion<MacroProvider>).$__version === PROVIDER_VERSION
+  return (v as VersionedProvider).$__provider_version === PROVIDER_VERSION
 }
 
 /*
@@ -37,11 +42,15 @@ export function isProviderCompatible(v: MacroProvider) {
  */
 const PLUGIN_VERSION = 0
 
+export type VersionedPlugin = MacroPlugin & {
+  $__plugin_version: number
+}
+
 export function versionedPlugin(v: MacroPlugin): MacroPlugin {
-  ;(v as WithVersion<MacroPlugin>).$__version = PLUGIN_VERSION
+  ;(v as VersionedPlugin).$__plugin_version = PLUGIN_VERSION
   return v
 }
 
 export function isPluginCompatible(v: MacroPlugin) {
-  return (v as WithVersion<MacroPlugin>).$__version === PLUGIN_VERSION
+  return (v as VersionedPlugin).$__plugin_version === PLUGIN_VERSION
 }

@@ -9,17 +9,27 @@ describe('defineMacroProvider', () => {
       .withCustomType('type A = string')
       .withSignature('(): void', 'NO_OP')
       .withHandler(NO_OP_HANDLER)
+    // check conflict
     expect(() =>
       defineMacroProvider({
         id: 'provider',
         exports: { '@test': { macros: [m] } },
+        options: { parserPlugins: [] },
       })
     ).not.toThrow()
     expect(() =>
       defineMacroProvider({
         id: 'provider',
         exports: { '@test': { macros: [m, m] } },
+        options: { parserPlugins: [] },
       })
     ).toThrow()
+    // allow empty options
+    expect(() =>
+      defineMacroProvider({
+        id: 'provider',
+        exports: { '@test': { macros: [m] } },
+      })
+    ).not.toThrow()
   })
 })

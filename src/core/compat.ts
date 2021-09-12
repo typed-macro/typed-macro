@@ -1,10 +1,11 @@
+/* istanbul ignore file */
+
 /*
  * This is a compatibility control mechanism based on version number,
  * to ensure the compatibility between macro and runtime.
  */
 
 import { Macro } from '@/core/macro'
-import { WithVersion } from '@/common'
 
 /*
  * The current Macro version.
@@ -18,11 +19,15 @@ import { WithVersion } from '@/common'
  */
 export const MACRO_VERSION = 0
 
+export type VersionedMacro = Macro & {
+  $__macro_version: number
+}
+
 export function versionedMacro(v: Macro): Macro {
-  ;(v as WithVersion<Macro>).$__version = MACRO_VERSION
+  ;(v as VersionedMacro).$__macro_version = MACRO_VERSION
   return v
 }
 
 export function isMacroCompatible(v: Macro) {
-  return (v as WithVersion<Macro>).$__version === MACRO_VERSION
+  return (v as VersionedMacro).$__macro_version === MACRO_VERSION
 }

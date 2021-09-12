@@ -5,6 +5,7 @@ import {
   mockMacro,
   mockRuntime,
 } from '#/testutils'
+import { VersionedMacro } from '@/core/compat'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -225,5 +226,25 @@ describe('Runtime', () => {
     cases.forEach((filepath) => {
       expect(runtime.handleTransform(code, filepath)).toMatchSnapshot()
     })
+  })
+
+  it('should check the compatibility of macros (in Attachable)', () => {
+    const runtime = mockRuntime()
+    const m = mockMacro('test', ({ path }) => path.remove())
+    expect(() =>
+      runtime.attach({
+        exports: mockExports({
+          macros: { '@macros': [m] },
+        }),
+      })
+    ).not.toThrow()
+    ;(m as VersionedMacro).$__macro_version = -1
+    expect(() =>
+      runtime.attach({
+        exports: mockExports({
+          macros: { '@macros': [m] },
+        }),
+      })
+    ).toThrow()
   })
 })

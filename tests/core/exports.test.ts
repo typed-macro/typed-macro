@@ -1,6 +1,6 @@
 import { validateMacros, normalizeExports } from '@/core/exports'
 import { macroSerializer, mockMacro } from '#/testutils'
-import { WithVersion } from '@/common'
+import { VersionedMacro } from '@/core/compat'
 expect.addSnapshotSerializer(macroSerializer)
 
 describe('normalizeExports()', () => {
@@ -66,7 +66,7 @@ describe('validateMacros()', () => {
         '@macros': [m],
       })
     ).not.toThrow()
-    ;(m as WithVersion<any>).$__version = -1
+    ;(m as VersionedMacro).$__macro_version = -1
     expect(() =>
       validateMacros({
         '@macros': [m],

@@ -26,7 +26,9 @@ export type MacroManager = {
    *  > which means no need to add the plugin to Vite/Rollup 's plugins array again.
    * @param sources macro providers or plugins.
    */
-  use(...sources: (MacroProvider | Plugin)[]): MacroManager
+  use(
+    sources: MacroProvider | Plugin | (MacroProvider | Plugin)[]
+  ): MacroManager
   /**
    * Get a shallow copy of the underlying plugins of the macro manager.
    * In most cases, it can be used as one plugin directly since Vite flats
