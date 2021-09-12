@@ -89,8 +89,15 @@ export class Runtime {
   private _typeRenderer?: TypeRenderer
   private _filter?: (id: string) => boolean
 
-  get options() {
-    return this._options
+  get attachable() {
+    return {
+      options: this._options,
+      exports: {
+        macros: this.macros,
+        modules: this.modules,
+        types: this.types,
+      },
+    }
   }
 
   get filter() {
@@ -127,23 +134,12 @@ export class Runtime {
       )
   }
 
-  get exports(): NormalizedExports {
-    return {
-      macros: this.macros,
-      modules: this.modules,
-      types: this.types,
-    }
-  }
-
   mergeOptions(options: DeepPartial<RuntimeOptions>) {
     if (options.transformer) {
       // reset transformer
       this._transformer = undefined
       // merge transformer#parserPlugins
-      if (
-        options.transformer.parserPlugins &&
-        options.transformer.parserPlugins.length
-      ) {
+      if (options.transformer.parserPlugins?.length) {
         this._options.transformer.parserPlugins = Array.from(
           new Set([
             ...(this._options.transformer.parserPlugins || []),

@@ -22,7 +22,7 @@ exports[`Runtime should include specific files 4`] = `""`;
 
 exports[`Runtime should include specific files 5`] = `""`;
 
-exports[`Runtime should work with addExports() and .exports 1`] = `
+exports[`Runtime should work with addExports() 1`] = `
 Object {
   "macros": Object {
     "@m1": Array [
@@ -36,7 +36,7 @@ Object {
 }
 `;
 
-exports[`Runtime should work with addExports() and .exports 2`] = `
+exports[`Runtime should work with addExports() 2`] = `
 Object {
   "macros": Object {
     "@m1": Array [

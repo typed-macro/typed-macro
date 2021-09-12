@@ -47,12 +47,9 @@ export function macroPlugin(options: InternalPluginOptions): MacroPlugin {
     __internal_macro_plugin: true,
     __consume() {
       if (!runtime) throw new Error(`plugin '${name}' is used more than once.`)
-      const consume = {
-        exports: runtime.exports,
-        options: runtime.options,
-      }
+      const attachable = runtime.attachable
       runtime = undefined
-      return consume
+      return attachable
     },
     name,
     enforce: 'pre',

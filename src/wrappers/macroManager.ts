@@ -112,8 +112,7 @@ class MacroManagerImpl {
   private addPlugin(plugin: MacroPlugin) {
     if (!isPluginCompatible(plugin))
       throw new Error(`macro plugin '${plugin.name}' is incompatible`)
-    const { exports, options } = plugin.__consume()
-    this.runtime.attach({ exports, options })
+    this.runtime.attach(plugin.__consume())
     this.plugins.push(plugin)
   }
 

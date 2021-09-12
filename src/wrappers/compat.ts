@@ -12,12 +12,11 @@ import { MacroPlugin } from '@/wrappers/macroPlugin'
  * The current MacroProvider version.
  *
  * It represents whether the MacroProvider and MacroManager is compatible.
- * This involves the interface that attach exports from Provider to the Runtime
- * and the hooks.
+ * This involves the hooks and the interface that attach exports from Provider to the Runtime.
  *
- * @deps {@link MacroProviderHooks}, {@link Attachable}
+ * @deps {@link MacroProvider}, {@link MacroProviderHooks}, {@link Attachable}
  */
-const PROVIDER_VERSION = 0
+export const PROVIDER_VERSION = 0
 
 export type VersionedProvider = MacroProvider & {
   $__provider_version: number
@@ -38,9 +37,9 @@ export function isProviderCompatible(v: MacroProvider) {
  * It represents whether the MacroPlugin and MacroManager is compatible.
  * This involves the interface that attach exports from Plugin to the Runtime.
  *
- * @deps {@link MacroPlugin.__consume}, {@link Attachable}
+ * @deps {@link MacroPlugin}, {@link MacroPlugin.__consume}, {@link Attachable}
  */
-const PLUGIN_VERSION = 0
+export const PLUGIN_VERSION = 0
 
 export type VersionedPlugin = MacroPlugin & {
   $__plugin_version: number
