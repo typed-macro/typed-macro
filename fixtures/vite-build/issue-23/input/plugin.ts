@@ -1,19 +1,8 @@
-import { defineMacro, defineMacroProvider } from 'vite-plugin-macro'
-import { run } from './common'
+import { defineMacro } from '@/defineMacro'
+import { defineMacroPlugin } from '@/defineMacroPlugin'
+import { join } from 'path'
 
-export function provideEcho() {
-  return defineMacroProvider({
-    id: 'echo',
-    exports: {
-      '@echo': {
-        macros: [echoMacro],
-      },
-      '@string': {
-        macros: [reverseMacro],
-      },
-    },
-  })
-}
+const run = <T>(block: () => T) => block()
 
 const echoMacro = defineMacro('echoReverse')
   .withSignature('(msg: string): void')
@@ -31,7 +20,7 @@ const echoMacro = defineMacro('echoReverse')
 
     // collect __reverse()
     yield prependImports({
-      moduleName: '@string',
+      moduleName: '@issue-23',
       exportName: 'reverse',
       localName: '__reverse',
     })
@@ -46,9 +35,7 @@ const echoMacro = defineMacro('echoReverse')
 
 const reverseMacro = defineMacro('reverse')
   .withSignature('(msg: string): string')
-  .withHandler(function* ({ path, args }, { types }) {
-    yield args
-
+  .withHandler(({ path, args }, { types }) => {
     const msg = run(() => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
@@ -59,3 +46,13 @@ const reverseMacro = defineMacro('reverse')
 
     path.replaceWith(types.stringLiteral(msg.split('').reverse().join('')))
   })
+
+export const plugin = defineMacroPlugin({
+  name: 'test',
+  typesPath: join(__dirname, 'macros.d.ts'),
+  exports: {
+    '@issue-23': {
+      macros: [reverseMacro, echoMacro],
+    },
+  },
+})

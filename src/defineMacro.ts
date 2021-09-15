@@ -7,6 +7,7 @@ type MacroBuilder = {
    * Add custom type definition, it will be written to .d.ts before macro signature.
    */
   withCustomType: (typeDefinition: string) => Omit<MacroBuilder, 'withHandler'>
+
   /**
    * Add signature of macro. one macro requires at least one signature.
    * @param signature function signature, like '(s: string): void'
@@ -17,8 +18,31 @@ type MacroBuilder = {
     signature: string,
     comment?: string
   ) => Omit<MacroBuilder, 'withCustomType'>
+
   /**
    * Set the transform handler and get the macro.
+   *
+   * Async function can not be used as macro handler.
+   *
+   * If the handler is a normal function, the nested macros inside the current
+   * call expression will be expanded automatically before calling the handler.
+   *
+   * If the handler is a generator function, you can:
+   *  - yield node paths of import statements to collect macros from them,
+   *    note macros must be collected before used, or you can wait for the next round of traversal,
+   *    and the runtime(transformer) will collect imported macros again before the traversal
+   *  - yield node paths to actively expand macros inside them
+   *
+   * e.g.
+   * ```typescript
+   * .withHandler(function*({ args }) {
+   *   // do some thing
+   *   yield args // expand macros inside the current call expression
+   *   // do some thing
+   *   yield someOtherNodePath
+   *   // do some thing
+   * })
+   * ```
    */
   withHandler: (handler: MacroHandler) => Macro
 }

@@ -1,10 +1,8 @@
 import { parse } from '@babel/parser'
 import {
-  containsMacros,
   findImported,
-  findImportedMacros,
   findProgramPath,
-  getCalledMacro,
+  ImportedMacrosContainer,
 } from '@/core/helper/traverse'
 import template from '@babel/template'
 import { ImportOption } from '@/core/helper/import'
@@ -135,7 +133,7 @@ describe('findImported()', () => {
   })
 })
 
-describe('findImportedMacros()', () => {
+describe('ImportedMacrosContainer#collectFromAST() / collectFromNodePath()', () => {
   it('should work', () => {
     const testCases: {
       code: string
@@ -152,7 +150,9 @@ describe('findImportedMacros()', () => {
     ]
     testCases.forEach((c) => {
       expect(
-        findImportedMacros(getAST(c.code), c.macros as any)
+        new ImportedMacrosContainer(c.macros as any).collectFromAST(
+          getAST(c.code)
+        ).container
       ).toMatchSnapshot()
     })
   })
@@ -172,7 +172,7 @@ describe('findImportedMacros()', () => {
     ]
     testCases.forEach((c) => {
       const ast = getAST(c.code)
-      findImportedMacros(ast, c.macros as any, true)
+      new ImportedMacrosContainer(c.macros as any).collectFromAST(ast, true)
       matchCodeSnapshot(ast)
     })
   })
@@ -192,13 +192,13 @@ describe('findImportedMacros()', () => {
     ]
     testCases.forEach((c) => {
       const ast = getAST(c.code)
-      findImportedMacros(ast, c.macros as any)
+      new ImportedMacrosContainer(c.macros as any).collectFromAST(ast, false)
       expect(ast.program.body.length).toBe(0)
     })
   })
 })
 
-describe('getCalledMacro()', () => {
+describe('ImportedMacrosContainer#getCalledMacro()', () => {
   it('should work', () => {
     const testCases: {
       code: string
@@ -253,40 +253,44 @@ describe('getCalledMacro()', () => {
     ]
     testCases.forEach((c) => {
       const ast = getAST(c.code)
-      const importedMacros = findImportedMacros(ast, c.macros as any)
+      const importedMacros = new ImportedMacrosContainer(
+        c.macros as any
+      ).collectFromAST(ast)
 
       expect(
-        getCalledMacro(
+        importedMacros.getCalledMacro(
           (
             (
               getPath(c.call).get('body')[0] as NodePath<ExpressionStatement>
             ).get('expression') as NodePath<CallExpression>
-          ).get('callee'),
-          importedMacros
+          ).get('callee')
         )
       ).toMatchSnapshot()
     })
   })
 })
 
-describe('containsMacros()', () => {
+describe('ImportedMacrosContainer#testContainsMacros()', () => {
   it('should work', () => {
     const ast = getAST(`
   import { a } from '@a'
   a(a(), c(), c(a()))`)
-    const importedMacros = findImportedMacros(
-      ast,
-      {
-        '@a': [{ name: 'a' } as any],
-      },
-      true
-    )
+    const importedMacros = new ImportedMacrosContainer({
+      '@a': [{ name: 'a' } as any],
+    }).collectFromAST(ast, true)
+
     const program = findProgramPath(ast)
+
     const paths = (
       (program.get('body')[1] as NodePath<ExpressionStatement>).get(
         'expression'
       ) as NodePath<CallExpression>
     ).get('arguments')
-    expect(containsMacros(paths, importedMacros)).toEqual([true, false, true])
+
+    expect(importedMacros.testContainsMacros(paths)).toEqual([
+      true,
+      false,
+      true,
+    ])
   })
 })

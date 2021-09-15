@@ -1,25 +1,25 @@
 import { createHelper, MacroHelper } from '@/core/macro/helper'
 import { getAST } from '#/testutils'
-import { findImportedMacros, findProgramPath } from '@/core/helper/traverse'
+import {
+  findProgramPath,
+  ImportedMacrosContainer,
+} from '@/core/helper/traverse'
 import { NodePath } from '@babel/traverse'
 import { CallExpression, ExpressionStatement } from '@babel/types'
 
 describe('MacroHelper', () => {
   let helper: MacroHelper
+  let path: NodePath<CallExpression>
   beforeEach(() => {
     const ast = getAST(`
   import { c } from 'c'
   import { a } from '@a'
   a(a(), c())`)
     const program = findProgramPath(ast)
-    const importedMacros = findImportedMacros(
-      ast,
-      {
-        '@a': [{ name: 'a' } as any],
-      },
-      true
-    )
-    const path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
+    const importedMacros = new ImportedMacrosContainer({
+      '@a': [{ name: 'a' } as any],
+    }).collectFromAST(ast, true)
+    path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
       'expression'
     ) as NodePath<CallExpression>
     helper = createHelper(
@@ -76,5 +76,6 @@ describe('MacroHelper', () => {
 
   it('containsMacros()', () => {
     expect(helper.containsMacros()).toEqual([true, false])
+    expect(helper.containsMacros(path.parentPath)).toEqual([true])
   })
 })

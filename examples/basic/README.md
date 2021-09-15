@@ -14,4 +14,5 @@ This example shows
 - usage of `defineMacroPlugin()`
 - usage of `vitePluginMacro()`, a wrapper of `createMacroManager()`
 - usage of macro helpers
+- usage of generator handlers
 - how to modify nodes

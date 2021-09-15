@@ -39,3 +39,15 @@ export function isPromise(v: unknown): v is Promise<unknown> {
 export function isError(v: unknown): v is Error {
   return v instanceof Error
 }
+
+export function isFunction(o: unknown): o is Function {
+  return o instanceof Function
+}
+
+export function isAsyncFunction(fn: Function) {
+  return fn.constructor.name.includes('Async')
+}
+
+export function isGeneratorFunction(fn: Function): fn is GeneratorFunction {
+  return fn.constructor.name.includes('Generator')
+}

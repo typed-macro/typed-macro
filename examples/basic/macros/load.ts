@@ -17,14 +17,14 @@ export function pluginLoad() {
 
 const tryMacro = defineMacro('tryLoad')
   .withSignature('(glob: string): void')
-  .withHandler(({ path, args, filepath }, { template, types }) => {
+  .withHandler(({ path, args, filepath }, { template }) => {
     const glob = run(() => {
       if (args.length === 0)
         throw new Error(`glob should not be undefined in tryLoad()`)
       const arg = args[0]
-      if (!types.isStringLiteral(arg))
+      if (!arg.isStringLiteral())
         throw new Error(`glob should be string literal in tryLoad()`)
-      return arg.value
+      return arg.node.value
     })
 
     path.replaceWith(
@@ -39,27 +39,25 @@ const loadMacro = defineMacro('load')
     '(glob: string): void',
     'provide a glob pattern to load assets'
   )
-  .withHandler(
-    ({ path, args }, { types }, { appendImports, normalizePathPattern }) => {
-      const pattern = run(() => {
-        if (args.length === 0)
-          throw new Error(`glob should not be undefined in load()`)
-        const arg = args[0]
-        if (!types.isStringLiteral(arg))
-          throw new Error(`glob should be string literal in load()`)
-        return arg.value
-      })
+  .withHandler(({ path, args }, _, { appendImports, normalizePathPattern }) => {
+    const pattern = run(() => {
+      if (args.length === 0)
+        throw new Error(`glob should not be undefined in load()`)
+      const arg = args[0]
+      if (!arg.isStringLiteral())
+        throw new Error(`glob should be string literal in load()`)
+      return arg.node.value
+    })
 
-      const { normalized, base, resolveImportPath } =
-        normalizePathPattern(pattern)
+    const { normalized, base, resolveImportPath } =
+      normalizePathPattern(pattern)
 
-      const imports = searchByGlob(normalized, base).map(resolveImportPath)
+    const imports = searchByGlob(normalized, base).map(resolveImportPath)
 
-      appendImports(imports.map((imp) => ({ moduleName: imp })))
+    appendImports(imports.map((imp) => ({ moduleName: imp })))
 
-      path.remove()
-    }
-  )
+    path.remove()
+  })
 
 function searchByGlob(pattern: string, baseDir: string) {
   return glob.sync(pattern, {

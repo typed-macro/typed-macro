@@ -4,14 +4,12 @@ import { parse, ParserPlugin } from '@babel/parser'
 import generate from '@babel/generator'
 import { nodeLoc } from '@/common'
 import { NamespacedMacros } from './exports'
-import { Macro } from './macro'
+import { createMacroCall, YieldContext } from './macro'
 import {
-  findImportedMacros,
   findProgramPath,
-  getCalledMacro,
+  ImportedMacrosContainer,
 } from '@/core/helper/traverse'
 import { createState, State } from './helper/state'
-import { isError, isPromise } from '@/common'
 
 export type TransformerOptions = {
   /**
@@ -64,10 +62,10 @@ export function createTransformer({
     })
 
     // keep import statements in dev mode so can invalidate macro modules
-    const collect = () => findImportedMacros(ast, macros, dev)
+    const importedMacros = new ImportedMacrosContainer(macros, dev)
+    importedMacros.collectFromAST(ast)
 
-    const importedMacros = collect()
-    if (!importedMacros.length) return
+    if (!importedMacros.size) return
 
     const transformState = createState()
 
@@ -78,10 +76,11 @@ export function createTransformer({
         filepath,
         ast,
         ssr,
+        dev,
         importedMacros,
         transformState,
       }) &&
-      importedMacros.push(...collect())
+      importedMacros.collectFromAST(ast)
     ) {
       if (loopCount++ >= maxRecursions)
         throw new Error(
@@ -95,30 +94,14 @@ export function createTransformer({
   }
 }
 
-type ImportedAsNS = {
-  importedAsNamespace: true
-  namespace: string
-  local: string
-  macros: Macro[]
-}
-
-type ImportedAsNamed = {
-  importedAsNamespace: false
-  namespace: string
-  local: string
-  // not always macro
-  macro?: Macro
-}
-
-type ImportedMacro = ImportedAsNS | ImportedAsNamed
-
 type ApplyContext = {
   code: string
   filepath: string
   ast: File
+  dev: boolean
   ssr: boolean
 
-  importedMacros: ImportedMacro[]
+  importedMacros: ImportedMacrosContainer
   transformState: State
 }
 
@@ -126,60 +109,78 @@ export function applyMacros({
   code,
   filepath,
   ast,
-  importedMacros,
+  dev,
   ssr,
+  importedMacros,
   transformState,
 }: ApplyContext): boolean {
   let applied = false
   const program = findProgramPath(ast)
   const traversalState = createState()
 
-  const process = (path: NodePath<CallExpression>) => {
-    const macroToApply = getCalledMacro(path.get('callee'), importedMacros)
-    if (!macroToApply) return
-    if (typeof macroToApply === 'string')
-      throw new Error(
-        `Macro '${macroToApply}' is not existed but is called in '${filepath}'`
-      )
-    try {
-      macroToApply({
-        code,
-        filepath,
-        path,
-        ssr,
-        ast,
-        transformState,
-        traversalState,
-        importedMacros,
-        program,
-      })
-    } catch (e: unknown) {
-      if (isError(e)) {
-        // throw errors
-        throw new Error(
-          `Error when apply macro '${
-            macroToApply.name
-          }' in '${filepath}' near ${nodeLoc(path.node)}:\n ${e}`
-        )
-      } else if (isPromise(e)) {
-        // expand nested macros first
+  traverse(ast, {
+    CallExpression(path) {
+      if (process(path)) applied = true
+    },
+  })
+
+  return applied
+
+  function handleYield(current: NodePath<CallExpression>, ctx: YieldContext) {
+    if (!ctx) return
+    if (!Array.isArray(ctx)) ctx = [ctx]
+    ctx.forEach((path) => {
+      if (!path) return
+      if (path.isImportDeclaration()) {
+        // collect macros
+        importedMacros.collectFromNodePath(path)
+      } else {
+        // apply macros
+        if (current.findParent((parent) => parent.node === path.node))
+          throw new Error('can not yield a parent node')
+        // if is a macro call, process it and skip traverse
+        if (path.isCallExpression() && process(path)) return
         path.traverse({
           CallExpression(p) {
             process(p)
           },
         })
-        process(path)
       }
-    } finally {
-      applied = true
-    }
+    })
   }
 
-  traverse(ast, {
-    CallExpression(path) {
-      process(path)
-    },
-  })
-
-  return applied
+  function process(path: NodePath<CallExpression>) {
+    const macro = importedMacros.getCalledMacro(path.get('callee'))
+    if (!macro) return false
+    if (typeof macro === 'string')
+      throw new Error(
+        `Macro '${macro}' is not existed but called in '${filepath}' near ${nodeLoc(
+          path.node
+        )}`
+      )
+    try {
+      const transform = macro(
+        createMacroCall({
+          code,
+          filepath,
+          path,
+          ast,
+          ssr,
+          dev,
+          transformState,
+          traversalState,
+          importedMacros,
+          program,
+        })
+      )
+      for (const ctx of transform) handleYield(path, ctx)
+    } catch (e) {
+      throw new Error(
+        `Error when apply macro '${macro.name}' in '${filepath}' near ${nodeLoc(
+          path.node
+        )}:\n ${e}`
+      )
+    }
+    return true
+  }
 }

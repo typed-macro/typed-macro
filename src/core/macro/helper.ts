@@ -1,23 +1,18 @@
 import { ImportOption } from '@/core/helper/import'
-import { Node, NodePath } from '@babel/traverse'
-import { CallExpression, ImportDeclaration, Program } from '@babel/types'
+import { NodePath } from '@babel/traverse'
+import { Node, CallExpression, ImportDeclaration, Program } from '@babel/types'
 import {
   normalizePathPattern,
   PathPatternNormalizer,
   projectDir,
 } from '@/core/helper/path'
-import {
-  containsMacros,
-  findImported,
-  ImportedMacro,
-} from '@/core/helper/traverse'
+import { findImported, ImportedMacrosContainer } from '@/core/helper/traverse'
 import {
   appendImports,
   appendToBody,
   prependImports,
   prependToBody,
 } from '@/core/helper/transform'
-import { promise } from '@/common'
 
 export type MacroHelper = {
   /**
@@ -133,36 +128,13 @@ export type MacroHelper = {
    * call expression by default
    */
   containsMacros: (...paths: NodePath[]) => boolean[]
-
-  /**
-   * Yield current transformer to nested macros inside current
-   * call expression and then call the current macro handler again
-   * if the nested macros exist.
-   * In another words, expand nested macros in arguments first.
-   *
-   * It is recommended to call this function at the beginning of the handler
-   * that needs to ensure that the arguments don't contain nested macros,
-   * to reduce unnecessary repeated calculations.
-   *
-   * In v0.2.x, this function throws a Promise internally,
-   * so DO NOT call it in a try block.
-   *
-   * e.g.
-   * ```typescript
-   * ({ path }, _, { yieldToNestedMacros }) => {
-   *   yieldToNestedMacros()
-   *   // ...your code
-   * }
-   * ```
-   */
-  yieldToNestedMacros: () => never | void
 }
 
 export function createHelper(
   thisPath: NodePath<CallExpression>,
   thisProgram: NodePath<Program>,
   thisFilepath: string,
-  importedMacros: ImportedMacro[]
+  importedMacros: ImportedMacrosContainer
 ) {
   const helpers: MacroHelper = {
     findImported: (imp, loose = true, program = thisProgram) => {
@@ -200,17 +172,9 @@ export function createHelper(
     projectDir,
 
     containsMacros: (...paths) => {
-      return containsMacros(
-        paths.length ? paths : thisPath.get('arguments'),
-        importedMacros
+      return importedMacros.testContainsMacros(
+        paths.length ? paths : thisPath.get('arguments')
       )
-    },
-
-    yieldToNestedMacros: () => {
-      if (
-        containsMacros(thisPath.get('arguments'), importedMacros).includes(true)
-      )
-        throw promise
     },
   }
 

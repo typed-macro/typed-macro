@@ -1,11 +1,12 @@
-import { CallExpression, File, Program } from '@babel/types'
+import { CallExpression, File, Node, Program } from '@babel/types'
 import { NodePath } from '@babel/traverse'
 
 import { State } from '@/core/helper/state'
 import { createHelper, MacroHelper } from './helper'
 import { Babel, BABEL_TOOLS } from './babel'
-import { ImportedMacro } from '@/core/helper/traverse'
 import { versionedMacro } from '@/core/compat'
+import { isAsyncFunction, isFunction, isGeneratorFunction } from '@/common'
+import { ImportedMacrosContainer } from '../helper/traverse'
 
 export type MacroContext = {
   /**
@@ -17,9 +18,11 @@ export type MacroContext = {
    */
   code: string
   /**
-   * The arguments nodes of the call-macro expression currently being handled.
+   * The arguments node paths of the call-macro expression currently being handled.
    */
-  args: CallExpression['arguments']
+  args: CallExpression['arguments'] extends Array<infer R>
+    ? NodePath<R>[]
+    : never
   /**
    * The NodePath of the call-macro expression currently being handled.
    */
@@ -32,6 +35,10 @@ export type MacroContext = {
    * Whether in ssr mode.
    */
   ssr: boolean
+  /**
+   * Whether in dev mode.
+   */
+  dev: boolean
   /**
    * Traversal state.
    */
@@ -52,6 +59,16 @@ export type MacroContext = {
   }
 }
 
+export type YieldContext =
+  // yield ImportDeclaration NodePath: collect macros from it
+  // yield other NodePath: expand macros in it
+  | NodePath<Node | Node[]>
+  | NodePath<Node | Node[]>[]
+  // do nothing
+  | undefined
+
+export type SuspendableTransform = Generator<YieldContext, any, any>
+
 export type MacroHandler = (
   /**
    * Context about the macro caller.
@@ -65,21 +82,15 @@ export type MacroHandler = (
    * Wrappers upon babel tools to simplify operations.
    */
   helper: Readonly<MacroHelper>
-) => void
+) => SuspendableTransform | unknown
 
-type RawMacroCall = {
-  filepath: string
-  code: string
-  path: NodePath<CallExpression>
-  ast: File
-  program: NodePath<Program>
-  ssr: boolean
-  traversalState: State
-  transformState: State
-  importedMacros: ImportedMacro[]
+type MacroCall = {
+  ctx: MacroContext
+  babel: Readonly<Babel>
+  helper: Readonly<MacroHelper>
 }
 
-export type Macro = (call: RawMacroCall) => void
+export type Macro = (call: MacroCall) => SuspendableTransform
 
 export type MacroMeta = {
   signatures: {
@@ -98,65 +109,31 @@ export function macro(
   meta: MacroMeta,
   handler: MacroHandler
 ): Macro {
-  const normalizer = getNormalizer(handler)
-  const m = {
-    [name](call: RawMacroCall) {
-      const { ctx, babel, helper } = normalizer(call)
-      handler(ctx, babel as Babel, helper as MacroHelper)
-    },
-  }[name]
+  if (!isFunction(handler))
+    throw new Error('macro handler should be a function')
+  if (isAsyncFunction(handler))
+    throw new Error('macro handler should not be an async function')
+  if (handler.length === 0)
+    throw new Error('macro handler should have at least one parameter')
+
+  const m = isGeneratorFunction(handler)
+    ? {
+        *[name](call: MacroCall) {
+          yield* handler(
+            call.ctx,
+            call.babel,
+            call.helper
+          ) as SuspendableTransform
+        },
+      }[name]
+    : {
+        *[name](call: MacroCall) {
+          yield call.ctx.args
+          handler(call.ctx, call.babel, call.helper)
+        },
+      }[name]
   ;(m as InternalMacro).__types = renderMetaType(name, meta)
   return versionedMacro(m)
-}
-
-type MacroCallNormalizer = (raw: RawMacroCall) => {
-  ctx: MacroContext
-  babel?: Readonly<Babel>
-  helper?: Readonly<MacroHelper>
-}
-
-function normalizeContext(raw: RawMacroCall): MacroContext {
-  const { filepath, ssr, ast, code, path, transformState, traversalState } = raw
-  return {
-    filepath,
-    code,
-    ast,
-    path,
-    args: path.node.arguments,
-    state: {
-      transform: transformState,
-      traversal: traversalState,
-    },
-    ssr,
-  }
-}
-
-export function getNormalizer(handler: MacroHandler): MacroCallNormalizer {
-  switch (handler.length) {
-    case 0:
-      throw new Error('not a valid macro handler')
-    case 1:
-      return (raw: RawMacroCall) => ({
-        ctx: normalizeContext(raw),
-      })
-
-    case 2:
-      return (raw: RawMacroCall) => ({
-        ctx: normalizeContext(raw),
-        babel: BABEL_TOOLS,
-      })
-
-    default:
-      return (raw: RawMacroCall) => {
-        const { path, filepath, program, importedMacros } = raw
-        const ctx = normalizeContext(raw)
-        return {
-          ctx,
-          babel: BABEL_TOOLS,
-          helper: createHelper(path, program, filepath, importedMacros),
-        }
-      }
-  }
 }
 
 export function isMacro(o: unknown): o is InternalMacro {
@@ -177,4 +154,53 @@ export function renderMetaType(name: string, meta: MacroMeta) {
   ]
     .filter((t) => !!t)
     .join('\n')
+}
+
+type RawMacroCall = {
+  filepath: string
+  code: string
+  path: NodePath<CallExpression>
+  ast: File
+  program: NodePath<Program>
+  ssr: boolean
+  dev: boolean
+  traversalState: State
+  transformState: State
+  importedMacros: ImportedMacrosContainer
+}
+
+// The other modules will use it to generate the calling context of the macro.
+// Therefore, although calling context and this function are in the same file as the macro implementation,
+// they will not be contained by the final defined macros.
+// Macros can obtain all the information only from the caller.
+// Then it's easy to maintain macros' compatibility for they are super lightweight.
+export function createMacroCall({
+  filepath,
+  ssr,
+  dev,
+  ast,
+  code,
+  path,
+  transformState,
+  traversalState,
+  program,
+  importedMacros,
+}: RawMacroCall): MacroCall {
+  return {
+    ctx: {
+      filepath,
+      code,
+      ast,
+      path,
+      ssr,
+      dev,
+      args: path.get('arguments'),
+      state: {
+        transform: transformState,
+        traversal: traversalState,
+      },
+    },
+    babel: BABEL_TOOLS,
+    helper: createHelper(path, program, filepath, importedMacros),
+  }
 }

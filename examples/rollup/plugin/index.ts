@@ -17,13 +17,13 @@ export function macroPluginHello() {
 
 const helloMacro = defineMacro('hello')
   .withSignature('(msg?: string): void')
-  .withHandler(({ path, args }, { template, types }) => {
+  .withHandler(({ path, args }, { template }) => {
     const msg = run(() => {
       if (args.length === 0) return 'Rollup'
       const firstArg = args[0]
-      if (!types.isStringLiteral(firstArg))
+      if (!firstArg.isStringLiteral())
         throw new Error('please use literal string as message')
-      return firstArg.value
+      return firstArg.node.value
     })
 
     path.replaceWith(template.statement.ast(`console.log("Hello, ${msg}")`))

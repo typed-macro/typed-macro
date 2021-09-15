@@ -1,5 +1,8 @@
 declare module '@echo' {
-  export function echo(msg: string, repeat?: number): void
+  export function echoReverse(msg: string): void
+}
+declare module '@string' {
+  export function reverse(msg: string): string
 }
 declare module '@load' {
   export function tryLoad(glob: string): void

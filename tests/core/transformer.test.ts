@@ -4,7 +4,7 @@ import { applyMacros, createTransformer } from '@/core/transformer'
 import { Macro } from '@/core/macro'
 import { NamespacedMacros } from '@/core/exports'
 import { createState } from '@/core/helper/state'
-import { findImportedMacros } from '@/core/helper/traverse'
+import { ImportedMacrosContainer } from '@/core/helper/traverse'
 
 expect.addSnapshotSerializer(macroSerializer)
 
@@ -32,7 +32,9 @@ describe('applyMacros()', () => {
     ]
     testCases.forEach((c) => {
       const ast = getAST(c.code)
-      const importedMacros = findImportedMacros(ast, c.macros)
+      const importedMacros = new ImportedMacrosContainer(
+        c.macros
+      ).collectFromAST(ast)
 
       expect(
         applyMacros({
@@ -41,6 +43,7 @@ describe('applyMacros()', () => {
           ast,
           importedMacros,
           ssr: false,
+          dev: false,
           transformState: createState(),
         })
       ).toBe(c.applied)
@@ -48,32 +51,23 @@ describe('applyMacros()', () => {
   })
 
   it('should throw error when call non-existent macro', () => {
-    const testCases: {
-      code: string
-      macros: Record<string, { name: string }[]>
-    }[] = [
-      {
-        code: `import a from '@a'; a.a()`,
-        macros: {
-          '@a': [],
-        },
-      },
-    ]
-    testCases.forEach((c) => {
-      const ast = getAST(c.code)
-      const importedMacros = findImportedMacros(ast, c.macros as any)
+    const code = `import a from '@a'; a.a()`
+    const ast = getAST(code)
+    const importedMacros = new ImportedMacrosContainer({
+      '@a': [],
+    }).collectFromAST(ast)
 
-      expect(() =>
-        applyMacros({
-          code: c.code,
-          filepath: '',
-          ast,
-          importedMacros,
-          ssr: false,
-          transformState: createState(),
-        })
-      ).toThrow()
-    })
+    expect(() =>
+      applyMacros({
+        code: code,
+        filepath: '',
+        ast,
+        dev: false,
+        importedMacros,
+        ssr: false,
+        transformState: createState(),
+      })
+    ).toThrow()
   })
 })
 
@@ -94,7 +88,7 @@ describe('transformer', () => {
         {
           '@echo': [
             mockMacro('echo', ({ path, args }, { template }) => {
-              const msg = (args[0] as StringLiteral).value
+              const msg = (args[0].node as StringLiteral).value
               path.replaceWith(
                 template.statement.ast`console.log("${Array.from(
                   { length: 3 },
@@ -266,8 +260,14 @@ describe('transformer', () => {
       )
     ).toMatchSnapshot()
   })
+})
 
-  it('should support nested macros', () => {
+// why test yield in transformer rather than applyMacros():
+//  At present, the specific implementation of this feature is unstable
+//  and may be changed later.
+//  So regard it as a feature in the black-box of transformer.
+describe('transformer should support handlers yield', () => {
+  it('node path to be expanded', () => {
     const transform = createTransformer({
       parserPlugins: [],
       maxRecursions: 5,
@@ -276,9 +276,9 @@ describe('transformer', () => {
     const stack: string[] = []
     const outMacro = mockMacro(
       'outer',
-      ({ path }, { template }, { yieldToNestedMacros }) => {
+      function* ({ path, args }, { template }) {
         stack.push('enter out')
-        yieldToNestedMacros()
+        yield args
         path.replaceWith(template.expression.ast(`"out"`))
         stack.push('leave out')
       }
@@ -309,7 +309,6 @@ describe('transformer', () => {
         'leave in',
         'enter in',
         'leave in',
-        'enter out',
         'leave out',
       ])
     }
@@ -317,7 +316,7 @@ describe('transformer', () => {
     {
       transform(
         {
-          code: `import { outer, inner } from '@macro'; outer(inner(), outer(inner()))`,
+          code: `import { outer, inner } from '@macro'; outer(inner(), outer(() => inner()))`,
           filepath: '',
           dev: false,
         },
@@ -331,11 +330,89 @@ describe('transformer', () => {
         'enter out',
         'enter in',
         'leave in',
-        'enter out',
         'leave out',
-        'enter out',
         'leave out',
       ])
     }
+  })
+
+  it('node path of import statements to be collected', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+    const macros = {
+      '@macro': [
+        mockMacro('addImport', function* ({ path }, _, { prependImports }) {
+          yield prependImports({
+            moduleName: '@macro',
+            exportName: 'addImport',
+            localName: '__addImport',
+          })
+          path.remove()
+        }),
+      ],
+    }
+    expect(
+      transform(
+        {
+          code: `import { addImport } from '@macro'; addImport()`,
+          filepath: '',
+          dev: true,
+        },
+        macros
+      )
+    ).toMatchSnapshot()
+  })
+
+  it('undefined', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+    const macros = {
+      '@macro': [
+        mockMacro('test', function* ({ path }) {
+          yield undefined
+          yield [undefined]
+          path.remove()
+        }),
+      ],
+    }
+    expect(() =>
+      transform(
+        {
+          code: `import { test } from '@macro'; test()`,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+    ).not.toThrow()
+  })
+
+  it('parent node path to throw error', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+    const macros = {
+      '@macro': [
+        mockMacro('test', function* ({ path }) {
+          yield path.parentPath
+          path.remove()
+        }),
+      ],
+    }
+    expect(() =>
+      transform(
+        {
+          code: `import { test } from '@macro'; test()`,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+    ).toThrow()
   })
 })

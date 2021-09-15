@@ -1,5 +1,5 @@
 import { isMacro, macro, renderMetaType } from '@/core/macro'
-import { NO_OP, NO_OP_HANDLER } from '#/testutils'
+import { ASYNC_NO_OP, NO_OP, NO_OP_HANDLER } from '#/testutils'
 
 describe('renderMetaType()', () => {
   it('should work', () => {
@@ -19,21 +19,24 @@ describe('renderMetaType()', () => {
 
 describe('macro()', () => {
   it('should throw error if handler is invalid', () => {
-    expect(() =>
-      macro(
-        'test',
-        {
-          signatures: [
-            {
-              signature: '_',
-            },
-          ],
-          types: [],
-        },
-        // NO_OP has no parameter
-        NO_OP
-      )
-    ).toThrow()
+    const invalidHandlers = [NO_OP, ASYNC_NO_OP]
+    invalidHandlers.forEach((h) =>
+      expect(() =>
+        macro(
+          'test',
+          {
+            signatures: [
+              {
+                signature: '_',
+              },
+            ],
+            types: [],
+          },
+          // NO_OP has no parameter
+          h
+        )
+      ).toThrow()
+    )
   })
 })
 
