@@ -262,6 +262,10 @@ describe('transformer', () => {
   })
 })
 
+// why test yield in transformer rather than applyMacros():
+//  At present, the specific implementation of this feature is unstable
+//  and may be changed later.
+//  So regard it as a feature in the black-box of transformer.
 describe('transformer should support handlers yield', () => {
   it('node path to be expanded', () => {
     const transform = createTransformer({

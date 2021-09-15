@@ -126,10 +126,7 @@ export function applyMacros({
 
   return applied
 
-  function handleYieldCtx(
-    current: NodePath<CallExpression>,
-    ctx: YieldContext
-  ) {
+  function handleYield(current: NodePath<CallExpression>, ctx: YieldContext) {
     if (!ctx) return
     if (!Array.isArray(ctx)) ctx = [ctx]
     ctx.forEach((path) => {
@@ -176,7 +173,7 @@ export function applyMacros({
           program,
         })
       )
-      for (const ctx of transform) handleYieldCtx(path, ctx)
+      for (const ctx of transform) handleYield(path, ctx)
     } catch (e) {
       throw new Error(
         `Error when apply macro '${macro.name}' in '${filepath}' near ${nodeLoc(
