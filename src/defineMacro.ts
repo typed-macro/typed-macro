@@ -28,8 +28,10 @@ type MacroBuilder = {
    * call expression will be expanded automatically before calling the handler.
    *
    * If the handler is a generator function, you can:
-   *  - yield node paths of import statements to collect macros from them, note macros must be collected before used
-   *  - yield node paths to positively expand macros inside them
+   *  - yield node paths of import statements to collect macros from them,
+   *    note macros must be collected before used, or you can wait for the next round of traversal,
+   *    and the runtime(transformer) will collect imported macros again before the traversal
+   *  - yield node paths to actively expand macros inside them
    *
    * e.g.
    * ```typescript

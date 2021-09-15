@@ -1,6 +1,6 @@
 import { ImportOption } from '@/core/helper/import'
-import { Node, NodePath } from '@babel/traverse'
-import { CallExpression, ImportDeclaration, Program } from '@babel/types'
+import { NodePath } from '@babel/traverse'
+import { Node, CallExpression, ImportDeclaration, Program } from '@babel/types'
 import {
   normalizePathPattern,
   PathPatternNormalizer,

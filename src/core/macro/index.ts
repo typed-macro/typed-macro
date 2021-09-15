@@ -167,6 +167,11 @@ type RawMacroCall = {
   importedMacros: ImportedMacrosContainer
 }
 
+// The other modules will use it to generate the calling context of the macro.
+// Therefore, although calling context and this function are in the same file as the macro implementation,
+// they will not be referenced in the final defined macros
+// so that macros can obtain all the information only from the caller.
+// Then it's easy to maintain macros' compatibility for them are super lightweight.
 export function createMacroCall({
   filepath,
   ssr,

@@ -324,9 +324,52 @@ and call corresponding handlers for those macros **one by one**.
 _One by one: in order for macros to handle nested relationships correctly,
 and reduce the conflict on modifying the AST,
 it is necessary to reject asynchronous macro processing.
-Therefore, sorry, you can't use asynchronous macro handlers._
+**Therefore, sorry, you can't use asynchronous macro handlers.**_
 
-These three steps, _traversing import statements_, _traversing call expressions_, and _calling corresponding
+If the handler is a normal function like the above example shows,
+the nested macros inside the current call expression will be expanded
+automatically before calling the handler.
+
+If the handler is a generator function, you can:
+
+- yield node paths of import statements to collect macros from them, note macros must be collected before used
+- yield node paths to positively expand macros inside them
+
+e.g.
+
+```typescript
+const helloMacro = defineMacro(`hello`)
+  .withSignature(`(msg?: string): void`, `output hello message`)
+  .withHandler(function* (
+    { path },
+    { template },
+    { prependImports, appendToBody }
+  ) {
+    // do some thing...
+
+    // expand macros inside the current call expression
+    yield path.get('arguments')
+
+    // do some thing...
+
+    // actively collect the imported macro so it can be used immediately,
+    // or you should wait for the next traversal
+    yield prependImports({
+      moduleName: '@other-macros',
+      exportName: 'macro',
+      localName: '__macro',
+    })
+
+    // expand the isnerted macros
+    yield appendToBody(template.statement.ast(`__macro()`))
+
+    // do some thing..
+  })
+```
+
+You can find an example of using generator handler [here](fixtures/vite-build/issue-23/input/plugin.ts).
+
+The three steps, _traversing import statements_, _traversing call expressions_, and _calling corresponding
 handlers for macros during traversing call expressions_, will be repeated many times until all macros are expanded,
 or the maximum recursion is reached (it's a value that can be configured by users,
 and you'll see it soon).
