@@ -332,8 +332,11 @@ automatically before calling the handler.
 
 If the handler is a generator function, you can:
 
-- yield node paths of import statements to collect macros from them, note macros must be collected before used
+- yield node paths of import statements to collect macros from them,
+  _note that macros must be collected before used, or you should wait for the next traversal
+  because the runtime collects imported macros automatically before every traversal_
 - yield node paths to positively expand macros inside them
+- yield undefined to do nothing 😂
 
 e.g.
 
