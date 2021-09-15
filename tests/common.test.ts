@@ -1,11 +1,20 @@
 import {
   findDuplicatedItem,
+  isAsyncFunction,
   isError,
+  isFunction,
+  isGeneratorFunction,
   isPromise,
   nodeLoc,
   validateFnName,
 } from '@/common'
-import { getAST, getExpression, NO_OP } from './testutils'
+import {
+  ASYNC_NO_OP,
+  GENERATOR_NO_OP,
+  getAST,
+  getExpression,
+  NO_OP,
+} from './testutils'
 
 describe('nodeLoc()', () => {
   it('should work', () => {
@@ -45,7 +54,18 @@ describe('findDuplicatedItem()', () => {
 
 describe('isPromise()', () => {
   it('should work', () => {
-    ;[1, '', true, {}, [], new Map(), new Error(), Symbol()].forEach((v) => {
+    ;[
+      undefined,
+      null,
+      1,
+      '',
+      true,
+      {},
+      [],
+      new Map(),
+      new Error(),
+      Symbol(),
+    ].forEach((v) => {
       expect(isPromise(v)).toBe(false)
     })
     ;[
@@ -61,13 +81,66 @@ describe('isPromise()', () => {
 
 describe('isError()', () => {
   it('should work', () => {
-    ;[1, '', true, {}, [], new Map(), Symbol(), Promise.resolve()].forEach(
-      (v) => {
-        expect(isError(v)).toBe(false)
-      }
-    )
+    ;[
+      undefined,
+      null,
+      1,
+      '',
+      true,
+      {},
+      [],
+      new Map(),
+      Symbol(),
+      Promise.resolve(),
+    ].forEach((v) => {
+      expect(isError(v)).toBe(false)
+    })
     ;[new Error(), new SyntaxError(), new TypeError()].forEach((v) => {
       expect(isError(v)).toBe(true)
+    })
+  })
+})
+
+describe('isFunction()', () => {
+  it('should work', () => {
+    ;[
+      undefined,
+      null,
+      1,
+      '',
+      true,
+      {},
+      [],
+      new Map(),
+      Symbol(),
+      Promise.resolve(),
+    ].forEach((v) => {
+      expect(isFunction(v)).toBe(false)
+    })
+    ;[NO_OP, ASYNC_NO_OP, GENERATOR_NO_OP].forEach((v) => {
+      expect(isFunction(v)).toBe(true)
+    })
+  })
+})
+
+describe('isAsyncFunction()', () => {
+  it('should work', () => {
+    ;[NO_OP, GENERATOR_NO_OP].forEach((v) => {
+      expect(isAsyncFunction(v)).toBe(false)
+    })
+    ;[ASYNC_NO_OP].forEach((v) => {
+      expect(isAsyncFunction(v)).toBe(true)
+    })
+  })
+})
+
+describe('isGeneratorFunction()', () => {
+  it('should work', () => {
+    ;[NO_OP, ASYNC_NO_OP].forEach((v) => {
+      expect(isGeneratorFunction(v)).toBe(false)
+    })
+    ;[GENERATOR_NO_OP].forEach((v) => {
+      expect(isGeneratorFunction(v)).toBe(true)
     })
   })
 })

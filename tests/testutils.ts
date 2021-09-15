@@ -43,6 +43,10 @@ export function matchCodeSnapshot(ast: File) {
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 export const NO_OP = () => {}
+/* eslint-disable @typescript-eslint/no-empty-function */
+export const ASYNC_NO_OP = async () => {}
+/* eslint-disable @typescript-eslint/no-empty-function */
+export const GENERATOR_NO_OP = function* () {}
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */

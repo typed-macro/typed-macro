@@ -44,12 +44,10 @@ export function isFunction(o: unknown): o is Function {
   return o instanceof Function
 }
 
-export function isAsyncFunction(fn: object) {
-  if (!fn.constructor) return false
+export function isAsyncFunction(fn: Function) {
   return fn.constructor.name.includes('Async')
 }
 
-export function isGeneratorFunction(fn: object): fn is GeneratorFunction {
-  if (!fn.constructor) return false
+export function isGeneratorFunction(fn: Function): fn is GeneratorFunction {
   return fn.constructor.name.includes('Generator')
 }

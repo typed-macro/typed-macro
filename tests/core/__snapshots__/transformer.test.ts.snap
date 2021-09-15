@@ -22,4 +22,6 @@ exports[`transformer should not transform normal function calls 2`] = `
 
 exports[`transformer should recollect imported macros every loop 1`] = `"console.log('hello world');"`;
 
+exports[`transformer should support handlers yield node path of import statements to be collected 1`] = `"import '@macro';import '@macro';"`;
+
 exports[`transformer should work 1`] = `"import '@echo';console.log(\\"yeah yeah yeah\\");"`;

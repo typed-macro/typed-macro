@@ -9,6 +9,7 @@ import { CallExpression, ExpressionStatement } from '@babel/types'
 
 describe('MacroHelper', () => {
   let helper: MacroHelper
+  let path: NodePath<CallExpression>
   beforeEach(() => {
     const ast = getAST(`
   import { c } from 'c'
@@ -18,7 +19,7 @@ describe('MacroHelper', () => {
     const importedMacros = new ImportedMacrosContainer({
       '@a': [{ name: 'a' } as any],
     }).collectFromAST(ast, true)
-    const path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
+    path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
       'expression'
     ) as NodePath<CallExpression>
     helper = createHelper(
@@ -75,5 +76,6 @@ describe('MacroHelper', () => {
 
   it('containsMacros()', () => {
     expect(helper.containsMacros()).toEqual([true, false])
+    expect(helper.containsMacros(path.parentPath)).toEqual([true])
   })
 })

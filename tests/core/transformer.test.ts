@@ -260,8 +260,10 @@ describe('transformer', () => {
       )
     ).toMatchSnapshot()
   })
+})
 
-  it('should support yield', () => {
+describe('transformer should support handlers yield', () => {
+  it('node path to be expanded', () => {
     const transform = createTransformer({
       parserPlugins: [],
       maxRecursions: 5,
@@ -307,7 +309,7 @@ describe('transformer', () => {
     {
       transform(
         {
-          code: `import { outer, inner } from '@macro'; outer(inner(), outer(inner()))`,
+          code: `import { outer, inner } from '@macro'; outer(inner(), outer(() => inner()))`,
           filepath: '',
           dev: false,
         },
@@ -325,5 +327,85 @@ describe('transformer', () => {
         'leave out',
       ])
     }
+  })
+
+  it('node path of import statements to be collected', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+    const macros = {
+      '@macro': [
+        mockMacro('addImport', function* ({ path }, _, { prependImports }) {
+          yield prependImports({
+            moduleName: '@macro',
+            exportName: 'addImport',
+            localName: '__addImport',
+          })
+          path.remove()
+        }),
+      ],
+    }
+    expect(
+      transform(
+        {
+          code: `import { addImport } from '@macro'; addImport()`,
+          filepath: '',
+          dev: true,
+        },
+        macros
+      )
+    ).toMatchSnapshot()
+  })
+
+  it('undefined', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+    const macros = {
+      '@macro': [
+        mockMacro('test', function* ({ path }) {
+          yield undefined
+          yield [undefined]
+          path.remove()
+        }),
+      ],
+    }
+    expect(() =>
+      transform(
+        {
+          code: `import { test } from '@macro'; test()`,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+    ).not.toThrow()
+  })
+
+  it('parent node path to throw error', () => {
+    const transform = createTransformer({
+      parserPlugins: [],
+      maxRecursions: 5,
+    })
+    const macros = {
+      '@macro': [
+        mockMacro('test', function* ({ path }) {
+          yield path.parentPath
+          path.remove()
+        }),
+      ],
+    }
+    expect(() =>
+      transform(
+        {
+          code: `import { test } from '@macro'; test()`,
+          filepath: '',
+          dev: false,
+        },
+        macros
+      )
+    ).toThrow()
   })
 })
