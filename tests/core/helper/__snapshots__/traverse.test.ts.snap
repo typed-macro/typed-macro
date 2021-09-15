@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`findImportedMacros() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should rewrite import stmts if keep=true 1`] = `"import '@a';"`;
 
-exports[`findImportedMacros() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should rewrite import stmts if keep=true 2`] = `"import '@a';"`;
 
-exports[`findImportedMacros() should rewrite import stmts if keep=true 3`] = `"import '@a';"`;
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should rewrite import stmts if keep=true 3`] = `"import '@a';"`;
 
-exports[`findImportedMacros() should rewrite import stmts if keep=true 4`] = `"import '@a';"`;
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should rewrite import stmts if keep=true 4`] = `"import '@a';"`;
 
-exports[`findImportedMacros() should work 1`] = `
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should work 1`] = `
 Array [
   Object {
     "importedAsNamespace": false,
@@ -21,7 +21,7 @@ Array [
 ]
 `;
 
-exports[`findImportedMacros() should work 2`] = `
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should work 2`] = `
 Array [
   Object {
     "importedAsNamespace": false,
@@ -34,7 +34,7 @@ Array [
 ]
 `;
 
-exports[`findImportedMacros() should work 3`] = `
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should work 3`] = `
 Array [
   Object {
     "importedAsNamespace": true,
@@ -49,7 +49,7 @@ Array [
 ]
 `;
 
-exports[`findImportedMacros() should work 4`] = `
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should work 4`] = `
 Array [
   Object {
     "importedAsNamespace": true,
@@ -64,38 +64,38 @@ Array [
 ]
 `;
 
-exports[`findImportedMacros() should work 5`] = `Array []`;
+exports[`ImportedMacrosContainer#collectFromAST() / collectFromNodePath() should work 5`] = `Array []`;
 
-exports[`getCalledMacro() should work 1`] = `
+exports[`ImportedMacrosContainer#getCalledMacro() should work 1`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`getCalledMacro() should work 2`] = `undefined`;
+exports[`ImportedMacrosContainer#getCalledMacro() should work 2`] = `undefined`;
 
-exports[`getCalledMacro() should work 3`] = `
+exports[`ImportedMacrosContainer#getCalledMacro() should work 3`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`getCalledMacro() should work 4`] = `undefined`;
+exports[`ImportedMacrosContainer#getCalledMacro() should work 4`] = `undefined`;
 
-exports[`getCalledMacro() should work 5`] = `undefined`;
+exports[`ImportedMacrosContainer#getCalledMacro() should work 5`] = `undefined`;
 
-exports[`getCalledMacro() should work 6`] = `
+exports[`ImportedMacrosContainer#getCalledMacro() should work 6`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`getCalledMacro() should work 7`] = `
+exports[`ImportedMacrosContainer#getCalledMacro() should work 7`] = `
 Object {
   "name": "a",
 }
 `;
 
-exports[`getCalledMacro() should work 8`] = `"a"`;
+exports[`ImportedMacrosContainer#getCalledMacro() should work 8`] = `"a"`;
 
-exports[`getCalledMacro() should work 9`] = `"a"`;
+exports[`ImportedMacrosContainer#getCalledMacro() should work 9`] = `"a"`;

@@ -1,6 +1,9 @@
 import { createHelper, MacroHelper } from '@/core/macro/helper'
 import { getAST } from '#/testutils'
-import { findImportedMacros, findProgramPath } from '@/core/helper/traverse'
+import {
+  findProgramPath,
+  ImportedMacrosContainer,
+} from '@/core/helper/traverse'
 import { NodePath } from '@babel/traverse'
 import { CallExpression, ExpressionStatement } from '@babel/types'
 
@@ -12,13 +15,9 @@ describe('MacroHelper', () => {
   import { a } from '@a'
   a(a(), c())`)
     const program = findProgramPath(ast)
-    const importedMacros = findImportedMacros(
-      ast,
-      {
-        '@a': [{ name: 'a' } as any],
-      },
-      true
-    )
+    const importedMacros = new ImportedMacrosContainer({
+      '@a': [{ name: 'a' } as any],
+    }).collectFromAST(ast, true)
     const path = (program.get('body')[2] as NodePath<ExpressionStatement>).get(
       'expression'
     ) as NodePath<CallExpression>

@@ -19,21 +19,24 @@ describe('renderMetaType()', () => {
 
 describe('macro()', () => {
   it('should throw error if handler is invalid', () => {
-    expect(() =>
-      macro(
-        'test',
-        {
-          signatures: [
-            {
-              signature: '_',
-            },
-          ],
-          types: [],
-        },
-        // NO_OP has no parameter
-        NO_OP
-      )
-    ).toThrow()
+    const invalidHandlers = [NO_OP, async () => NO_OP()]
+    invalidHandlers.forEach((h) =>
+      expect(() =>
+        macro(
+          'test',
+          {
+            signatures: [
+              {
+                signature: '_',
+              },
+            ],
+            types: [],
+          },
+          // NO_OP has no parameter
+          h
+        )
+      ).toThrow()
+    )
   })
 })
 

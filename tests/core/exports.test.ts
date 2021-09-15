@@ -28,11 +28,7 @@ describe('normalizeExports()', () => {
     expect(() => {
       normalizeExports({
         '@macros': {
-          macros: [
-            function macro() {
-              console.log(1)
-            },
-          ],
+          macros: [{ name: 'macro' } as any],
           customTypes: 'type A = string',
         },
         '@module': {
