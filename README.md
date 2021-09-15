@@ -363,7 +363,7 @@ const helloMacro = defineMacro(`hello`)
       localName: '__macro',
     })
 
-    // expand the isnerted macros
+    // expand the inserted macros
     yield appendToBody(template.statement.ast(`__macro()`))
 
     // do some thing..
