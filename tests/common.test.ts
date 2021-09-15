@@ -68,12 +68,7 @@ describe('isPromise()', () => {
     ].forEach((v) => {
       expect(isPromise(v)).toBe(false)
     })
-    ;[
-      Promise.resolve(),
-      (async () => {
-        NO_OP()
-      })(),
-    ].forEach((v) => {
+    ;[Promise.resolve(), ASYNC_NO_OP()].forEach((v) => {
       expect(isPromise(v)).toBe(true)
     })
   })
