@@ -35,9 +35,9 @@ type MacroBuilder = {
    *
    * e.g.
    * ```typescript
-   * .withHandler(function*({ path }) {
+   * .withHandler(function*({ args }) {
    *   // do some thing
-   *   yield path.get('arguments') // expand macros inside the current call expression
+   *   yield args // expand macros inside the current call expression
    *   // do some thing
    *   yield someOtherNodePath
    *   // do some thing

@@ -8,33 +8,54 @@ export function provideEcho() {
       '@echo': {
         macros: [echoMacro],
       },
+      '@string': {
+        macros: [reverseMacro],
+      },
     },
   })
 }
 
-const echoMacro = defineMacro('echo')
-  .withSignature('(msg: string, repeat?: number): void')
-  .withHandler(({ path, args }, { template, types }) => {
+const echoMacro = defineMacro('echoReverse')
+  .withSignature('(msg: string): void')
+  .withHandler(function* ({ path, args }, { template }, { prependImports }) {
+    // expand arguments
+    yield args
+
+    const getMsg = () => {
+      if (args.length === 0) throw new Error('empty arguments is invalid')
+      const firstArg = args[0]
+      if (!firstArg.isStringLiteral())
+        throw new Error('please use literal string as message')
+      return firstArg.node.value
+    }
+
+    // collect __reverse()
+    yield prependImports({
+      moduleName: '@string',
+      exportName: 'reverse',
+      localName: '__reverse',
+    })
+
+    // expand __reverse()
+    yield path
+      .get('arguments')[0]
+      .replaceWith(template.expression.ast(`__reverse("${getMsg()}")`))
+
+    path.replaceWith(template.statement.ast`console.log("${getMsg()}")`)
+  })
+
+const reverseMacro = defineMacro('reverse')
+  .withSignature('(msg: string): string')
+  .withHandler(function* ({ path, args }, { types }) {
+    yield args
+
     const msg = run(() => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
-      if (!types.isStringLiteral(firstArg))
+      if (!firstArg.isStringLiteral())
         throw new Error('please use literal string as message')
-      return firstArg.value
+      return firstArg.node.value
     })
 
-    const repeat = run(() => {
-      if (args.length < 2) return 5
-      const secondArg = args[1]
-      if (!types.isNumericLiteral(secondArg))
-        throw new Error('please use literal number as repeat')
-      return secondArg.value
-    })
-
-    path.replaceWith(
-      template.statement.ast`console.log("${Array.from(
-        { length: repeat },
-        () => msg
-      ).join(' ')}")`
-    )
+    path.replaceWith(types.stringLiteral(msg.split('').reverse().join('')))
   })

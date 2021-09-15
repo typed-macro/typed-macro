@@ -1,7 +1,7 @@
-import { echo } from '@echo'
+import { echoReverse } from '@echo'
 import { tryLoad, load } from '@load'
 
-echo('yeah', 3)
+echoReverse('yeah yeah')
 
 tryLoad('./**/*.css')
 load('./**/*.css')

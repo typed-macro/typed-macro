@@ -88,7 +88,7 @@ describe('transformer', () => {
         {
           '@echo': [
             mockMacro('echo', ({ path, args }, { template }) => {
-              const msg = (args[0] as StringLiteral).value
+              const msg = (args[0].node as StringLiteral).value
               path.replaceWith(
                 template.statement.ast`console.log("${Array.from(
                   { length: 3 },
@@ -274,12 +274,15 @@ describe('transformer should support handlers yield', () => {
     })
 
     const stack: string[] = []
-    const outMacro = mockMacro('outer', function* ({ path }, { template }) {
-      stack.push('enter out')
-      yield path.get('arguments')
-      path.replaceWith(template.expression.ast(`"out"`))
-      stack.push('leave out')
-    })
+    const outMacro = mockMacro(
+      'outer',
+      function* ({ path, args }, { template }) {
+        stack.push('enter out')
+        yield args
+        path.replaceWith(template.expression.ast(`"out"`))
+        stack.push('leave out')
+      }
+    )
 
     const inMacro = mockMacro('inner', ({ path }, { template }) => {
       stack.push('enter in')

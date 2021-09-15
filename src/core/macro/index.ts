@@ -18,9 +18,11 @@ export type MacroContext = {
    */
   code: string
   /**
-   * The arguments nodes of the call-macro expression currently being handled.
+   * The arguments node paths of the call-macro expression currently being handled.
    */
-  args: CallExpression['arguments']
+  args: CallExpression['arguments'] extends Array<infer R>
+    ? NodePath<R>[]
+    : never
   /**
    * The NodePath of the call-macro expression currently being handled.
    */
@@ -126,7 +128,7 @@ export function macro(
       }[name]
     : {
         *[name](call: MacroCall) {
-          yield call.ctx.path.get('arguments')
+          yield call.ctx.args
           handler(call.ctx, call.babel, call.helper)
         },
       }[name]
@@ -192,7 +194,7 @@ export function createMacroCall({
       path,
       ssr,
       dev,
-      args: path.node.arguments,
+      args: path.get('arguments'),
       state: {
         transform: transformState,
         traversal: traversalState,

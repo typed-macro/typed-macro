@@ -176,17 +176,17 @@ const echoMacro = defineMacro('echo') // macro builder
       // so you don't have to worry about telling users where the wrong code is.
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
-      if (!types.isStringLiteral(firstArg))
+      if (!firstArg.isStringLiteral())
         throw new Error('please use literal string as message')
-      return firstArg.value
+      return firstArg.node.value
     })
 
     const repeat = run(() => {
       if (args.length < 2) return 5
       const secondArg = args[1]
-      if (!types.isNumericLiteral(secondArg))
+      if (!secondArg.isNumericLiteral())
         throw new Error('please use literal number as repeat')
-      return secondArg.value
+      return secondArg.node.value
     })
 
     path.replaceWith(
@@ -280,9 +280,9 @@ const helloMacro = defineMacro(`hello`)
     if (args.length === 0) msg = 'Rollup'
     else {
       const firstArg = args[0]
-      if (!types.isStringLiteral(firstArg))
+      if (!firstArg.isStringLiteral())
         throw new Error('please use literal string as message')
-      msg = firstArg.value
+      msg = firstArg.node.value
     }
 
     path.replaceWith(template.statement.ast(`console.log("Hello, ${msg}")`))
@@ -344,14 +344,14 @@ e.g.
 const helloMacro = defineMacro(`hello`)
   .withSignature(`(msg?: string): void`, `output hello message`)
   .withHandler(function* (
-    { path },
+    { path, args },
     { template },
     { prependImports, appendToBody }
   ) {
     // do some thing...
 
     // expand macros inside the current call expression
-    yield path.get('arguments')
+    yield args
 
     // do some thing...
 
@@ -370,7 +370,7 @@ const helloMacro = defineMacro(`hello`)
   })
 ```
 
-You can find an example of using generator handler [here](fixtures/vite-build/issue-23/input/plugin.ts).
+You can find an example of using generator handler [here](examples/basic/macros/echo.ts).
 
 The three steps, _traversing import statements_, _traversing call expressions_, and _calling corresponding
 handlers for macros during traversing call expressions_, will be repeated many times until all macros are expanded,

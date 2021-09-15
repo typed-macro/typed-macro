@@ -6,13 +6,13 @@ const run = <T>(block: () => T) => block()
 export function vitePluginBasic() {
   const echoMacro = defineMacro('echo')
     .withSignature('(msg: string): void')
-    .withHandler(({ path, args }, { template, types }, { appendImports }) => {
+    .withHandler(({ path, args }, { template }, { appendImports }) => {
       const msg = run(() => {
         if (args.length === 0) throw new Error('empty arguments is invalid')
         const firstArg = args[0]
-        if (!types.isStringLiteral(firstArg))
+        if (!firstArg.isStringLiteral())
           throw new Error('please use literal string as message')
-        return firstArg.value
+        return firstArg.node.value
       })
 
       appendImports({

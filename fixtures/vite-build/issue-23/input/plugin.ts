@@ -6,20 +6,16 @@ const run = <T>(block: () => T) => block()
 
 const echoMacro = defineMacro('echoReverse')
   .withSignature('(msg: string): void')
-  .withHandler(function* (
-    { path, args },
-    { template, types },
-    { prependImports }
-  ) {
+  .withHandler(function* ({ path, args }, { template }, { prependImports }) {
     // expand arguments
-    yield path.get('arguments')
+    yield args
 
     const getMsg = () => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
-      if (!types.isStringLiteral(firstArg))
+      if (!firstArg.isStringLiteral())
         throw new Error('please use literal string as message')
-      return firstArg.value
+      return firstArg.node.value
     }
 
     // collect __reverse()
@@ -40,13 +36,14 @@ const echoMacro = defineMacro('echoReverse')
 const reverseMacro = defineMacro('reverse')
   .withSignature('(msg: string): string')
   .withHandler(function* ({ path, args }, { types }) {
-    yield path.get('arguments')
+    yield args
+
     const msg = run(() => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
-      if (!types.isStringLiteral(firstArg))
+      if (!firstArg.isStringLiteral())
         throw new Error('please use literal string as message')
-      return firstArg.value
+      return firstArg.node.value
     })
 
     path.replaceWith(types.stringLiteral(msg.split('').reverse().join('')))
