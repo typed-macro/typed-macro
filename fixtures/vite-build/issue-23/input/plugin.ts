@@ -35,9 +35,7 @@ const echoMacro = defineMacro('echoReverse')
 
 const reverseMacro = defineMacro('reverse')
   .withSignature('(msg: string): string')
-  .withHandler(function* ({ path, args }, { types }) {
-    yield args
-
+  .withHandler(({ path, args }, { types }) => {
     const msg = run(() => {
       if (args.length === 0) throw new Error('empty arguments is invalid')
       const firstArg = args[0]
