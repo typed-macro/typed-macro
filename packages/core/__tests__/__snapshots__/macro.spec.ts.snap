@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`function defineMacro() should work 1`] = `
+Object {
+  "__is_macro": true,
+  "handler": [Function],
+  "name": "macro",
+  "types": "export type A = string
+export type B = number
+export function macro(): void",
+  "version": "1",
+}
+`;

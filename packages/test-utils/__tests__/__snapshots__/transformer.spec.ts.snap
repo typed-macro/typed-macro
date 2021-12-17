@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TestTransformer should work 1`] = `
+"
+
+let a = 0;"
+`;
+
+exports[`TestTransformer should work 2`] = `
+"
+
+let a = 0;
+a;"
+`;

@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "esModuleInterop": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "moduleResolution": "Node",
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@typed-macro/shared": ["../packages/shared/dist"],
+      "@typed-macro/core": ["../packages/core/dist"],
+      "@typed-macro/runtime": ["../packages/runtime/dist"],
+      "@typed-macro/test-utils": ["../packages/test-utils/dist"],
+      "vite-plugin-macro": ["../packages/wrapper-vite/dist"],
+      // "webpack-macro-loader": ["packages/wrapper-webpack/src"],
+    },
+    "noEmit": true
+  },
+  "include": ["../packages/*/dist", "."]
+}

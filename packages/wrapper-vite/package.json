@@ -1,0 +1,29 @@
+{
+  "name": "vite-plugin-macro",
+  "version": "1.0.0-alpha",
+  "description": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/typed-macro/typed-macro"
+  },
+  "author": "unbyte <i@shangyes.net>",
+  "homepage": "https://github.com/typed-macro/typed-macro/tree/master/packages/wrapper-vite#readme",
+  "bugs": {
+    "url": "https://github.com/typed-macro/typed-macro/issues/new"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@typed-macro/core": "1.0.0-alpha",
+    "@typed-macro/runtime": "1.0.0-alpha",
+    "@typed-macro/shared": "1.0.0-alpha"
+  },
+  "peerDependencies": {
+    "vite": "^2.3.0"
+  }
+}

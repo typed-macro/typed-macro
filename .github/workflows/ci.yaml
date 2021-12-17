@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
+      - run: yarn --frozen-lockfile --network-timeout 180000
+      - run: yarn test --ci --coverage
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage/
+      - uses: codecov/codecov-action@v2
+        with:
+          directory: coverage
+          verbose: true
+
+  test-dts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
+      - run: yarn --frozen-lockfile --network-timeout 180000
+      - run: yarn test:dts

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeRenderer should support append and render to string 1`] = `
+"declare module 'some' {
+export type A = string
+}"
+`;
+
+exports[`TypeRenderer should support append and render to string 2`] = `
+"declare module 'some' {
+export type A = string
+export type B = number
+}
+declare module 'other' {
+export type A = string
+}"
+`;

@@ -1,0 +1,14 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            Please refer to [CHANGELOG.md](https://github.com/typed-macro/typed-macro/blob/master/CHANGELOG.md) for details.

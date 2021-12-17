@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TestRuntime should work 1`] = `
+"
+
+let a = 0;"
+`;
+
+exports[`TestRuntime should work 2`] = `
+"
+
+let a = 0;
+a;"
+`;
+
+exports[`TestRuntime should work 3`] = `
+"declare module '@macros' {
+export function dev(v: unknown): void
+}"
+`;

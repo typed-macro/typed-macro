@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Runtime should work 1`] = `
+"export let a = 1
+"
+`;
+
+exports[`Runtime should work 2`] = `
+"
+
+
+export let a = 1;
+export let b = 2"
+`;
+
+exports[`Runtime should work 3`] = `
+Array [
+  "hook.onStart",
+  "hook.onFilter: test.vue",
+  "hook.beforeTransform: test.ts",
+  "hook.afterTransform: test.ts",
+  "hook.onStop",
+]
+`;

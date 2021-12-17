@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VitePluginMacro should work 1`] = `
+Object {
+  "code": "
+
+let a = 0;",
+  "map": null,
+}
+`;
+
+exports[`VitePluginMacro should work 2`] = `
+Object {
+  "code": "
+
+let a = 0;
+a;",
+  "map": null,
+}
+`;

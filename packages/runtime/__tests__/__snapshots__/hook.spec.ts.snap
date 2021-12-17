@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HookContainer should work 1`] = `"bacode"`;
+
+exports[`HookContainer should work 2`] = `"codeb"`;
+
+exports[`HookContainer should work 3`] = `
+Array [
+  "hooks A: onStart()",
+  "hooks B: onStart()",
+  "hooks A: onStop()",
+  "hooks B: onStop()",
+  "hooks A: beforeTransform()",
+  "hooks B: beforeTransform()",
+  "hooks A: afterTransform()",
+  "hooks B: afterTransform()",
+]
+`;

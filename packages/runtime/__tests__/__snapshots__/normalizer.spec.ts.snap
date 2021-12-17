@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`function normalizeMacroProvider() should work 1`] = `
+Object {
+  "exports": Object {
+    "a": Object {
+      "macros": Array [],
+    },
+    "b": Object {
+      "code": "export const value = 1",
+      "types": "export const value: number",
+    },
+  },
+  "id": "test",
+  "normalizedExports": Object {
+    "codes": Object {
+      "b": "export const value = 1
+",
+    },
+    "macros": Object {
+      "a": Array [],
+    },
+    "types": Object {
+      "a": Array [],
+      "b": Array [
+        "export const value: number",
+      ],
+    },
+  },
+}
+`;
+
+exports[`function normalizeMacroProvider() should work 2`] = `
+Object {
+  "exports": Object {
+    "a": Object {
+      "macros": Array [
+        Object {
+          "__is_macro": true,
+          "handler": [Function],
+          "name": "noop",
+          "types": "export function noop(v: unknown): void",
+          "version": "1",
+        },
+      ],
+    },
+    "b": Object {
+      "code": "export const value = 1",
+      "types": "export const value: number",
+    },
+  },
+  "id": "test",
+  "normalizedExports": Object {
+    "codes": Object {
+      "b": "export const value = 1
+",
+    },
+    "macros": Object {
+      "a": Array [
+        Object {
+          "__is_macro": true,
+          "handler": [Function],
+          "name": "noop",
+          "types": "export function noop(v: unknown): void",
+          "version": "1",
+        },
+      ],
+    },
+    "types": Object {
+      "a": Array [
+        "export function noop(v: unknown): void",
+      ],
+      "b": Array [
+        "export const value: number",
+      ],
+    },
+  },
+}
+`;

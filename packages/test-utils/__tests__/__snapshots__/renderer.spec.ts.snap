@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TestTypeRenderer should work 1`] = `
+"declare module '@macros' {
+export type B = number
+export type T = string
+export function test(v: T): void
+}
+declare module '@another' {
+export let a: number
+}"
+`;

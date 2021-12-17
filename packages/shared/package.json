@@ -1,0 +1,21 @@
+{
+  "name": "@typed-macro/shared",
+  "version": "1.0.0-alpha",
+  "description": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/typed-macro/typed-macro"
+  },
+  "author": "unbyte <i@shangyes.net>",
+  "homepage": "https://github.com/typed-macro/typed-macro/tree/master/packages/shared#readme",
+  "bugs": {
+    "url": "https://github.com/typed-macro/typed-macro/issues/new"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts"
+}

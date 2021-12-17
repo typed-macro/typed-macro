@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`function defineMacroProvider() should work 1`] = `[Function]`;
+
+exports[`function defineMacroProvider() should work 2`] = `
+Object {
+  "__is_macro_provider": true,
+  "exports": Object {},
+  "id": "test",
+  "version": "1",
+}
+`;

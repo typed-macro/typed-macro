@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transformer should apply macros 1`] = `""`;
+
+exports[`Transformer should support helpers 1`] = `
+"console.log(2);console.log(3);console.log(1);import * as funcB from 'some';import { funcA } from 'some';import { funcC as _funcC } from 'some';import 'other';import _other from 'other';console.log(2);console.log(3);console.log(1);
+
+console.log(\\"tluafed\\");
+console.log(\\"tluafed\\");console.log(4);console.log(5);console.log(6);console.log(4);console.log(5);console.log(6);"
+`;
+
+exports[`Transformer should support nested macros 1`] = `
+"
+
+console.log(\\"hello world\\");"
+`;
+
+exports[`Transformer should support variable shadow 1`] = `
+"
+
+
+{
+  const n = () => {};
+  n();
+}
+
+
+{
+  const m = { noop() {} };
+  m.noop();
+}"
+`;
