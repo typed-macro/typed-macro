@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/typed-macro/typed-macro/releases">
-    <img alt="version" src="https://img.shields.io/gitlab/v/release/typed-macro/typed-macro?include_prereleases&sort=semver">
+    <img alt="version" src="https://img.shields.io/github/v/release/typed-macro/typed-macro?include_prereleases&sort=semver">
   </a>
 </p>
 
