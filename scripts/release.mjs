@@ -46,7 +46,7 @@ const run = isDryRun
     info("DRY RUN", cmd)
   : (cmd, opts = {}) => {
     log(cmd);
-    $.exec(cmd, { silent: true, fatal: true, ...opts });
+    return $.exec(cmd, { silent: true, fatal: true, ...opts });
   };
 
 /**
