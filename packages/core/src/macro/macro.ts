@@ -9,13 +9,14 @@ import {
 import { Babel } from './babel'
 import { MacroContext } from './context'
 
-export type YieldTask =
+export type YieldUnit =
   // yield ImportDeclaration NodePath: collect macros from it
   // yield other NodePath: expand macros in it
   | NodePath
-  | NodePath[]
   // do nothing
   | undefined
+
+export type YieldTask = YieldUnit | YieldUnit[]
 
 export type SuspendableTransform = Generator<YieldTask, any, any>
 

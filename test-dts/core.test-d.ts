@@ -40,6 +40,7 @@ describe('macro handler', () => {
     yield helper.prependImports({ moduleName: '' }) // NodePath<ImportDeclaration>
     yield helper.prependImports([{ moduleName: '' }]) // NodePath<ImportDeclaration>[]
     yield undefined // Do nothing
+    yield [undefined] // Do nothing
   })
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function, require-yield

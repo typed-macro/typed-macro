@@ -4,6 +4,7 @@ export {
   MacroCall,
   isMacro,
   YieldTask,
+  YieldUnit,
   SuspendableTransform,
 } from './macro'
 export { MacroContext, MacroTransformContext } from './context'
