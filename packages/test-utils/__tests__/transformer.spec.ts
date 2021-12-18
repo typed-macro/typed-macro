@@ -25,4 +25,16 @@ describe('TestTransformer', () => {
     expect(inProd).toMatchSnapshot()
     expect(inDev).toMatchSnapshot()
   })
+
+  it('should always return code', () => {
+    const transform = createTestTransformer({
+      macros: {},
+    })
+
+    expect(
+      transform(`
+    some(1)
+    `)
+    ).not.toBeUndefined()
+  })
 })

@@ -1,9 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Transformer should apply macros 1`] = `""`;
+exports[`Transformer should apply macros 1`] = `
+"
+
+
+
+parseInt();
+Math.floor(2);"
+`;
+
+exports[`Transformer should apply macros 2`] = `
+"
+
+
+parseInt();
+Math.floor(2);"
+`;
+
+exports[`Transformer should apply macros 3`] = `
+"
+
+parseInt();
+Math.floor(2);"
+`;
+
+exports[`Transformer should re-throw errors with code position from macro handlers 1`] = `
+[Error: Error when apply macro 'test' in 'test.ts' near line 3, column 4:
+ Error: some error]
+`;
 
 exports[`Transformer should support helpers 1`] = `
-"console.log(2);console.log(3);console.log(1);import * as funcB from 'some';import { funcA } from 'some';import { funcC as _funcC } from 'some';import 'other';import _other from 'other';console.log(2);console.log(3);console.log(1);
+"console.log(2);console.log(3);console.log(1);import * as funcB from 'some';import { funcC as _funcC } from 'some';import { funcA } from 'some';import 'other';import _other from 'other';console.log(2);console.log(3);console.log(1);
 
 console.log(\\"tluafed\\");
 console.log(\\"tluafed\\");console.log(4);console.log(5);console.log(6);console.log(4);console.log(5);console.log(6);"
@@ -29,4 +56,10 @@ exports[`Transformer should support variable shadow 1`] = `
   const m = { noop() {} };
   m.noop();
 }"
+`;
+
+exports[`Transformer should support yield 1`] = `
+"
+
+console.log(1);console.log(1);"
 `;

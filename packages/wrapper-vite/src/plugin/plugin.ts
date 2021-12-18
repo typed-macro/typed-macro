@@ -68,6 +68,7 @@ export type MacroPluginOptions = FilterOptions &
  * ```
  */
 export function createMacroPlugin(
+  /* istanbul ignore next */
   options: MacroPluginOptions = {}
 ): MacroPlugin {
   const { exclude, include, maxTraversals, typesPath, dev, ssr } = options
@@ -104,6 +105,7 @@ export function createMacroPlugin(
       await Promise.all([
         runtime!.start(),
         runtime!.renderTypes(
+          /* istanbul ignore next */
           typesPath || join(env.projectPath[0], 'macros.d.ts')
         ),
       ])

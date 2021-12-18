@@ -53,7 +53,7 @@ export function createTestEnvContext({
     modules: modules
       ? modules === true
         ? createMockModules()
-        : modules
+        : /* istanbul ignore next */ modules
       : undefined,
     watcher: watchOptions && new FSWatcher(watchOptions),
     ...env,

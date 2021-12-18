@@ -17,7 +17,7 @@ import { ModularizedMacros } from '../normalizer'
 export const nodeLoc = (node: Node) =>
   node.loc
     ? `line ${node.loc.start.line}, column ${node.loc.start.column}`
-    : 'unknown'
+    : /* istanbul ignore next */ 'unknown'
 
 export function findProgramPath(ast: File) {
   let path: NodePath<Program>
@@ -118,7 +118,7 @@ export function createImportedMacroContainer(
         // case - import { a as a } from 'a'
         const exportName = isIdentifier(s.imported)
           ? s.imported.name
-          : s.imported.value
+          : /* istanbul ignore next */ s.imported.value
 
         container.push({
           importedAsNamespace: false,
@@ -156,6 +156,7 @@ export function createImportedMacroContainer(
           // case - namespace['method']()
           return (
             maybeMacro.macros.find((m) => m.name === method.value) ||
+            /* istanbul ignore next */
             method.value
           )
         }

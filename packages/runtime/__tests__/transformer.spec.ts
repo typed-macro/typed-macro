@@ -45,29 +45,44 @@ describe('Transformer', () => {
   it('should apply macros', () => {
     transformer.appendMacros('macro', [createMacroRemove()])
 
-    const applied = transformer.transform(
-      `
+    expect(
+      transformer.transform(
+        `
     import 'macro'
     import { noop } from 'macro'
     noop()
+    parseInt()
+    Math.floor(2)
     `,
-      'test.ts',
-      env
-    )
-    expect(applied).toMatchSnapshot()
-    ;[
-      `
-    import * as m from 'macro'
+        'test.ts',
+        env
+      )
+    ).toMatchSnapshot()
+
+    expect(
+      transformer.transform(
+        `import * as m from 'macro'
     m.noop()
     m['noop']()
+    parseInt()
+    Math.floor(2)
       `,
-      `
-    import { noop as n } from 'macro'
+        'test.ts',
+        env
+      )
+    ).toMatchSnapshot()
+
+    expect(
+      transformer.transform(
+        `import { noop as n } from 'macro'
     n()
+    parseInt()
+    Math.floor(2)
       `,
-    ].forEach((code) => {
-      expect(transformer.transform(code, 'test.ts', env)).toBe(applied)
-    })
+        'test.ts',
+        env
+      )
+    ).toMatchSnapshot()
 
     expect(transformer.transform(`noop()`, 'test.ts', env)).toBeUndefined()
   })
@@ -132,6 +147,7 @@ describe('Transformer', () => {
         /* eslint-disable require-yield */
         .withHandler(function* ({ path, args }, { types, template }, helper) {
           expect(helper.containsMacros(args)).toEqual([true])
+          expect(helper.containsMacros(args[0])).toEqual(true)
 
           helper.prependToBody(template.statement.ast('console.log(1)'))
           helper.prependToBody(
@@ -168,11 +184,15 @@ describe('Transformer', () => {
           }
 
           const insertedImportA = helper.prependImports(importA)
-          const [insertedImportB] = helper.prependImports([importB])
+          const [insertedImportB, insertedImportC] = helper.prependImports([
+            importB,
+            importC,
+          ])
 
-          const insertedImportC = helper.appendImports(importC)
-          const [insertedImportD] = helper.appendImports([importD])
+          const insertedImportD = helper.appendImports(importD)
           const [insertedImportE] = helper.appendImports([importE])
+
+          expect(helper.appendImports([])).toEqual([])
 
           expect(helper.findImported(importA)).toBe(insertedImportA)
           expect(helper.findImported([importB])[0]).toBe(insertedImportB)
@@ -204,11 +224,42 @@ describe('Transformer', () => {
     ).toMatchSnapshot()
   })
 
+  it('should support yield', () => {
+    transformer.appendMacros('macro', [
+      defineMacro('test')
+        .withSignature('(): void')
+        .withHandler(function* (
+          { path, args },
+          { template },
+          { appendToBody, appendImports }
+        ) {
+          if (args.length) {
+            yield args // NodePath[]
+            yield appendImports({ moduleName: 'macro', exportName: 'test' }) // NodePath<ImportDeclaration>
+            yield appendToBody(template.statement.ast('test()')) // NodePath[]
+            yield undefined // nothing
+            yield [undefined] // nothing
+          }
+          path.replaceWith(template.statement.ast('console.log(1)'))
+        }),
+    ])
+
+    expect(
+      transformer.transform(
+        `
+    import { test } from 'macro'
+    test(test())
+    `,
+        'test.ts',
+        env
+      )
+    ).toMatchSnapshot()
+  })
+
   it('should support traversal/transform state', () => {
     transformer.appendMacros('macro', [
       defineMacro('noop')
         .withSignature('(): void')
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .withHandler(({ path, state }) => {
           const transformCount = (state.transform.get('count') || 0) as number
           if (transformCount === 0) {
@@ -242,7 +293,7 @@ describe('Transformer', () => {
   })
 
   it('should limit max traversal times', () => {
-    transformer = createTransformer({ maxTraversals: -1 })
+    transformer = createTransformer({ maxTraversals: 3 })
     let count = 0
     transformer.appendMacros('macro', [
       defineMacro('noop')
@@ -291,5 +342,60 @@ describe('Transformer', () => {
         env
       )
     ).toThrowError()
+  })
+
+  it('should reject yield parent path', () => {
+    transformer.appendMacros('macro', [
+      defineMacro('test')
+        .withSignature('(): void')
+        .withHandler(function* ({ path, args }, { template }) {
+          yield args
+          if (args.length === 0) {
+            yield path.parentPath
+          }
+          path.replaceWith(template.statement.ast('console.log(1)'))
+        }),
+    ])
+
+    expect(() =>
+      transformer.transform(
+        `
+    import { test } from 'macro'
+    test(test())
+    `,
+        'test.ts',
+        env
+      )
+    ).toThrowError()
+  })
+
+  it('should re-throw errors with code position from macro handlers', () => {
+    transformer.appendMacros('macro', [
+      defineMacro('test')
+        .withSignature('(): void')
+        .withHandler(({ args, path }) => {
+          if (args.length) {
+            throw new Error('some error')
+          }
+          path.remove()
+        }),
+    ])
+
+    expect(
+      (() => {
+        try {
+          transformer.transform(
+            `
+    import { test } from 'macro'
+    test(1)
+    `,
+            'test.ts',
+            env
+          )
+        } catch (e) {
+          return e
+        }
+      })()
+    ).toMatchSnapshot()
   })
 })

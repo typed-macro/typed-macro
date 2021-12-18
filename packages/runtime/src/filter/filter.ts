@@ -44,7 +44,8 @@ export function createFilter({
     const fn = pm(pattern, { dot: true })
     return { test: (id: string) => fn(id) }
   }
-  const ensureArray = (v: unknown) => (v ? (isArray(v) ? v : [v]) : [])
+
+  const ensureArray = (v: FilterPattern) => (isArray(v) ? v : [v])
 
   const includeMatchers = ensureArray(include).map(getMatcher)
   const excludeMatchers = ensureArray(exclude).map(getMatcher)

@@ -124,4 +124,41 @@ describe('Runtime', () => {
     await runtime.stop()
     expect(executedHooks).toMatchSnapshot()
   })
+
+  it('should check exclusion before inclusion', async () => {
+    {
+      runtime = createRuntime(env, {
+        filter: {
+          exclude: /\.md$/,
+          include: /test/,
+        },
+      })
+      await runtime.start()
+      // excluded
+      expect(await runtime.filter('test.md')).toBe(false)
+      // not included also
+      expect(await runtime.filter('some.js')).toBe(false)
+    }
+    {
+      runtime = createRuntime(env, {
+        filter: {
+          exclude: /\.md$/,
+          include: /test/,
+        },
+      })
+      const provider = defineMacroProvider({
+        id: 'provider',
+        exports: {},
+        hooks: {
+          onFilter: () => true,
+        },
+      })
+      runtime.appendProvider(provider)
+      await runtime.start()
+      // excluded
+      expect(await runtime.filter('test.md')).toBe(false)
+      // not included but onFilter returns true
+      expect(await runtime.filter('some.js')).toBe(true)
+    }
+  })
 })

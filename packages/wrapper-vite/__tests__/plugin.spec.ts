@@ -52,6 +52,10 @@ describe('VitePluginMacro', () => {
           await plugin.transform!.call({} as any, code, 'test.ts')
         ).toMatchSnapshot()
 
+        expect(
+          await plugin.transform!.call({} as any, code, 'test.noop')
+        ).toBeUndefined()
+
         await plugin.buildEnd!.call({} as any)
         expect(onStop.mock.calls.length).toBe(1)
       }
