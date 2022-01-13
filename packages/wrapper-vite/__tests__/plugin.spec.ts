@@ -15,8 +15,15 @@ describe('VitePluginMacro', () => {
     dev(a)
     `
 
-  const config = {
+  const prodConfig = {
     isProduction: true,
+    build: {
+      ssr: 'some.ts',
+    },
+  } as any
+
+  const devConfig = {
+    isProduction: false,
     build: {
       ssr: 'some.ts',
     },
@@ -41,7 +48,7 @@ describe('VitePluginMacro', () => {
           })
         )
 
-        await plugin.configResolved!(config)
+        await plugin.configResolved!(prodConfig)
 
         expect(await plugin.resolveId!.call({} as any, '@macros', '', {})).toBe(
           '@macros'
@@ -70,7 +77,7 @@ describe('VitePluginMacro', () => {
 
         // use provider
         plugin.use(provider)
-        await plugin.configResolved!(config)
+        await plugin.configResolved!(prodConfig)
         expect(
           await plugin.transform!.call({} as any, code, 'test.ts')
         ).toMatchSnapshot()
@@ -82,33 +89,56 @@ describe('VitePluginMacro', () => {
     // enable server-related
     await withTempPath('./macros.d.ts', async (typesPath) => {
       const plugin = createMacroPlugin({ typesPath })
-      let hasModule = false
-      let hasWatcher = false
+      let hasModuleInMacro = false
+      let hasWatcherInMacro = false
+
+      let hasModuleInHook = false
+      let hasWatcherInHook = false
+
+      let hasModuleInFactory = false
+      let hasWatcherInFactory = false
+
       // use provider
       plugin.use(
-        defineMacroProvider({
-          id: 'test',
-          exports: {
-            '@macros': {
-              macros: [
-                defineMacro('dev')
-                  .withSignature('(): void')
-                  .withHandler(({ modules, watcher, path }) => {
-                    hasModule = !!modules
-                    hasWatcher = !!watcher
-                    path.remove()
-                  }),
-              ],
+        defineMacroProvider((env) => {
+          hasModuleInFactory = !!env.modules
+          hasWatcherInFactory = !!env.watcher
+
+          return {
+            id: 'test',
+            exports: {
+              '@macros': {
+                macros: [
+                  defineMacro('dev')
+                    .withSignature('(): void')
+                    .withHandler(({ modules, watcher, path }) => {
+                      hasModuleInMacro = !!modules
+                      hasWatcherInMacro = !!watcher
+                      path.remove()
+                    }),
+                ],
+              },
             },
-          },
+            hooks: {
+              onStart() {
+                hasModuleInHook = !!env.modules
+                hasWatcherInHook = !!env.watcher
+              },
+            },
+          }
         })
       )
 
-      await plugin.configResolved!(config)
+      await plugin.configResolved!(devConfig)
       await plugin.configureServer!({ watcher: {} } as any)
       await plugin.transform!.call({} as any, code, 'test.ts')
-      expect(hasWatcher).toBe(true)
-      expect(hasModule).toBe(true)
+
+      expect(hasModuleInFactory).toBe(true)
+      expect(hasWatcherInFactory).toBe(true)
+      expect(hasWatcherInMacro).toBe(true)
+      expect(hasModuleInMacro).toBe(true)
+      expect(hasModuleInHook).toBe(true)
+      expect(hasWatcherInHook).toBe(true)
     })
   })
 })

@@ -2,7 +2,12 @@ import { Modules } from '@typed-macro/core'
 import { isString } from '@typed-macro/shared'
 import { ModuleNode, ViteDevServer } from 'vite'
 
-export function createModules(server: ViteDevServer): Modules {
+export type InternalModules = Modules & {
+  /** @internal */
+  __setServer: (server: ViteDevServer) => void
+}
+
+export function createModules(_server?: ViteDevServer): InternalModules {
   const container: Map<string, string> = new Map()
   const queryByTag = (pattern: RegExp | string) => {
     const result: string[] = []
@@ -16,10 +21,10 @@ export function createModules(server: ViteDevServer): Modules {
     const invalidatedFiles: string[] = []
     const seen: Set<ModuleNode> = new Set()
     for (const file of queryByTag(pattern)) {
-      const module = server.moduleGraph.getModuleById(file)
+      const module = _server?.moduleGraph.getModuleById(file)
       if (module) {
         invalidatedFiles.push(file)
-        server.moduleGraph.invalidateModule(module, seen)
+        _server?.moduleGraph.invalidateModule(module, seen)
       } else {
         container.delete(file)
       }
@@ -39,5 +44,6 @@ export function createModules(server: ViteDevServer): Modules {
     },
     queryByTag,
     invalidateByTag,
+    __setServer: (server) => (_server = server),
   }
 }

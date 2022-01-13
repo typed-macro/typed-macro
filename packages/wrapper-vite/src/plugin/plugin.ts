@@ -7,8 +7,9 @@ import {
   TransformerOptions,
 } from '@typed-macro/runtime'
 import { createEnvContext } from './impl/env'
-import { createModules } from './impl/modules'
+import { InternalModules } from './impl/modules'
 import { join } from 'path'
+import { WatchOptions } from 'chokidar'
 
 export type MacroPlugin = Plugin & {
   /**
@@ -50,6 +51,13 @@ export type MacroPluginOptions = FilterOptions &
      * @see https://vitejs.dev/guide/ssr.html
      */
     ssr?: boolean
+
+    /**
+     * Configure chokidar FSWatcher.
+     *
+     * @see https://github.com/paulmillr/chokidar#api
+     */
+    watcherOptions?: WatchOptions
   }
 
 /**
@@ -71,7 +79,17 @@ export function createMacroPlugin(
   /* istanbul ignore next */
   options: MacroPluginOptions = {}
 ): MacroPlugin {
-  const { exclude, include, maxTraversals, typesPath, dev, ssr } = options
+  const {
+    exclude,
+    include,
+    maxTraversals,
+    typesPath,
+    dev,
+    ssr,
+    watcherOptions,
+    parserPlugins,
+  } = options
+
   const uninstantiatedProviders: MacroProvider[] = []
 
   let runtime: Runtime | undefined
@@ -87,13 +105,14 @@ export function createMacroPlugin(
       // create env
       const env = createEnvContext(
         dev ?? !config.isProduction,
-        ssr ?? !!config.build.ssr
+        ssr ?? !!config.build.ssr,
+        watcherOptions
       )
 
       // init runtime
       runtime = createRuntime(env, {
         filter: { exclude, include },
-        transformer: { maxTraversals },
+        transformer: { maxTraversals, parserPlugins },
       })
 
       // add providers
@@ -111,8 +130,7 @@ export function createMacroPlugin(
       ])
     },
     configureServer: async (server) => {
-      runtime!.internal.env.watcher = server.watcher
-      runtime!.internal.env.modules = createModules(server)
+      ;(runtime!.internal.env.modules as InternalModules).__setServer(server)
     },
     resolveId: (id) => runtime?.resolveId(id),
     load: (id) => runtime?.load(id),
