@@ -35,11 +35,11 @@ export type SuspendableTransform = Generator<YieldTask, any, any>
  * e.g.
  * ```typescript
  * function* someMacro(ctx) {
- *   // do some thing
+ *   // do something
  *   yield ctx.args // expand macros inside arguments
- *   // do some thing
+ *   // do something
  *   yield someOtherNodePath
- *   // do some thing
+ *   // do something
  * }
  * ```
  */

@@ -1,5 +1,5 @@
-import { EnvContext, Modules } from '@typed-macro/core'
-import { FSWatcher, WatchOptions } from 'chokidar'
+import { EnvContext, FSWatcher, Modules, WatchOptions } from '@typed-macro/core'
+import chokidar from 'chokidar'
 import { createMockModules } from './modules'
 
 export type TestEnvContextOptions = Partial<
@@ -55,7 +55,8 @@ export function createTestEnvContext({
         ? createMockModules()
         : /* istanbul ignore next */ modules
       : undefined,
-    watcher: watchOptions && new FSWatcher(watchOptions),
+    watcher:
+      watchOptions && (new chokidar.FSWatcher(watchOptions) as FSWatcher),
     ...env,
   }
 }

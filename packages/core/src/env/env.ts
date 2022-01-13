@@ -1,5 +1,5 @@
-import { FSWatcher } from 'chokidar'
 import { Host, PackageManager } from '@typed-macro/shared'
+import type { FSWatcher } from '../../types'
 
 /**
  * Manage modules, users can set tag of a module and then query/invalidate

@@ -30,8 +30,5 @@
     "picomatch": "^2.3.0",
     "@typed-macro/shared": "1.0.0-alpha",
     "@typed-macro/core": "1.0.0-alpha"
-  },
-  "peerDependencies": {
-    "chokidar": "^3.5.2"
   }
 }

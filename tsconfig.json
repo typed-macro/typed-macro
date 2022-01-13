@@ -15,10 +15,15 @@
       "@typed-macro/core": ["packages/core/src"],
       "@typed-macro/runtime": ["packages/runtime/src"],
       "@typed-macro/test-utils": ["packages/test-utils/src"],
-      "vite-plugin-macro": ["packages/wrapper-vite/src"],
+      "vite-plugin-macro": ["packages/wrapper-vite/src"]
       // "webpack-macro-loader": ["packages/wrapper-webpack/src"],
     },
     "noEmit": true
   },
-  "include": ["packages/*/src", "packages/*/tests", "packages/*/fixtures"]
+  "include": [
+    "packages/*/src",
+    "packages/*/types",
+    "packages/*/tests",
+    "packages/*/fixtures"
+  ]
 }

@@ -28,8 +28,5 @@
     "@types/babel__template": "^7.4.1",
     "@types/babel__traverse": "^7.14.2",
     "@typed-macro/shared": "1.0.0-alpha"
-  },
-  "peerDependencies": {
-    "chokidar": "^3.5.2"
   }
 }

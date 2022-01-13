@@ -1,6 +1,6 @@
-import { EnvContext } from '@typed-macro/core'
+import { EnvContext, FSWatcher, WatchOptions } from '@typed-macro/core'
 import { getPackageManager, getProjectPath } from '@typed-macro/shared'
-import { FSWatcher, WatchOptions } from 'chokidar'
+import chokidar from 'chokidar'
 import { createModules } from './modules'
 
 export function createEnvContext(
@@ -15,13 +15,13 @@ export function createEnvContext(
       : /* istanbul ignore next */ 'unknown'
 
   const watcher = dev
-    ? new FSWatcher({
+    ? (new chokidar.FSWatcher({
         ignored: ['**/node_modules/**', '**/.git/**'],
         ignoreInitial: true,
         ignorePermissionErrors: true,
         disableGlobbing: true,
         ...watcherOptions,
-      })
+      }) as FSWatcher)
     : undefined
 
   const modules = dev ? createModules() : undefined
