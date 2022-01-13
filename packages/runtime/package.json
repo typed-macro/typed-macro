@@ -1,6 +1,6 @@
 {
   "name": "@typed-macro/runtime",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "license": "MIT",
   "repository": {
@@ -28,7 +28,7 @@
     "@types/babel__template": "^7.4.1",
     "@types/babel__traverse": "^7.14.2",
     "picomatch": "^2.3.0",
-    "@typed-macro/shared": "1.0.0-alpha",
-    "@typed-macro/core": "1.0.0-alpha"
+    "@typed-macro/shared": "1.0.0-alpha.1",
+    "@typed-macro/core": "1.0.0-alpha.1"
   }
 }

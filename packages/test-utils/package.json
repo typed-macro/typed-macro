@@ -1,6 +1,6 @@
 {
   "name": "@typed-macro/test-utils",
-  "version": "1.0.0-alpha",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "license": "MIT",
   "repository": {
@@ -20,8 +20,8 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "chokidar": "^3.5.2",
-    "@typed-macro/shared": "1.0.0-alpha",
-    "@typed-macro/core": "1.0.0-alpha",
-    "@typed-macro/runtime": "1.0.0-alpha"
+    "@typed-macro/shared": "1.0.0-alpha.1",
+    "@typed-macro/core": "1.0.0-alpha.1",
+    "@typed-macro/runtime": "1.0.0-alpha.1"
   }
 }
