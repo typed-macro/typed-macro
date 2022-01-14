@@ -16,10 +16,8 @@ export function createEnvContext(
 
   const watcher = dev
     ? (new chokidar.FSWatcher({
-        ignored: ['**/node_modules/**', '**/.git/**'],
         ignoreInitial: true,
         ignorePermissionErrors: true,
-        disableGlobbing: true,
         ...watcherOptions,
       }) as FSWatcher)
     : undefined

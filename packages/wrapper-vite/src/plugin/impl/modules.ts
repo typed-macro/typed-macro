@@ -2,8 +2,8 @@ import { Modules } from '@typed-macro/core'
 import { isString } from '@typed-macro/shared'
 import { ModuleNode, ViteDevServer } from 'vite'
 
+/** @internal */
 export type InternalModules = Modules & {
-  /** @internal */
   __setServer: (server: ViteDevServer) => void
 }
 
