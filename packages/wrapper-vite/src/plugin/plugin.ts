@@ -100,7 +100,6 @@ export function createMacroPlugin(
       return plugin
     },
     name: 'vite-plugin-macro',
-    enforce: 'pre',
     configResolved: async (config) => {
       // create env
       const env = createEnvContext(
