@@ -58,6 +58,14 @@ export type MacroPluginOptions = FilterOptions &
      * @see https://github.com/paulmillr/chokidar#api
      */
     watcherOptions?: WatchOptions
+  
+    /**
+     * Adjust the application order.
+     *
+     * @see https://vitejs.dev/guide/api-plugin.html#plugin-ordering
+     * @default 'pre'
+     */
+    enforce?: 'pre' | 'post' | undefined
   }
 
 /**
@@ -88,6 +96,7 @@ export function createMacroPlugin(
     ssr,
     watcherOptions,
     parserPlugins,
+    enforce,
   } = options
 
   const uninstantiatedProviders: MacroProvider[] = []
@@ -100,7 +109,7 @@ export function createMacroPlugin(
       return plugin
     },
     name: 'vite-plugin-macro',
-    enforce: 'pre',
+    enforce: options.hasOwnProperty('enforce') ? enforce : 'pre',
     configResolved: async (config) => {
       // create env
       const env = createEnvContext(
